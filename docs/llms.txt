@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-01-07 for version 1.25.1.9000.
+package. This README was reviewed on 2026-01-11 for version 1.25.1.9000.
 
 ## Main features
 
@@ -783,7 +783,7 @@ ctrLoadQueryIntoDb(
 # - Created directory ./files-ctgov
 # - Applying 'documents.regexp' to 45 missing documents
 # - Creating subfolder for each trial
-# = Newly saved 45 document(s) for 35 trial(s); 0 of such document(s) for 0 trial(s) already existed in /Users/ralfherold/Daten/mak/r/emea/ctrdata/files-ctgov
+# = Newly saved 45 document(s) for 35 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov
 # = Imported or updated 35 trial(s)
 # Updated history ("meta-info" in "collection_name")
 # $n
@@ -808,7 +808,6 @@ ctrLoadQueryIntoDb(
 # - Created directory ./files-ctgov2
 # - Applying 'documents.regexp' to 46 missing documents
 # - Creating subfolder for each trial
-#                                                                       
 # = Newly saved 46 document(s) for 29 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov2
 # = Imported or updated 42 trial(s)
 # Updated history ("meta-info" in "collection_name")
@@ -833,7 +832,6 @@ ctrLoadQueryIntoDb(
 # - Created directory ./files-isrctn
 # - Applying 'documents.regexp' to 61 missing documents
 # - Creating subfolder for each trial
-#                                                                      
 # = Newly saved 37 document(s) for 16 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-isrctn
 # = Imported or updated 350 trial(s)
 # Updated history ("meta-info" in "collection_name")
