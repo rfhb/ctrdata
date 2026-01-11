@@ -994,15 +994,65 @@ ctrMultiDownload <- function(
     # randomise to minimise errors
     reqs <- reqs[sample.int(length(reqs))]
 
-    # do download now
-    res <- suppressWarnings(
-      httr2::req_perform_parallel(
-        reqs,
-        paths = sapply(reqs, "[[", "fp"),
-        on_error = "continue",
-        progress = progress,
-        max_active = 10L # default
-      ))
+    # do download now, but first check a
+    # criterion that is specific for CTIS
+    # to decide on method for requests
+    if (!all(grepl("/download$", downloadValue$url[toDo]))) {
+
+      # parallel
+
+      res <- suppressWarnings(
+        httr2::req_perform_parallel(
+          reqs,
+          paths = sapply(reqs, "[[", "fp"),
+          on_error = "continue",
+          progress = progress,
+          max_active = 10L
+        ))
+
+    } else {
+
+      # iteratively
+
+      # - for CTIS documents where it seems the
+      #   CDN deep link is valid only very briefly
+
+      # helper returns the next request or end
+      nextReq <- function(resp, req) {
+        if (resp$headers$`Content-Type` == "application/json") {
+          cdnUrl <- gsub('"', "", as.character(
+            jqr::jq(file(req$fp), " .url ")))
+          unlink(req$fp)
+          return(httr2::req_url(req, url = cdnUrl))
+        }
+        # use req as is
+        return(NULL)
+      }
+
+      # perform requests
+      res <- lapply(
+        seq_along(reqs),
+        function(i) {
+
+          # inform user
+          message(i, "\r", appendLF = FALSE)
+
+          # request to resolve followed
+          # by request to download file
+          thisRes <- httr2::req_perform_iterative(
+            req = reqs[[i]],
+            next_req = nextReq,
+            path = reqs[[i]]$fp,
+            max_reqs = 2L,
+            on_error = "return",
+            progress = TRUE
+          )
+
+          # keep only CDN download info
+          return(thisRes[[2]])
+        })
+
+    }
 
     # mangle results info
     res <- lapply(
@@ -1071,7 +1121,7 @@ ctrMultiDownload <- function(
       unlink(res$destfile[res$isCdn])
 
       # reset status
-      res$success[res$isCdn] <- NA
+      res$success[res$isCdn] <- NA_integer_
 
     }
 
@@ -1079,37 +1129,16 @@ ctrMultiDownload <- function(
     downloadValue <- dplyr::rows_update(
       downloadValue,
       # do not include destfile as this may be NA in res
-      res[, c("success", "status_code", "url", "isCdn",
+      res[, c("success", "status_code", "url", "isCdn", "destfile",
               "urlResolved", "content_type", "data"), drop = FALSE],
-      by = c("url", "data")[seq_len(
-        ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
+      # by = c("url", "data")[seq_len(
+      #   ifelse(all(is.na(downloadValue$data)), 1L, 2L))]
+      by = "destfile"
     )
 
     # user info and stop
     if (inherits(downloadValue, "try-error")) {
       stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
-    }
-
-    # handle when CDN deep link is likely expired
-    redoCdn <- downloadValue$isCdn &
-      # TODO remove 403L?
-      (downloadValue$status_code %in% c(403L, 404L, 410L))
-    if (isTRUE(any(redoCdn))) {
-      downloadValue$urlResolved[redoCdn] <- NA_character_
-    }
-
-    # when status code indicates server refused request
-    rfsd <- downloadValue$status_code %in% c(403L, 429L)
-    # - remove any downloads thus far
-    if (isTRUE(any(rfsd))) unlink(downloadValue$destfile[rfsd])
-    # - add delay if at least one request was refused
-    #   that was not likely for an expired CDN link
-    if (isTRUE(any(rfsd & !downloadValue$isCdn))) {
-      wt <- as.integer(runif(n = 1L) * 45L) + 14L
-      message(
-        "- Server refused some requests; waiting ",
-        wt, " sec before retrying        ")
-      Sys.sleep(wt)
     }
 
     # only check success because this is filled initially by !toDo;
@@ -1128,7 +1157,7 @@ ctrMultiDownload <- function(
     }
     toDo <- toDoThis
 
-    # use info
+    # user info
     if (verbose) {
       message("numI ", numI)
       message("length(toDo) ", length(toDo))
