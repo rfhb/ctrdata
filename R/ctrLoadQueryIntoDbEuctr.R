@@ -240,8 +240,10 @@ ctrLoadQueryIntoDbEuctr <- function(
           w <- countriesPreferred[w][1]
           if (is.na(w)) i[1] else w
         })
+        # early return if no protocol kept
+        if (all(is.na(p[[2]]))) return(NULL)
       }
-
+      
       # mangling list which has even number of elements
       lapply(
         seq_len(length(p) / 2L),
@@ -268,6 +270,15 @@ ctrLoadQueryIntoDbEuctr <- function(
   message("- Downloading ", length(urls), " records of ", resultsEuNumTrials,
           " trials (estimate: ", signif(length(urls) * 16 / 287, 1L), " s)")
 
+  # no trials for downloading 
+  # (e.g., only GB and 3RD)
+  if (!length(urls)) {
+    # return
+    return(list(n = length(urls),
+                success = NULL,
+                failed = NULL))
+  }
+  
   # do download and save
   resDf <- ctrMultiDownload(
     urls = urls,
