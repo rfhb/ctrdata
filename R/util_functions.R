@@ -868,8 +868,6 @@ addMetaData <- function(x, con) {
 #' @importFrom jsonlite fromJSON toJSON validate
 #' @importFrom httr2 request req_url req_headers req_throttle req_perform_parallel req_body_json req_user_agent req_perform req_retry req_options resp_status
 #' @importFrom dplyr rows_update
-#' @importFrom rlang hash !!!
-#' @importFrom stats runif
 #'
 ctrMultiDownload <- function(
     urls,
@@ -914,7 +912,6 @@ ctrMultiDownload <- function(
     "data" = data,
     "url" = utils::URLencode(urls),
     "status_code" = rep.int(NA_integer_, length(toDo)),
-    "urlResolved" = rep.int(NA_character_, length(toDo)),
     "content_type" = rep.int(NA_character_, length(toDo))
   )
 
@@ -923,31 +920,24 @@ ctrMultiDownload <- function(
 
   # remove any duplicates
   downloadValue <- unique(downloadValue)
-
-  # use urlResolved if this has been filled below in CDN check
-  downloadValue$url[!is.na(downloadValue$urlResolved)] <-
-    downloadValue$urlResolved[!is.na(downloadValue$urlResolved)]
+  toDo <- !downloadValue$success
 
   # construct requests to do
   reqs <- mapply(
     function(u, d, f) {
+      
       # start with basic request
-      r <- httr2::request(u)
-
-      # add unique header
-      hdr <- rlang::hash(runif(n = 1L))
-      names(hdr) <- paste0(sample(letters, size = 10L), collapse = "")
-      r <- httr2::req_headers(r, !!!hdr)
+      r <- httr2::request(base_url = u)
 
       # add user agent
-      r <- httr2::req_user_agent(r, ctrdataUseragent)
+      r <- httr2::req_user_agent(req = r, ctrdataUseragent)
 
       # keep important option 2L for euctr
-      r <- httr2::req_options(r, http_version = 2)
+      r <- httr2::req_options(.req = r, http_version = 2)
 
       # conditionally add body
       if (!is.na(d)) r <-
-        httr2::req_body_json(r, jsonlite::fromJSON(
+        httr2::req_body_json(req = r, jsonlite::fromJSON(
           d, simplifyVector = FALSE))
 
       # hard-coded throttling
@@ -966,7 +956,7 @@ ctrMultiDownload <- function(
         max_seconds = NULL,
         retry_on_failure = FALSE,
         # adapt to return codes found with some registers
-        is_transient = function(resp) httr2::resp_status(resp) %in% c(403, 429, 500, 503),
+        is_transient = function(resp) httr2::resp_status(resp) %in% c(403L, 429L, 503L),
         failure_timeout = 60L
       )
 
@@ -1035,7 +1025,6 @@ ctrMultiDownload <- function(
           "url" = r$request$url,
           "destfile" = NA_character_, # TODO
           "content_type" = NA_character_,
-          "urlResolved" = NA_character_,
           "data" = body2json(r$request$body$data)
         )
       )
@@ -1046,7 +1035,6 @@ ctrMultiDownload <- function(
           "url" = r$request$url,
           "destfile" = as.character(r$resp$body),
           "content_type" = NA_character_,
-          "urlResolved" = NA_character_,
           "data" = body2json(r$request$body$data)
         )
       ) # else
@@ -1057,7 +1045,6 @@ ctrMultiDownload <- function(
           "url" = r[["url"]],
           "destfile" = as.character(r[["body"]]),
           "content_type" = r[["headers"]]$`content-type`,
-          "urlResolved" = NA_character_,
           "data" = body2json(r$request$body$data)
         )
       )})
@@ -1067,7 +1054,7 @@ ctrMultiDownload <- function(
   downloadValue <- dplyr::rows_update(
     downloadValue,
     res[, c("success", "status_code", "url", "destfile",
-            "urlResolved", "content_type", "data"), drop = FALSE],
+            "content_type", "data"), drop = FALSE],
     by = "destfile"
   )
 
