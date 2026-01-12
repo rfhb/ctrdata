@@ -880,85 +880,79 @@ ctrMultiDownload <- function(
   stopifnot(length(urls) == length(destfiles))
   if (!length(urls)) return(data.frame())
 
-  # make operator accessible
-  `!!!` <- rlang::`!!!`
-
   # helper
   body2json <- function(x) {
-    if (is.null(x)) return(NA)
+    if (is.null(x)) return(NA_character_)
     as.character(jsonlite::toJSON(x, auto_unbox = TRUE))
   }
+
+  # master data frame from all input
+  downloadSet <- data.frame(
+    "url" = utils::URLencode(urls),
+    "destfile" = destfiles,
+    "data" = rep.int(NA_character_, length(urls)),
+    "toDo" = rep.int(TRUE, times = length(urls)),
+    "success" = rep.int(TRUE, times = length(urls)),
+    "status_code" = rep.int(NA_integer_, length(urls)),
+    "content_type" = rep.int(NA_character_, length(urls))
+  )
 
   # do not again download files that already exist
   # or that do not have an (arbitrary) minimal size.
   # nchar("Request failed.") is 15L
-  toDo <- rep.int(TRUE, times = length(urls))
-  toDo[file.exists(destfiles) &
-         (is.na(file.size(destfiles)) |
-            file.size(destfiles) > 20L)] <- FALSE
+  downloadSet$toDo[
+    file.exists(destfiles) &
+      (is.na(file.size(destfiles)) |
+         file.size(destfiles) > 20L)] <- FALSE
 
   # mangle data and prepare for request body
-  if (is.null(data)) data <- rep.int(NA, length(toDo))
-  data <- sapply(data, function(i) ifelse(
-    is.null(i) || is.na(i) || !jsonlite::validate(i), NA,
-    jsonlite::toJSON(jsonlite::fromJSON(
-      i, simplifyVector = FALSE), auto_unbox = TRUE)),
+  if (!is.null(data)) downloadSet$data <- sapply(
+    data, function(i) ifelse(
+      is.null(i) || is.na(i) || !jsonlite::validate(i), NA,
+      jsonlite::toJSON(jsonlite::fromJSON(
+        i, simplifyVector = FALSE), auto_unbox = TRUE)),
     USE.NAMES = FALSE)
 
-  # master data frame from all input
-  downloadValue <- data.frame(
-    "success" = !toDo,
-    "destfile" = destfiles,
-    "data" = data,
-    "url" = utils::URLencode(urls),
-    "status_code" = rep.int(NA_integer_, length(toDo)),
-    "content_type" = rep.int(NA_character_, length(toDo))
-  )
-
   # early exit
-  if (!any(toDo)) return(downloadValue[!toDo, , drop = FALSE])
+  if (!any(downloadSet$toDo)) return(
+    downloadSet[!downloadSet$toDo, , drop = FALSE])
 
   # remove any duplicates
-  downloadValue <- unique(downloadValue)
-  toDo <- !downloadValue$success
+  downloadSet <- unique(downloadSet)
 
   # construct requests to do
   reqs <- mapply(
     function(u, d, f) {
-      
-      # start with basic request
-      r <- httr2::request(base_url = u)
 
-      # add user agent
-      r <- httr2::req_user_agent(req = r, ctrdataUseragent)
-
-      # keep important option 2L for euctr
-      r <- httr2::req_options(.req = r, http_version = 2)
+      r <- httr2::request(
+        # start with basic request
+        base_url = u) |>
+        # add user agent
+        httr2::req_user_agent(ctrdataUseragent) |>
+        # keep important option 2L for euctr
+        httr2::req_options(http_version = 2) |>
+        # hard-coded throttling
+        httr2::req_throttle(
+          # ensures that function never makes more
+          # than capacity requests in fill_time_s
+          capacity = 40L,
+          fill_time_s = 2L
+        ) |>
+        # include retries in request
+        httr2::req_retry(
+          max_tries = 10L,
+          max_seconds = NULL,
+          retry_on_failure = FALSE,
+          # adapt to return codes found with some registers
+          is_transient = function(resp) httr2::resp_status(
+            resp) %in% c(403L, 429L, 503L),
+          failure_timeout = 60L
+        )
 
       # conditionally add body
       if (!is.na(d)) r <-
         httr2::req_body_json(req = r, jsonlite::fromJSON(
           d, simplifyVector = FALSE))
-
-      # hard-coded throttling
-      r <- httr2::req_throttle(
-        req = r,
-        # ensures that function never makes more
-        # than capacity requests in fill_time_s
-        capacity = 40L,
-        fill_time_s = 2L
-      )
-
-      # include retries in request
-      r <- httr2::req_retry(
-        req = r,
-        max_tries = 10L,
-        max_seconds = NULL,
-        retry_on_failure = FALSE,
-        # adapt to return codes found with some registers
-        is_transient = function(resp) httr2::resp_status(resp) %in% c(403L, 429L, 503L),
-        failure_timeout = 60L
-      )
 
       # adding file path
       r$fp <- f
@@ -966,14 +960,14 @@ ctrMultiDownload <- function(
       # return
       return(r)
     },
-    u = downloadValue$url[toDo],
-    d = downloadValue$data[toDo],
-    f = downloadValue$destfile[toDo],
+    u = downloadSet$url[downloadSet$toDo],
+    d = downloadSet$data[downloadSet$toDo],
+    f = downloadSet$destfile[downloadSet$toDo],
     SIMPLIFY = FALSE,
     USE.NAMES = FALSE
   )
 
-  # randomise to minimise errors
+  # randomise
   reqs <- reqs[sample.int(length(reqs))]
 
   # using a httr2 mock function to handle CDN
@@ -1020,78 +1014,81 @@ ctrMultiDownload <- function(
     function(r) {
       if (inherits(r, "httr2_failure")) return(
         data.frame(
-          "success" = FALSE,
-          "status_code" = NA_integer_,
           "url" = r$request$url,
           "destfile" = NA_character_, # TODO
-          "content_type" = NA_character_,
-          "data" = body2json(r$request$body$data)
+          "data" = body2json(r$request$body$data),
+          "toDo" = TRUE,
+          "success" = FALSE,
+          "status_code" = NA_integer_,
+          "content_type" = NA_character_
         )
       )
       if (inherits(r, "httr2_error")) return(
         data.frame(
-          "success" = FALSE,
-          "status_code" = r$status,
           "url" = r$request$url,
           "destfile" = as.character(r$resp$body),
-          "content_type" = NA_character_,
-          "data" = body2json(r$request$body$data)
+          "data" = body2json(r$request$body$data),
+          "toDo" = TRUE,
+          "success" = FALSE,
+          "status_code" = r$status,
+          "content_type" = NA_character_
         )
       ) # else
       return(
         data.frame(
-          "success" = TRUE,
-          "status_code" = r[["status_code"]],
           "url" = r[["url"]],
           "destfile" = as.character(r[["body"]]),
-          "content_type" = r[["headers"]]$`content-type`,
-          "data" = body2json(r$request$body$data)
+          "data" = body2json(r$request$body$data),
+          "toDo" = FALSE,
+          "success" = TRUE,
+          "status_code" = r[["status_code"]],
+          "content_type" = r[["headers"]]$`content-type`
         )
       )})
   res <- as.data.frame(do.call(rbind, res))
 
   # update input, mind row order
-  downloadValue <- dplyr::rows_update(
-    downloadValue,
-    res[, c("success", "status_code", "url", "destfile",
-            "content_type", "data"), drop = FALSE],
+  downloadSet <- dplyr::rows_update(
+    downloadSet,
+    res[, c("url", "destfile", "data", "toDo", "success",
+            "status_code", "content_type"), drop = FALSE],
     by = "destfile"
   )
 
   # user info and stop
-  if (inherits(downloadValue, "try-error")) {
-    stop("Download failed; last error: ", class(downloadValue), call. = FALSE)
+  if (inherits(downloadSet, "try-error")) {
+    stop("Download failed; last error: ", class(downloadSet), call. = FALSE)
   }
 
   # only check success because this is filled initially by !toDo;
   # check status_code where it is NA as this is the latest action;
   # status_code is NA where this iteration determined it as isCdn
-  toDo <- is.na(downloadValue$success) |
+  downloadSet$toDo <- is.na(downloadSet$success) |
     # OK, Partial Content, Not Found, Range Not Satisfiable
-    !(downloadValue$status_code %in% c(NA, 200L, 206L, 404L, 416L))
+    !(downloadSet$status_code %in% c(NA, 200L, 206L, 404L, 416L))
 
   # remove any files from failed downloads
-  unlink(downloadValue$destfile[downloadValue$status_code %in% c(
+  unlink(downloadSet$destfile[downloadSet$status_code %in% c(
     403L, 404L, 416L, 429L)])
 
   # finalise
-  if (any(toDo)) {
+  if (any(downloadSet$toDo)) {
 
     # remove any files from failed downloads
-    unlink(downloadValue$destfile[toDo])
+    unlink(downloadSet$destfile[downloadSet$toDo])
 
     message("Download failed for: status code / url(s):")
-    apply(downloadValue[toDo, c("status_code", "url"), drop = FALSE],
+    apply(downloadSet[downloadSet$toDo, c("status_code", "url"), drop = FALSE],
           1, function(r) message(r[1], " / ", r[2], "\n", appendLF = FALSE))
 
   }
 
   # if previously downloaded, success may not reflect on disk;
   # thus safeguard by unsetting success if file does not exist
-  downloadValue$success <- file.exists(downloadValue$destfile)
+  downloadSet$success <- file.exists(downloadSet$destfile)
 
   # return
-  return(downloadValue[!toDo, , drop = FALSE])
+  return(downloadSet[!downloadSet$toDo, , drop = FALSE])
 
 } # end ctrMultiDownload
 
