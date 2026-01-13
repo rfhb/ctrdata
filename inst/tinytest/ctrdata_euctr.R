@@ -179,7 +179,7 @@ expect_message(
       querytoupdate = "last",
       con = dbc,
       verbose = TRUE)),
-  "search[?]query=2013-003488-71")
+  "search[?]query=2014-003578-17")
 
 # checking as only works for last 7 days with rss mechanism
 # query just based on date is used to avoids no trials are found
