@@ -77,9 +77,9 @@
 #' @param euctrprotocolsall If \code{TRUE}, load all available records of
 #' protocol-related data (that is, versions from all EU Member States and any
 #' third country where the trial is conducted); if \code{FALSE}, only a single
-#' record per trial is loaded, to accelerate loading. Default is \code{TRUE},
-#' but only for backwards consistency; for new collections, \code{FALSE} is
-#' the recommended setting, unless there are questions about differences
+#' EU Member State record per trial is loaded, to accelerate loading.
+#' Default is \code{TRUE}, for backwards consistency; for new collections,
+#' \code{FALSE} is recommended, unless there are questions about differences
 #' between Member States' protocol versions of a trial such as dates or outcomes
 #' of an authorisation decision or an ethics opinion, global status and end.
 #'

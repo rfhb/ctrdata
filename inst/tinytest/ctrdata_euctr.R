@@ -134,6 +134,23 @@ expect_message(
       con = dbc)),
   "Imported or updated")
 
+# test
+expect_equal(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2014-003578-17",
+      euctrprotocolsall = TRUE, con = dbc))$n,
+  2L)
+
+# test
+expect_equal(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2014-003578-17",
+      euctrprotocolsall = FALSE, con = dbc))$n,
+  0L)
+
+
 #### ctrLoadQueryIntoDb update ####
 
 # manipulate history to test updating
