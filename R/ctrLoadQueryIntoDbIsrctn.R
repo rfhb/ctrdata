@@ -166,8 +166,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   # inform user
   message(
     "- Downloading trial file (estimate: ",
-    signif(resCount * 0.018, 1L), " MB)..."
-  )
+    signif(resCount * 6.8 / 232, 1L), " s)...")
 
   # construct API call setting limit to number found above
   isrctndownloadurl <- paste0(
@@ -183,11 +182,12 @@ ctrLoadQueryIntoDbIsrctn <- function(
       ".xml"))
 
   # get (download) trials into single file f
+  # print(system.time(
   ctrMultiDownload(
     urls = isrctndownloadurl,
     destfiles = f,
-    verbose = verbose
-  )
+    verbose = verbose)
+  # )) # print system time
 
   # inform user
   if (!file.exists(f) || file.size(f) == 0L) {
@@ -203,9 +203,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
 
   # run conversion
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
-  message("- Converting to NDJSON (estimate: ",
-          signif(resCount * 1.7 / 290, 1L), " s)...")
+  message(
+    "- Converting to NDJSON (estimate: ",
+    signif(resCount * 0.4 / 232, 1L), " s)...")
 
+  # print(system.time(
   jqr::jq(
     # input
     textConnection(
@@ -228,6 +230,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
     flags = jqr::jq_flags(pretty = FALSE),
     out = file.path(tempDir, "isrctn_trials_.ndjson")
   )
+  # )) # print system time
 
   ## import json -----------------------------------------------------
 

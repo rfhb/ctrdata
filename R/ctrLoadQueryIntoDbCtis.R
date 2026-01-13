@@ -77,8 +77,9 @@ ctrLoadQueryIntoDbCtis <- function(
 
   # this is imported as the main data into the database
 
-  message("- Downloading and processing trial data... (",
-          "estimate: ", signif(length(idsTrials) * 12 / 96, 1L), " MB)")
+  message(
+    "- Downloading and processing trial data (estimate: ",
+    signif(length(idsTrials) * 167 / 621, 1L), " s)...")
 
   urls <- sprintf(ctisEndpoints[2], idsTrials)
 
@@ -86,12 +87,13 @@ ctrLoadQueryIntoDbCtis <- function(
     file.path(tempDir, paste0("ctis_trial_partIpartsII_", i, ".json"))
   }
 
-  # "HTTP server doesn't seem to support byte ranges. Cannot resume."
+  # download
+  # print(system.time(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fPartIPartsIIJson(idsTrials),
-    verbose = verbose
-  )
+    verbose = verbose)
+  # )) # print system time
 
   # convert partI and partsII details into ndjson file(s),
   # each approximately 10MB for nRecords = 100L
@@ -322,8 +324,9 @@ ctisApi1 <- function(
   }
 
   # user info
-  message("- Downloading and processing trial list... (",
-          "estimate: ", signif(overview$totalRecords * 3.2 / 1751, 1L), " s)")
+  message(
+    "- Downloading and processing trial list (estimate: ",
+    signif(overview$totalRecords * 13.7 / 343, 1L), " s)...")
 
   # prepare to retrieve overviews
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
@@ -386,12 +389,13 @@ ctisApi1 <- function(
   }
 
   # download files
+  # print(system.time(
   res <- ctrMultiDownload(
     urls = rep.int(ctisEndpoints[1], length(pageNo)),
     destfiles = fTrialsJsonApi1PageFiles,
     data = jsonApi1Pages,
-    verbose = verbose
-  )
+    verbose = verbose)
+  # )) # print system time
 
   # prepare files
   fTrialsNdjsonApi1 <- file.path(tempDir, "ctis_add_api1.ndjson")

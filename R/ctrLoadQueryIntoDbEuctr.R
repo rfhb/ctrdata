@@ -176,7 +176,7 @@ ctrLoadQueryIntoDbEuctr <- function(
   # inform user
   message(
     "- Downloading in ", resultsEuNumPages, " batch(es) (20 trials each; ",
-    "estimate: ", signif(resultsEuNumTrials * 0.12, 1L), " MB)")
+    "estimate: ", signif(resultsEuNumPages * 173 / 141, 1L), " s)...")
 
   # vector with URLs of all summaries
   urls <- sprintf(
@@ -195,11 +195,12 @@ ctrLoadQueryIntoDbEuctr <- function(
     ))
 
   # do download and saving
+  # print(system.time(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fp,
-    verbose = verbose
-  )
+    verbose = verbose)
+  # )) # print system time
 
   if (nrow(resDf) != resultsEuNumPages) {
     message("Download from EUCTR failed; incorrect number of records")
@@ -243,7 +244,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         # early return if no protocol kept
         if (all(is.na(p[[2]]))) return(NULL)
       }
-      
+
       # mangling list which has even number of elements
       lapply(
         seq_len(length(p) / 2L),
@@ -267,10 +268,11 @@ ctrLoadQueryIntoDbEuctr <- function(
     ))
 
   # inform user
-  message("- Downloading ", length(urls), " records of ", resultsEuNumTrials,
-          " trials (estimate: ", signif(length(urls) * 16 / 287, 1L), " s)")
+  message(
+    "- Downloading ", length(urls), " records of ", resultsEuNumTrials,
+    " trials (estimate: ", signif(length(urls) * 686 / 13608, 1L), " s)...")
 
-  # no trials for downloading 
+  # no trials for downloading
   # (e.g., only GB and 3RD)
   if (!length(urls)) {
     # return
@@ -278,22 +280,24 @@ ctrLoadQueryIntoDbEuctr <- function(
                 success = NULL,
                 failed = NULL))
   }
-  
+
   # do download and save
+  # print(system.time(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fp,
-    verbose = verbose
-  )
+    verbose = verbose)
+  # )) # print system time
 
   ## convert euctr to ndjson -----------------------------------------------
 
   if (length(.ctrdataenv$ct) == 0L) initTranformers()
 
   # run conversion
-  message("- Converting to NDJSON (estimate: ",
-          signif(nrow(resDf) * 5.7 / 2100, 1L),
-          " s)... ", appendLF = FALSE)
+  message(
+    "- Converting to NDJSON (estimate: ",
+    signif(nrow(resDf) * 32 / 13608, 1L),
+    " s)... ", appendLF = FALSE)
 
   ti <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   rl <- nrow(resDf)
@@ -527,8 +531,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     on.exit(unlink(jsonFileList), add = TRUE)
 
     # iterate conversion over eudract result files
-    message("- Converting to NDJSON (estimate: ",
-            signif(length(xmlFileList) * 6.13 / 201, 1L), " s)...")
+    message(
+      "- Converting to NDJSON (estimate: ",
+      signif(length(xmlFileList) * 53 / 1889, 1L), " s)...")
 
     # run conversion
     # print(system.time(
@@ -578,7 +583,6 @@ ctrLoadQueryIntoDbEuctr <- function(
       )
 
     }) # sapply xmlFileList
-
     # )) # print system time
 
     # iterate over results files
@@ -617,7 +621,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
         warning(paste0(
           "Import of results failed for trial ", eudractNumber),
-        immediate. = TRUE)
+          immediate. = TRUE)
         res <- 0L
 
       } else {

@@ -283,16 +283,15 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   importDateTime <- strftime(Sys.time(), "%Y-%m-%d %H:%M:%S")
 
   message(
-    "- Downloading in ",
-    ceiling(resultsEuNumTrials / 1000L),
+    "- Downloading in ", ceiling(resultsEuNumTrials / 1000L),
     " batch(es) (max. 1000 trials each; estimate: ",
-    format(resultsEuNumTrials * 0.1, digits = 2), " MB total)"
-  )
+    format(resultsEuNumTrials * 8.5 / 3090, digits = 2), " s)...")
 
   # register
   on.exit(unlink(dir(tempDir, "ctgov_trials_[0-9]+.ndjson", full.names = TRUE)), add = TRUE)
 
   # download and compile into ndjson
+  # print(system.time(
   while (TRUE) {
 
     # user info
@@ -362,7 +361,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     close(fTrialJsonCon)
     pageNextToken <- sub('.*"nextPageToken":"(.+?)".*', "\\1", pageNextTokenTest)
     if (pageNextToken == pageNextTokenTest) break
-  }
+
+  } # while
+  # )) # print system time
 
   ## database import -----------------------------------------------------
 
@@ -375,7 +376,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   ## download history---------------------------------------------------
 
   if (ctgov2history != "FALSE") {
-    message("* Checking and processing historic versions... ")
+    message(
+      "* Checking and processing historic versions (estimate: ",
+      format(imported$n * 155 / 3090, digits = 1L), " s)...")
 
     ## 1 - get history overview for every trial
     urls <- as.vector(vapply(
@@ -400,11 +403,12 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       USE.NAMES = FALSE
     ))
 
+    # print(system.time(
     ctrMultiDownload(
       urls = urls,
       destfiles = files,
-      verbose = verbose
-    )
+      verbose = verbose)
+    # )) # print system time
 
     # process
     historyDf <- lapply(
@@ -504,14 +508,15 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     # download
     message(
       "- Downloading ", length(files), " historic versions (estimate: ",
-      format(length(files) * 2.7 / 71, digits = 2), " MB total)..."
-    )
+      format(length(files) * 421 / 8365, digits = 2), " s)...")
 
+    # print(system.time(
     resDf <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
       verbose = verbose
     )
+    # )); message() # print system time
 
     ## 4 - merge versions by trial
     message("- Merging trial versions ", appendLF = FALSE)
@@ -631,12 +636,15 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       )
 
       # do download
+      # print(system.time(
       ctrDocsDownload(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
-        verbose = verbose
-      )
+        verbose = verbose)
+      # )) # print system time
+
+
     } # if (!nrow(dlFiles))
   } # !is.null(documents.path)
 
