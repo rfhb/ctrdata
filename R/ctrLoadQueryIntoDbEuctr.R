@@ -236,13 +236,16 @@ ctrLoadQueryIntoDbEuctr <- function(
       if (!euctrprotocolsall) {
         p <- lapply(p, function(i) {
           if (length(i) == 1L) return(i)
+          # intentionally do not match 3RD
+          # (which would need to upper) as
+          # per euctrprotocolsall help text
           i <- i[i %in% countriesActive]
           w <- countriesPreferred %in% i
           w <- countriesPreferred[w][1]
-          if (is.na(w)) i[1] else w
+          if (!is.na(w)) return(w)
+          if (!is.na(i[1])) return(i[1])
+          return(NULL)
         })
-        # early return if no protocol kept
-        if (all(is.na(p[[2]]))) return(NULL)
       }
 
       # mangling list which has even number of elements

@@ -66,9 +66,10 @@ the available history of results publication in "EUCTR."
 This somewhat time-consuming. Default is \code{FALSE}.}
 
 \item{euctrprotocolsall}{If \code{TRUE}, load all available records of
-protocol-related data (that is, versions from all EU Member States and any
-third country where the trial is conducted); if \code{FALSE}, only a single
-EU Member State record per trial is loaded, to accelerate loading.
+protocol-related data (that is, available versions from any EU Member States
+and any third country where the trial is or was conducted); if \code{FALSE},
+to accelerate loading, load only a single EU Member State record per trial
+(or no record, if records exist only for third countries).
 Default is \code{TRUE}, for backwards consistency; for new collections,
 \code{FALSE} is recommended, unless there are questions about differences
 between Member States' protocol versions of a trial such as dates or outcomes
@@ -157,8 +158,8 @@ A collection can store trial information from different queries
 or different registers.
 When at least one trial is loaded, query details are stored in the
 collection and can be accessed using \link{dbQueryHistory}.
-A previous query can be re-run, which replaces or adds trial
-records while keeping any user annotations of trial records.
+A previous query can be re-run, which replaces existing or adds new trial
+records while keeping any user annotations of existing trial records.
 }
 \examples{
 \dontrun{

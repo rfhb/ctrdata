@@ -16,14 +16,14 @@
 Source:
 [`inst/CITATION`](https://github.com/rfhb/ctrdata/blob/HEAD/inst/CITATION)
 
-Herold R (2025). *ctrdata: Retrieve and Analyze Clinical Trials Data
+Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
 from Public Registers*. R package version 1.25.1.9000,
 <https://cran.r-project.org/package=ctrdata>.
 
     @Manual{,
       title = {ctrdata: Retrieve and Analyze Clinical Trials Data from Public Registers},
       author = {Ralf Herold},
-      year = {2025},
+      year = {2026},
       note = {R package version 1.25.1.9000},
       url = {https://cran.r-project.org/package=ctrdata},
     }

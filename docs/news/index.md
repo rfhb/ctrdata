@@ -14,6 +14,8 @@
 - For CTIS,
   [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
   returns now only the trial record with the highest resubmission number
+- For EUCTR, correct edge case downloading third-country
+  protocol-related information
 - Fixed links between help pages and vignettes
 
 ## ctrdata 1.25.1

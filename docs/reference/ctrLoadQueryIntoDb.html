@@ -6,16 +6,16 @@ A collection can store trial information from different queries
 or different registers.
 When at least one trial is loaded, query details are stored in the
 collection and can be accessed using dbQueryHistory.
-A previous query can be re-run, which replaces or adds trial
-records while keeping any user annotations of trial records."><meta property="og:description" content="Retrieves information on clinical trials from registers
+A previous query can be re-run, which replaces existing or adds new trial
+records while keeping any user annotations of existing trial records."><meta property="og:description" content="Retrieves information on clinical trials from registers
 and stores it in a collection in a database. Main function
 of ctrdata for accessing registers.
 A collection can store trial information from different queries
 or different registers.
 When at least one trial is loaded, query details are stored in the
 collection and can be accessed using dbQueryHistory.
-A previous query can be re-run, which replaces or adds trial
-records while keeping any user annotations of trial records."></head><body>
+A previous query can be re-run, which replaces existing or adds new trial
+records while keeping any user annotations of existing trial records."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -63,8 +63,8 @@ A collection can store trial information from different queries
 or different registers.
 When at least one trial is loaded, query details are stored in the
 collection and can be accessed using <a href="dbQueryHistory.html">dbQueryHistory</a>.
-A previous query can be re-run, which replaces or adds trial
-records while keeping any user annotations of trial records.</p>
+A previous query can be re-run, which replaces existing or adds new trial
+records while keeping any user annotations of existing trial records.</p>
     </div>
 
     <div class="section level2">
@@ -148,11 +148,12 @@ This somewhat time-consuming. Default is <code>FALSE</code>.</p></dd>
 
 <dt id="arg-euctrprotocolsall">euctrprotocolsall<a class="anchor" aria-label="anchor" href="#arg-euctrprotocolsall"></a></dt>
 <dd><p>If <code>TRUE</code>, load all available records of
-protocol-related data (that is, versions from all EU Member States and any
-third country where the trial is conducted); if <code>FALSE</code>, only a single
-record per trial is loaded, to accelerate loading. Default is <code>TRUE</code>,
-but only for backwards consistency; for new collections, <code>FALSE</code> is
-the recommended setting, unless there are questions about differences
+protocol-related data (that is, available versions from any EU Member States
+and any third country where the trial is or was conducted); if <code>FALSE</code>,
+to accelerate loading, load only a single EU Member State record per trial
+(or no record, if records exist only for third countries).
+Default is <code>TRUE</code>, for backwards consistency; for new collections,
+<code>FALSE</code> is recommended, unless there are questions about differences
 between Member States' protocol versions of a trial such as dates or outcomes
 of an authorisation decision or an ethics opinion, global status and end.</p></dd>
 

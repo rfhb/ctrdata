@@ -8,8 +8,9 @@ different queries or different registers. When at least one trial is
 loaded, query details are stored in the collection and can be accessed
 using
 [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md).
-A previous query can be re-run, which replaces or adds trial records
-while keeping any user annotations of trial records.
+A previous query can be re-run, which replaces existing or adds new
+trial records while keeping any user annotations of existing trial
+records.
 
 ## Usage
 
@@ -95,13 +96,15 @@ ctrLoadQueryIntoDb(
 - euctrprotocolsall:
 
   If `TRUE`, load all available records of protocol-related data (that
-  is, versions from all EU Member States and any third country where the
-  trial is conducted); if `FALSE`, only a single record per trial is
-  loaded, to accelerate loading. Default is `TRUE`, but only for
-  backwards consistency; for new collections, `FALSE` is the recommended
-  setting, unless there are questions about differences between Member
-  States' protocol versions of a trial such as dates or outcomes of an
-  authorisation decision or an ethics opinion, global status and end.
+  is, available versions from any EU Member States and any third country
+  where the trial is or was conducted); if `FALSE`, to accelerate
+  loading, load only a single EU Member State record per trial (or no
+  record, if records exist only for third countries). Default is `TRUE`,
+  for backwards consistency; for new collections, `FALSE` is
+  recommended, unless there are questions about differences between
+  Member States' protocol versions of a trial such as dates or outcomes
+  of an authorisation decision or an ethics opinion, global status and
+  end.
 
 - ctgov2history:
 

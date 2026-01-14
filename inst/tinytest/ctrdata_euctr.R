@@ -138,6 +138,14 @@ expect_message(
 expect_equal(
   suppressWarnings(
     ctrLoadQueryIntoDb(
+      queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2014-003578-17+OR+2010-019340-40",
+      euctrprotocolsall = FALSE, con = dbc))$n,
+  1L)
+
+# test
+expect_equal(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
       queryterm = "https://www.clinicaltrialsregister.eu/ctr-search/search?query=2014-003578-17",
       euctrprotocolsall = TRUE, con = dbc))$n,
   2L)

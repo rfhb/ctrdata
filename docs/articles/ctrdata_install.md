@@ -78,6 +78,6 @@ Herold R (2025). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
 Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
 <https://doi.org/10.1017/rsm.2025.10061>. or  
-Herold R (2025). *ctrdata: Retrieve and Analyze Clinical Trials Data
+Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
 from Public Registers*. R package version 1.25.1.9000,
 <https://cran.r-project.org/package=ctrdata>.
