@@ -1,7 +1,7 @@
 # ctrdata 1.25.1.9000
 
 ## Enhancement
-- Refactored downloading data and documents to more robustly throttle and retry
+- Refactored downloading data and documents to run, throttle and retry more robustly
 - Updated user info, clarify history is updated only if at least one trial is loaded
 
 ## Bug fix
