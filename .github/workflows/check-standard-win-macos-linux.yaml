@@ -51,7 +51,7 @@ jobs:
 
       - name: Set repo for macOS binaries
         if: ${{ (matrix.config.os == 'macOS-latest') }}
-        run: pak::repo_add("https://mac.r-project.org")
+        run: install.packages("pak"); pak::repo_add("https://mac.r-project.org")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
