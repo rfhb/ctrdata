@@ -207,12 +207,9 @@ ctrShowOneTrialWidget <- function(
 #'
 #' @noRd
 #' @keywords internal
+#' @importFrom htmlwidgets shinyWidgetOutput shinyRenderWidget
 #'
 ctrShowOneTrialOutput <- function(outputId, width = "100%", height = "400px") {
-
-  if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
-    stop("Install package 'htmlwidgets' to use this function.", call. = FALSE)
-  }
 
   htmlwidgets::shinyWidgetOutput(outputId, "ctrShowOneTrialWidget", width, height, package = "ctrdata")
 }
@@ -221,10 +218,6 @@ ctrShowOneTrialOutput <- function(outputId, width = "100%", height = "400px") {
 #' @keywords internal
 #'
 renderCtrShowOneTrial <- function(expr, env = parent.frame(), quoted = FALSE) {
-
-  if (!requireNamespace("htmlwidgets", quietly = TRUE)) {
-    stop("Install package 'htmlwidgets' to use this function.", call. = FALSE)
-  }
 
   if (!quoted) {
     expr <- substitute(expr)
