@@ -51,8 +51,6 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          cache: always
-          cache-version: 1
           extra-packages: remotes, DBI, RSQLite, nodbi, duckdb, rcmdcheck, covr, tibble, stringdist, dplyr, chromote
 
       - name: Install dev nodbi
