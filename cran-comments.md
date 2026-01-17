@@ -1,6 +1,6 @@
 ## Test environments
 
-* local: R Under development (unstable) (2025-09-12 r88822) on aarch64-apple-darwin20 (ok)
+* local: R Under development (unstable) (2026-01-16 r89305) on aarch64-apple-darwin20 (ok)
 
 * Win-builder: R version 4.5.2 (2025-10-31 ucrt); R Under development (unstable) (2026-01-13 r89301 ucrt); R version 4.4.3 (2025-02-28 ucrt) (ok)
 
