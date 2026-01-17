@@ -49,7 +49,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
-          extra-packages: remotes, nodbi, RSQLite, RPostgres, mongolite, duckdb, rcmdcheck, covr, tibble, tinytest, httr, clipr
+          extra-packages: remotes, nodbi, RSQLite, RPostgres, mongolite, duckdb, rcmdcheck, covr, tibble, tinytest, httr, shiny, clipr
 
       - name: Install dev nodbi
         if: ${{ (matrix.config.os == 'ubuntu-latest') }}
