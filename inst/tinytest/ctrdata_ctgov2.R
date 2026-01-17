@@ -127,7 +127,7 @@ expect_message(
   suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
-      ctgov2history = 3,
+      ctgov2history = 3L,
       con = dbc
     )),
   "processing historic versions"
@@ -149,7 +149,7 @@ expect_message(
   suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
-      ctgov2history = -1,
+      ctgov2history = -1L,
       con = dbc
     )),
   "processing historic versions"
@@ -162,8 +162,9 @@ expect_message(
   suppressWarnings(
     tmp <- ctrLoadQueryIntoDb(
       querytoupdate = 2L,
+      verbose = TRUE,
       con = dbc)),
-  "Rerunning query")
+  "LastUpdatePostDate")
 
 # test
 expect_message(
@@ -187,7 +188,6 @@ expect_warning(
 
 # test
 tmp <- dbQueryHistory(con = dbc)
-print(tmp)
 expect_equal(dim(tmp), c(10L, 4L))
 
 #### dbFindFields ####

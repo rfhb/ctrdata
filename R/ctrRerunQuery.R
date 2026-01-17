@@ -70,7 +70,7 @@ ctrRerunQuery <- function(
       rerunquery[["query-term"]]]
   #
   # - remove time, keep date
-  initialday <- substr(initialday, start = 1, stop = 10)
+  initialday <- substr(initialday, start = 1L, stop = 10L)
   #
   # - change to Date class and get
   #   index of latest (max) date,
@@ -95,54 +95,18 @@ ctrRerunQuery <- function(
     message("* Checking for new or updated trials...")
 
     # ctgov --------------------------------------------------------------------
-    if (register == "CTGOV") {
 
-      # ctgov:
-      # specify any date - "lup_s/e" last update start / end:
-      # https://classic.clinicaltrials.gov/ct2/results?term=&recr=&rslt=&type=Intr&cond=
-      # Cancer&intr=&titles=&outc=&spons=&lead=
-      # &id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=&gndr=&age=0
-      # &rcv_s=&rcv_e=&lup_s=01%2F01%2F2015&lup_e=12%2F31%2F2016
-
-      # if "lup_s" is already in query term, just re-run full query to avoid
-      # multiple queries in history that only differ in timestamp:
-      if (grepl("&lup_[se]=[0-9]{2}", queryterm)) {
-
-        # remove queryupdateterm, thus running full again
-        queryupdateterm <- ""
-        warning("Query has date(s) for start or end of last update ",
-                "('&lup_'); running again with these limits",
-                call. = FALSE, immediate. = TRUE)
-
-      } else {
-
-        queryupdateterm <- strftime(
-          strptime(initialday,
-                   format = "%Y-%m-%d"),
-          format = "%m/%d/%Y")
-
-        queryupdateterm <- paste0("&lup_s=", queryupdateterm)
-
-        if (verbose) {
-          message("DEBUG: additional term: ",
-                  queryupdateterm)
-        }
-
-      }
-
-      message("- Rerunning query: ", queryterm,
-              "\n- Last run: ", initialday)
-    } # end ctgov
+    # no more needed because previous CTGOV query is
+    # translated to CTGOV2 by ctrGetQueryUrl above
 
     # ctgov2 -------------------------------------------------------------------
     if (register == "CTGOV2") {
 
-      # ctgov2:
-      # specify last update start / end:
+      # ctgov2: specify last update start / end:
       # https://www.clinicaltrials.gov/search?cond=Cancer&lastUpdPost=2022-01-01_2023-12-31
 
-      # if "lastUpdPost" is already in query term, just re-run full query to avoid
-      # multiple queries in history that only differ in timestamp:
+      # if "lastUpdPost" is already in query term, just re-run full query
+      # to avoid multiple queries in history that differ only in timestamp:
       if (grepl("&lastUpdPost=[0-9]{2}", queryterm)) {
 
         # remove queryupdateterm, thus running full again
@@ -153,17 +117,12 @@ ctrRerunQuery <- function(
 
       } else {
 
-        queryupdateterm <- strftime(
-          strptime(initialday,
-                   format = "%Y-%m-%d"),
-          format = "%Y-%m-%d")
+        queryupdateterm <- strftime(strptime(
+          initialday, format = "%Y-%m-%d"), format = "%Y-%m-%d")
 
         queryupdateterm <- paste0("&lastUpdPost=", queryupdateterm, "_")
 
-        if (verbose) {
-          message("DEBUG: additional term: ",
-                  queryupdateterm)
-        }
+        if (verbose) message("DEBUG: additional term: ", queryupdateterm)
 
       }
 
@@ -191,14 +150,14 @@ ctrRerunQuery <- function(
                 "\n- Last run: ", initialday)
 
       } else {
-        #
+
         # obtain rss feed with list of recently updated trials
         rssquery <- utils::URLencode(
           paste0("https://www.clinicaltrialsregister.eu/ctr-search/",
                  "rest/feed/bydates?", queryterm))
-        #
+
         if (verbose) message("DEBUG (rss url): ", rssquery)
-        #
+
         resultsRss <- try(rawToChar(
           httr2::req_perform(
             httr2::req_user_agent(
@@ -206,25 +165,27 @@ ctrRerunQuery <- function(
                 rssquery),
               ctrdataUseragent
             ))$body), silent = TRUE)
-        #
+
         # check plausibility
         if (inherits(resultsRss, "try-error")) {
           stop("Download from EUCTR failed; last error: ",
                class(resultsRss), call. = FALSE)
         }
-        #
+
         # inform user
         if (verbose) message("DEBUG (rss content): ", resultsRss)
-        #
+
         # attempt to extract euctr number(s)
         resultsRssTrials <- gregexpr(
           "eudract_number:[0-9]{4}-[0-9]{6}-[0-9]{2}</link>",
           resultsRss)[[1]]
-        #
+
         if (length(resultsRssTrials) == 1L &&
             resultsRssTrials == -1L) {
+
           # inform user
           message("First result page empty - no (new) trials found?")
+
           # only for EUCTR, update history here because
           # for EUCTR the query to be used with function
           # ctrLoadQueryIntoDb cannot be specified to only
@@ -235,36 +196,37 @@ ctrRerunQuery <- function(
             recordnumber = 0L,
             con = con,
             verbose = verbose)
-          #
+
           # set indicator
           failed <- emptyReturn
-          #
+
         } else {
+
           # new trials found, construct
           # differential query to run
           resultsRssTrials <- vapply(
             resultsRssTrials, FUN = function(x) {
               substr(resultsRss, x + 15, x + 28)
             }, character(1L))
-          #
+
           resultsRssTrials <- paste0(
             "query=",
             paste(
               resultsRssTrials,
               collapse = "+OR+"))
-          #
+
           if (verbose) message("DEBUG (rss trials): ", resultsRssTrials)
-          #
+
           # run query for extracted euctr number(s)
           # store original query in update term
           queryupdateterm <- queryterm
           queryterm <- resultsRssTrials
-          #
+
           if (verbose) {
             message("DEBUG: additional term: ",
                     queryupdateterm)
           }
-          #
+
           message("- Rerunning query: ", queryupdateterm,
                   "\n- Last run: ", initialday)
         }
@@ -329,57 +291,6 @@ ctrRerunQuery <- function(
       #   so that we do not overwrite existing records;
       #   over the resulting $success trial identifiers,
       #   then iterate
-
-      # helper function
-      getIdsFromQuery <- function(queryterm) {
-
-        # initialise
-        idsUpdatedTrials <- NULL
-        pageNumber <- 1L
-
-        # iterate
-        while (TRUE) {
-
-          initialData <- try(rawToChar(
-            httr2::req_perform(
-              httr2::req_body_json(
-                httr2::req_user_agent(
-                  httr2::request(
-                    "https://euclinicaltrials.eu/ctis-public-api/search"),
-                  ctrdataUseragent),
-                data = jsonlite::fromJSON(
-                  paste0(
-                    # add pagination parameters
-                    '{"pagination":{"page":', pageNumber, ",",
-                    # empirically found this as max
-                    '"size":999},',
-                    # add search criteria
-                    sub(
-                      "searchCriteria=", '"searchCriteria":',
-                      # handle empty search query terms
-                      ifelse(
-                        queryterm != "", queryterm,
-                        'searchCriteria={}'),
-                    ),
-                    # remaining parameters needed for proper server response
-                    ',"sort":{"property":"decisionDate","direction":"DESC"}}'
-                  ), simplifyVector = FALSE)
-              ))$body), silent = TRUE)
-
-          # accumulate trial identifiers
-          idsUpdatedTrials <- c(
-            idsUpdatedTrials, gsub(
-              '"', "", jqr::jq(initialData, " .data[].ctNumber ")
-            ))
-
-          pageNumber <- pageNumber + 1L
-          if (jqr::jq(initialData, ".pagination.nextPage") == "false") break
-
-        } # while
-
-        return(idsUpdatedTrials)
-
-      } # end getIdsFromQuery
 
       # helper function
       getIdsFromRss <- function(queryterm) {

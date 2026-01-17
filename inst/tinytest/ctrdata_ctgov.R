@@ -92,6 +92,30 @@ expect_message(
 
 #### ctrLoadQueryIntoDb update ####
 
+tmpDb <- nodbi::src_sqlite(
+  dbname = system.file("extdata", "demo.sqlite", package = "ctrdata"),
+  flags = RSQLite::SQLITE_RO,
+  collection = "my_trials")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      # dbQueryHistory(tmpDb)
+      querytoupdate = 2L,
+      verbose = TRUE,
+      con = tmpDb)),
+  "LastUpdatePostDate")
+
+# test
+expect_message(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
+      querytoupdate = "last",
+      forcetoupdate = FALSE,
+      con = dbc)),
+  "Imported or updated ")
+
 # test
 expect_message(
   suppressWarnings(
@@ -296,4 +320,3 @@ expect_error(
         annotation.mode = "WRONG",
         con = dbcRO))),
   "'annotation.mode' incorrect")
-

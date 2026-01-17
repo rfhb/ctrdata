@@ -58,7 +58,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   }
 
   # append if to update
-  queryterm <- paste0(queryterm, "&", queryupdateterm)
+  queryterm <- paste0(queryterm, queryupdateterm)
 
   # mangle
   queryterm <- gsub("&$", "", queryterm)
