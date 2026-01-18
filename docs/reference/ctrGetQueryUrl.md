@@ -55,12 +55,6 @@ for additional uses.
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
 if (interactive()) try(ctrGetQueryUrl(), silent = TRUE)
-#> * Using clipboard content as register query URL: https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"therapeuticAreaCode":[4]}
-#> * Found search query from CTIS: searchCriteria={"therapeuticAreaCode":[4]}
-#> # A tibble: 1 × 2
-#>   `query-term`                                   `query-register`
-#>   <chr>                                          <chr>           
-#> 1 "searchCriteria={\"therapeuticAreaCode\":[4]}" CTIS            
 
 # extract query parameters from search result URL
 # (URL was cut for the purpose of formatting only)

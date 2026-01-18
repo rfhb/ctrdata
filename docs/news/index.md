@@ -1,6 +1,12 @@
 # Changelog
 
-## ctrdata 1.25.1.9000
+## ctrdata 1.26.0.9000
+
+New development version
+
+## ctrdata 1.26.0
+
+CRAN release: 2026-01-18
 
 ### Enhancement
 
