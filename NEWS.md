@@ -1,4 +1,4 @@
-# ctrdata 1.25.1.9000
+# ctrdata 1.26.0
 
 ## Enhancement
 - Refactored downloading data and documents to run, throttle and retry more robustly
