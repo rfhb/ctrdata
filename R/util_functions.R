@@ -514,7 +514,7 @@ ctrCache <- function(xname, xvalue = NULL, verbose = FALSE) {
 #' @keywords internal
 #'
 #' @importFrom nodbi src_sqlite src_duckdb docdb_list
-#' @importFrom utils capture.output
+#' @importFrom utils capture.output packageDescription packageVersion
 #'
 #' @returns Connection object as list, with collection
 #'  element under root

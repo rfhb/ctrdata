@@ -16,7 +16,7 @@
 #' @returns A character vector of the active substance (input parameter) and
 #'  synonyms, or NULL if active substance was not found and may be invalid
 #'
-#' @importFrom utils packageVersion str
+#' @importFrom utils str
 #' @importFrom jqr jq
 #' @importFrom stats quantile
 #' @importFrom httr2 req_perform req_user_agent request
