@@ -38,15 +38,22 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   # debug
   if (verbose) message("Running dbQueryHistory ...")
 
-  hist <- nodbi::docdb_query(
+  # test
+  hist <- nodbi::docdb_exists(
+    src = con,
+    key = con$collection)
+
+  # get
+  if (hist) hist <- nodbi::docdb_query(
     src = con,
     key = con$collection,
     query = '{"_id": {"$eq": "meta-info"}}',
     fields = '{"queries": 1, "_id": 0}'
   )
 
-  # check if meeting expectations
-  if (is.null(hist) ||
+  # check expectations
+  if (isFALSE(hist) ||
+      is.null(hist) ||
       nrow(hist) == 0L) {
     #
     message("No history found in expected format.")
