@@ -1745,8 +1745,8 @@ dfOrTibble <- function(df) {
 
 #' fctChkFlds
 #'
-#' Calls for its side effect to stop if arguments
-#' are not conforming to expectations
+#' Called for its side effect: stopping if
+#' arguments do not conform to expectations
 #'
 #' @returns df with flds columns
 #'
