@@ -235,7 +235,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   if (inherits(counts, "try-error") ||
       counts$status_code != 200L) {
     warning("Could not be retrieved, check 'queryterm' and / or 'register'. ",
-            "\nAPI returned: ", rawToChar(counts$body),
+            "\nAPI returned: ", attr(counts, "condition")$message,
             call. = FALSE
     )
     message("API call: ", url)
