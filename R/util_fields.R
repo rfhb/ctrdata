@@ -163,6 +163,7 @@ typeVars <- list(
   "authorizedApplication.authorizedPartsII.mscInfo.assessmentOutcomeDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.clinicalTrialStatusHistory.trialStatusDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.decisionDate" = "ctrDate",
+  "authorizedApplication.authorizedPartsII.mscInfo.extensionTrialRestartDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.firstDecisionDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.fromDate" = "ctrDate",
   "authorizedApplication.authorizedPartsII.mscInfo.recruitmentRestartDate" = "ctrDate",

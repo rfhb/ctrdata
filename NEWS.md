@@ -1,6 +1,8 @@
 # ctrdata 1.26.0.9000
 
-New development version
+- `dbQueryHistory()` no more errors but returns NULL and a message with a non-existing or empty collection
+- Added typing of newly appearing field in CTIS
+- Better error message when CTGOV2 query fails
 
 # ctrdata 1.26.0
 

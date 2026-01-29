@@ -221,7 +221,7 @@ tmp <- ctrLoadQueryIntoDb(
   con = dbc
 )
 # test
-expect_true(tmp$n > 200L)
+expect_true(tmp$n > 400L)
 
 # get all field names
 tmpFields <- suppressMessages(
@@ -232,8 +232,7 @@ tmpFields <- suppressMessages(
       sample = FALSE)))
 
 # test
-expect_true(
-  length(tmpFields) >= 960L)
+expect_true(length(tmpFields) >= 1800L)
 
 # debug
 if (FALSE){
@@ -372,7 +371,7 @@ expect_message(
   " [0-9]+ records")
 
 # test
-expect_true(length(res) >= 440L)
+expect_true(length(res) >= 480L)
 
 # test
 expect_false(any(
@@ -428,6 +427,7 @@ if (FALSE) {
     count(part) %>%
     arrange(desc(n)) %>%
     print(n = 100L)
+
   # # A tibble: 8 × 2
   # part             n
   # <chr>        <int>
