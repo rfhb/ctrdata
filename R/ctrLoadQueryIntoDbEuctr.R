@@ -9,7 +9,6 @@
 #'
 #' @importFrom nodbi docdb_update
 #' @importFrom zip unzip
-#' @importFrom utils unzip
 #' @importFrom stringi stri_replace_all_fixed stri_detect_fixed stri_extract_all_regex
 #' @importFrom readr write_file read_file
 #' @importFrom rlang hash
