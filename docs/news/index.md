@@ -2,7 +2,11 @@
 
 ## ctrdata 1.26.0.9000
 
-New development version
+- [`dbQueryHistory()`](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
+  no more errors but returns NULL and a message with a non-existing or
+  empty collection
+- Added typing of newly appearing field in CTIS
+- Better error message when CTGOV2 query fails
 
 ## ctrdata 1.26.0
 
@@ -835,8 +839,10 @@ CRAN release: 2021-11-21
 
 - changes to match nodbi 0.5.0
 - simplifying database operations (user-visible functions:
-  ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), without
-  changes to API
+  [`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md),
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md),
+  [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)),
+  without changes to API
 
 ## ctrdata 1.7.1 (2021-08-22)
 
@@ -844,8 +850,9 @@ CRAN release: 2021-08-22
 
 - fix DBI not needed in Imports any more (CRAN Note)
 - fix potential file name issue in conversion script
-- fix dbFindFields() to never return \_id (previously depended on
-  database backend)
+- fix
+  [`dbFindFields()`](https://rfhb.github.io/ctrdata/reference/dbFindFields.md)
+  to never return \_id (previously depended on database backend)
 - changed tests (not on CRAN detection, register availability,
   additional tests)
 
@@ -867,17 +874,23 @@ CRAN release: 2021-05-09
 - added support for ISRCTN
 - refactored checking binaries and caching this info
 - updated EUCTR download parameters
-- refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser
+- refactored
+  [`ctrGetQueryUrl()`](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)
+  and
+  [`ctrOpenSearchPagesInBrowser()`](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)
 - harmonised error checking
 - avoid some errors with external scripts
 - refactored url / query mangling, added detailed testing
 - refactored storing JSON into database (handle big files, reduce
   memory)
-- improved dbFindIdsUniqueTrials (speed, memory, register coverage)
+- improved
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
+  (speed, memory, register coverage)
 - factored out conversion to JSON
 - accelerated EUCTR results and history download and storage
 - external scripts now create multiple chunks of records
-- use further identifier fields with dbFindIdsUniqueTrials
+- use further identifier fields with
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
 - adding user info which field entries could not be typed
 
 ## ctrdata 1.5.3 (2021-04-19)
@@ -887,10 +900,12 @@ CRAN release: 2021-04-19
 - include message how to handle server certificate issues, by
   propagating user settings for httr to curl operations
 - ensure identical return structures when no new trials found
-- dfTrials2Long: harmonise identifier level assignment, address cases
-  where field occurs only once in input df
-- dfMergeTwoVariablesRelevel: corrected and improved user info
-- dfName2Value: remove duplicate rows, e.g. from duplicated criteria
+- [`dfTrials2Long()`](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md):
+  harmonise identifier level assignment, address cases where field
+  occurs only once in input df
+- `dfMergeTwoVariablesRelevel()`: corrected and improved user info
+- [`dfName2Value()`](https://rfhb.github.io/ctrdata/reference/dfName2Value.md):
+  remove duplicate rows, e.g. from duplicated criteria
 
 ## ctrdata 1.5.2 (2021-04-05)
 
@@ -904,26 +919,37 @@ CRAN release: 2021-03-21
 
 - bugfix for non-matching euctr protocol and result ids: any trials from
   EUCTR for which results were downloaded with version 1.5.0 should be
-  downloaded again (ctrLoadQueryIntoDb)
-- dfTrials2Long refactored and accelerated
-- API change: dfTrials2Long return value (identifier replaces main_id
-  and sub_id)
+  downloaded again
+  ([`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md))
+- [`dfTrials2Long()`](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
+  refactored and accelerated
+- API change:
+  [`dfTrials2Long()`](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
+  return value (identifier replaces main_id and sub_id)
 - new option to save EUCTR results PDF files in user-specified directory
 
 ## ctrdata 1.5.0 (2021-03-14)
 
 CRAN release: 2021-03-16
 
-- return values of dbGetFieldsIntoDf are now mostly identical whether
-  using src_mongo or src_sqlite, to best ensure portability of analysis
-  code
+- return values of
+  [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)
+  are now mostly identical whether using
+  [`nodbi::src_mongo()`](https://docs.ropensci.org/nodbi/reference/src_mongo.html)
+  or
+  [`nodbi::src_sqlite()`](https://docs.ropensci.org/nodbi/reference/src_sqlite.html),
+  to best ensure portability of analysis code
 - permit dots in queries / URLs
 - improved handling of queryterm
-- renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl
-- soft deprecated ctrGetQueryUrlFromBrowser
+- renamed `ctrGetQueryUrlFromBrowser()` to
+  [`ctrGetQueryUrl()`](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)
+- soft deprecated `ctrGetQueryUrlFromBrowser()`
 - ensure parallel retrievals from EUCTR
-- speed up routines in dbGetFieldsIntoDf
-- make dfTrials2Long handle NA better
+- speed up routines in
+  [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)
+- make
+  [`dfTrials2Long()`](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
+  handle NA better
 - improved documentation, clarified examples
 - simplified internals for typing fields, start typing results fields
 
@@ -936,10 +962,13 @@ CRAN release: 2020-11-03
 
 ## ctrdata 1.4 (2020-10-17)
 
-- new: easy access to variables with dfTrials2Long() + dfName2Value()
-- improved dfMergeTwoVariablesRelevel() to maintain type of data
+- new: easy access to variables with
+  [`dfTrials2Long()`](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
+  and
+  [`dfName2Value()`](https://rfhb.github.io/ctrdata/reference/dfName2Value.md)
+- improved `dfMergeTwoVariablesRelevel()` to maintain type of data
 - revised and simplified vignettes
-- deprecated: dfListExtractKey()
+- deprecated: `dfListExtractKey()`
 - refactored parts of euctr retrieval
 - notify user when euctr register server does not permit compression and
   how long retrieval will take
@@ -962,13 +991,13 @@ CRAN release: 2020-08-02
 CRAN release: 2020-07-27
 
 - workaround EUCTR certificate issue
-- streamline ctrGetQueryUrlFromBrowser()
+- streamline `ctrGetQueryUrlFromBrowser()`
 - better handling of complex fields
 - include further tests for query string handling, checking more
   parameters and return values
 - better clean-up after testing
-- ctrLoadQueryIntoDb(querytorerun = …) now looks for the date when the
-  querytorerun was last run, to more often use euctr update options
+- `ctrLoadQueryIntoDb(querytorerun = ...)` now looks for the date when
+  the querytorerun was last run, to more often use euctr update options
 - switching from travis to github action
 - upped coverage of code tested
 
@@ -1009,12 +1038,12 @@ CRAN release: 2019-10-23
 
 CRAN release: 2019-10-16
 
-- switch to nodbi::scr\_{mongo,sqlite}() with re-implementation of most
+- switch to `nodbi::scr_{mongo,sqlite}()` with re-implementation of most
   functions
 - switch from testthat to tinytest, so that users can check with
-  tinytest::test_package(“ctrdata”)
+  `tinytest::test_package("ctrdata")`
 - improvements to euctr trial import  
-- new function dfListExtractKey
+- new function `dfListExtractKey()`
 - speed up testing bash commands under windows
 
 ## ctrdata 0.18.2 (2019-04-30)
@@ -1044,7 +1073,9 @@ CRAN release: 2019-04-11
 
 ## ctrdata 0.17 (2019-03-27)
 
-- improve dbFindFields() formatting
+- improve
+  [`dbFindFields()`](https://rfhb.github.io/ctrdata/reference/dbFindFields.md)
+  formatting
 - added parameter to force running a query again
 - added further typing (some of the numeric fields)
 - improve cygwin install attempts and information
@@ -1096,19 +1127,24 @@ CRAN release: 2019-03-12
 ## ctrdata 0.13.1 (2019-02-24)
 
 - added typing of dates and some logical fields when using
-  dbGetFieldsIntoDf()
+  [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)
 
 ## ctrdata 0.13 (2019-01-06)
 
-- dbGetVariablesIntoDf() is deprecated, use dbGetFieldsIntoDf() instead
-- dbFindVariable() is deprecated, use dbFindFields() instead
+- `dbGetVariablesIntoDf()` is deprecated, use
+  [`dbGetFieldsIntoDf()`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)
+  instead
+- `dbFindVariable()` is deprecated, use
+  [`dbFindFields()`](https://rfhb.github.io/ctrdata/reference/dbFindFields.md)
+  instead
 - in dbMergeTwoVariablesRelevel() parameter varnames is deprecated, use
   colnames instead
 
 ## ctrdata 0.12.1 (2018-12-15)
 
-- added function ctrFindActiveSubstanceSynonyms() to obtain synonyms for
-  an active substance
+- added function
+  [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
+  to obtain synonyms for an active substance
 - added user information on number of trials in CTGOV to be downloaded,
   and limit this to 5000 per query
 - corrected import from EUCTR for details = FALSE
@@ -1124,7 +1160,7 @@ CRAN release: 2019-03-12
 
 ## ctrdata 0.11.1 (2018-04-07)
 
-- improved installFindMongoBinaries(), should now better detect mongo
+- improved `installFindMongoBinaries()`, should now better detect mongo
   binary locations and use for example in cron scripts, which may not
   have access to a user’s path information
 
@@ -1166,7 +1202,8 @@ CRAN release: 2019-03-12
 
 ## ctrdata 0.9.13 (2017-06-23)
 
-- refactored ctrLoadQueryIntoDb
+- refactored
+  [`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
 
 ## ctrdata 0.9.12 (2017-06-18)
 
@@ -1197,26 +1234,30 @@ CRAN release: 2019-03-12
 
 ## ctrdata 0.9.9.5 (2016-12-14)
 
-- Added option ctrLoadQueryIntoDb(querytoupdate = “last”) to re-download
-  last query in collection
+- Added option `ctrLoadQueryIntoDb(querytoupdate = "last")` to
+  re-download last query in collection
 
 ## ctrdata 0.9.9.4 (2016-11-18)
 
-- Added progress indicator to ctrLoadQueryIntoDb() to indicate network
-  download traffic
+- Added progress indicator to
+  [`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
+  to indicate network download traffic
 
 ## ctrdata 0.9.9.3 (2016-11-17)
 
-- deduplication in dbFindIdsUniqueTrials() optimised for speed and
-  memory, added check by ISRCTN
+- deduplication in
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
+  optimised for speed and memory, added check by ISRCTN
 
 ## ctrdata 0.9.9.2 (2016-11-13)
 
-- corrected deduplication in dbFindIdsUniqueTrials()
+- corrected deduplication in
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
 
 ## ctrdata 0.9.9.1 (2016-11-12)
 
-- renamed ctrQueryHistoryInDb() to dbQueryHistory()
+- renamed `ctrQueryHistoryInDb()` to
+  [`dbQueryHistory()`](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
 - note: change in json format of query history, breaking compatibility
 - refactored all concerned functions to use mongolite
 - rmongodb is no more supported
@@ -1229,19 +1270,22 @@ CRAN release: 2019-03-12
 ## ctrdata 0.8.1 (2016-09-07)
 
 - added field to indicate source register
-- improved ctrLoadQueryIntoDb() with details = FALSE
+- improved
+  [`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
+  with `details = FALSE`
 - added example for map plotting
 
 ## ctrdata 0.8 (2016-09-04)
 
-- dbFindIdsUniqueTrials now encapsulates dfFindIdsUniqueEuctrRecord
-- dfFindIdsUniqueEuctrRecords removed
+- [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
+  now encapsulates `dfFindIdsUniqueEuctrRecord()`
+- `dfFindIdsUniqueEuctrRecords()` removed
 - installation instructions updated after recently rmongodb was removed
   from CRAN
 
 ## ctrdata 0.7 (2016-05-29)
 
-- dbGetVariablesIntoDf changed to concatenate values in array and
+- `dbGetVariablesIntoDf()` changed to concatenate values in array and
   objects
 - completed test adaptation for travis
 - improving perl regex
@@ -1259,7 +1303,7 @@ CRAN release: 2019-03-12
 ## ctrdata 0.6 (2016-02-25)
 
 - different update mechanism for EUCTR implemented
-- corrected function name from db… to dfFindUniqueEuctrRecord()
+- corrected function name from db… to `dfFindUniqueEuctrRecord()`
 
 ## ctrdata 0.5.9 (2016-01-23)
 
@@ -1284,14 +1328,14 @@ CRAN release: 2019-03-12
 ## ctrdata 0.2.8
 
 - Changed and extended how history of queries is included in database.
-- New function dbCTRQueryHistory()
+- New function `dbCTRQueryHistory()`
 
 ## ctrdata 0.2.7
 
 - Added function for merging variables such as from different registers
   and optionally to merge values into new values
-- Note that function findCTRkey was renamed to dbFindCTRkey because it
-  acts on the database
+- Note that function `findCTRkey()` was renamed to `dbFindCTRkey()`
+  because it acts on the database
 
 ## ctrdata 0.2.5
 

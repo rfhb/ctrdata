@@ -82,15 +82,10 @@ dfwide <- dbGetFieldsIntoDf(
 
 dflong <- dfTrials2Long(df = dfwide)
 #> clinical_results.outcome_list.outcome                                                                                                                                                                   
-
 #> study_design_info.allocation                                                                                                                                                                            
-
 #> endPoints.endPoint                                                                                                                                                                                      
-
 #> subjectDisposition.recruitmentDetails                                                                                                                                                                   
-
 #>                                                                                                                                                                                                         
-
 #> . 
 #> . 
 #> 

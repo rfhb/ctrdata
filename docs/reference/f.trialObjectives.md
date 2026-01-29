@@ -81,7 +81,6 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (27 fields)...
 #> Calculating f.trialObjectives...                            
-
 trialsDf
 #> # A tibble: 31 × 2
 #>    `_id`             .trialObjectives

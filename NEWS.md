@@ -7,10 +7,12 @@
 # ctrdata 1.26.0
 
 ## Enhancement
+
 - Refactored downloading data and documents to run, throttle and retry more robustly
 - Updated user info, clarify history is updated only if at least one trial is loaded
 
 ## Bug fix
+
 - For CTIS, `dbFindIdsUniqueTrials()` returns now only the trial record with the highest resubmission number
 - For EUCTR, correct edge case downloading third-country protocol-related information 
 - Fixed links between help pages and vignettes
@@ -19,10 +21,12 @@
 # ctrdata 1.25.1
 
 ## Enhancement
+
 - Work around upstream issue (#59, CTIS delivering at most 10000 trials per query)
 - Added CITATION file with recent reference publication
 
 ## Bug fix
+
 - Re-added field missing from EUCTR conversion
 - Changed API call after long deprecated by ISRCTN
 - Ordered messages from `dbFindIdsUniqueTrials()`, `f.isUniqueTrial()`
@@ -31,9 +35,11 @@
 # ctrdata 1.25.0
 
 ## Possibly breaking down-stream workflows 
+
 - Save EUCTR result files in folders by trial, as done for documents for all registers
 
 ## Enhancement
+
 - Revised how EUCTR trials are loaded and updated with results, accelerated operations
 - Added retrying requests, to handle refused or throttled responses (e.g., CTIS, #55)
 - Added incrementing numbers of historic versions of CTIS when running `ctrLoadQueryIntoDb()`
@@ -41,6 +47,7 @@
 - Changed deleting and preserving temporary files (see also news for version 1.17.0) 
 
 ## Bug fixes
+
 - Refined indicator variables for `f.hasResults()`
 - Added missing status code in `f.statusRecruitment()`
 - Corrected missing value handling in `f.sponsorType()`
@@ -65,12 +72,14 @@
 # ctrdata 1.23.0
 
 ## Improvements
+
 - Refactored for EUCTR protocol data `ctrLoadQueryIntoDb()` for large speed gain
 - Improved downloading more documents from ISRCTN, however needs live webpage read
 - Replaced `curl` with `httr2` and further refactored file retrieval
 - Reduced dependencies using equivalent alternative functions
 
 ## Bug fixes
+
 - Cover multiple sponsors in EUCTR for `f.sponsorType()`
 - Change priority of CTIS fields for `f.sponsorType()`
 - Added typing of newly appearing CTIS fields
@@ -95,16 +104,19 @@
 # ctrdata 1.22.1
 
 ## Bug fix
+
 - Adapt testing after SQLite 3.48.0 (in RSQLite 2.3.10 since 2025-05-02) accepts now up to 1000 arguments
 - Fixed EUCTR conversion to `NDJSON` in Javascript for rare specific trial(s), thanks @machado-t (#45)
 - Revised `dbFindIdsUniqueTrials()` to work with more than 80,000 records, thanks @machado-t (#48)
 
 ## Internal
+
 - Modify internal function `.dbMapIdsTrials()` to use both CTIS1 and CTIS2 field names, and defer de-duplication to parent function
 
 # ctrdata 1.22.0
 
 ## Improvements
+
 - When using `querytoupdate` for CTIS, set `ctishistory = TRUE` to create historic versions from previously downloaded trial record, see `vignette("ctrdata_summarise")`
 - Trial concept `f.trialObjectives()` improved with structured data from CTIS and EUCTR
 - `ctrGenerateQueries()` now defaults to interventional trials with medicines
@@ -112,6 +124,7 @@
 - `ctrGenerateQueries()` now also covers countries of trial conduct 
 
 ## Bug fix
+
 - Fixed `ISRCTN` API term mangling
 - Fixed digesting marginal cases in notifications in `f.statusRecruitment()`
 - Fixed `ctrGenerateQueries` to handle 'or' as needed for certain filters
@@ -119,6 +132,7 @@
 # ctrdata 1.21.1
 
 ## Bug fix 
+
 - Fixed all `f...` clinical trial concept functions to handle NAs, included in testing
 - Fixed round brackets for nesting logical operators in `queryterm`, thanks @jacksknnr (#46)
 - Fixed CRAN NOTE on package size
@@ -126,11 +140,13 @@
 # ctrdata 1.21.0
 
 ## Improvements
+
 - New feature: built-in functions that implement and calculate common trial concepts across different registers, see `help("ctrdata-trial-concepts")` which should largely avoid that users have to code themselves and repeatedly common trial concepts, such as recruitment start date, trial investigating a medicine as intervention, trial being a platform trial etc. 
 - New feature: function `ctrGenerateQueries()` to search all registers from a user's single input, e.g. intervention, phase, dates
 - Refactored `dfMergeVariablesRelevel()`, factored out returning data frame or tibble, thanks @machado-t (#45)
 
 ## Bug fix
+
 - `dbFindIdsUniqueTrials()` excludes GB records from `EUCTR` whenever there is at least one Member State or Third country record
 - `EUCTR` no longer allows to search for the status of a clinical trial, adapted testing to it
 - Correct `ctrShowOneTrial()` and `ctrLoadQueryIntoDb()` for certain EUCTR trials
@@ -142,20 +158,24 @@
 # ctrdata 1.20.0
 
 ## Improvements
+
 - New function `ctrShowOneTrial()` to inspect a trial structure and data, and to select fields for `dbGetFieldsIntoDf()`; in this context, make `ctrGetQueryUrl()` work for identifiers of single trials
 - Improve and update documentation
 
 ## Bug fix
+
 - Refactor `dfTrials2Long` to correct generating identifiers for single-item groups
 - Correct using certain testing conditions
 
 # ctrdata 1.19.5
 
 ## Improvements
+
 - Refactored `dbFindFields()` for speed and efficiency
 - Adapted to newly available expert search in `CTGOV2`
 
 ## Bug fix
+
 - Correct `CTGOV2` endpoint for document downloads
 - Adapted to `curl` v6 having renamed the timeout parameter
 - Documents download (folders only for trials with documents; excluding duplicates)
@@ -175,24 +195,29 @@
 # ctrdata 1.19.2
 
 ## Improvements
+
 - Added typing for newly appearing variables in `CTIS`
 - Accelerated `CTIS` trial data processing
 
 ## Bug fixes
+
 - Fix incomplete downloads from `CTIS` by disabling HTTP/2 multiplexing in another function
 
 # ctrdata 1.19.1
 
 ## Improvements
+
 - Revised translation of location elements from search URL to API call for `CTGOV2`
 
 # ctrdata 1.19.0
 
 ## Possibly breaking changes
+
 - `CTGOV` has retired on 2024-06-25 the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` now automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. This new functionality in `ctrdata` translates a user's search query URL from the classic website into a query for the current `CTGOV` website, for all search parameters. Since the structure and format of data differs between data retrieved from the current API and previously retrieved from the classic API, `ctrdata` will continue to identify the current API as `register = "CTGOV2"`, to support the analysis stage. In addition, `ctrdata` documentation continues to include examples of analyses with `CTGOV` data, as this may have been downloaded earlier. 
 - `CTIS` has been relaunched on 2024-06-17, and `ctrdata` has been fully updated to it. At the moment, `CTIS` provides basic searches and no search query URL. To support users, `ctrdata` includes an updated script that extracts a user's search parameters from the register search page to the clipboard and into the browser URL bar. In addition, the script triggers a search for trials when opening such a query URL, see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser. File names of `CTIS` documents start now with the document type, e.g. `SbjctInfaICF - L1 SIS and ICF NL for publication.pdf`, since the prefix (document source) introduced in version 1.18.0 is no more applicable. 
 
 ## Improvements 
+
 - Reduced size of demo database in package, addressing `CRAN` notes
 - Adapted `ctrFindActiveSubstanceSynonyms()` to `CTGOV2` API; this is now based on terms used in studies
 - Updated vignette and added inspecting a specific trial
@@ -203,21 +228,25 @@
 - Split utils.R into files for functions and fields
 
 ## Bug fixes
+
 - Correct partial date brackets for `CTGOV2`
 - Disable HTTP/2 multiplexing for `CTIS`
 
 # ctrdata 1.18.0 (2024-05-13)
 
 ## Possibly breaking change
+
 - File names for documents downloaded from `CTIS` now include the document type and use different separators (e.g., "parts2auth - SbjctInfaICF - ..." as abbreviation of "Subject information and informed consent form (for publication)", was previously "parts2auth_...")
 
 ## Improvements 
+
 - Add retrieval of historic versions of trial records from `CTGOV2` (automatically retrieved from `CTIS`, not available for other registers)
 - Added typing of newly appearing fields from `CTIS`
 - Increase testing coverage to 93.7% locally
 - Added missing CI for the combination of `DuckDB` and `CTGOV2`
 
 ## Bug fixes
+
 - Correct typing certain fields as (lists of) integers
 - Handle marginal case in `dbGetFieldsIntoDf()`
 - Changed `unlink` of intermediate files
@@ -226,6 +255,7 @@
 # ctrdata 1.17.2 (2024-02-25)
 
 ## Bug fixes
+
 - Switch sequence of API endpoints used with `CTIS` 
 - Correct handling multiple public events with `CTIS`
 - Re-use `CTIS` downloads in a given session
@@ -233,6 +263,7 @@
 # ctrdata 1.17.1 (2024-02-05)
 
 ## Improvements
+
 - Additional `CTIS` field types and possibly documents (associated clinical trials)
 - Use `ctId` instead of `id` as `CTIS` top-level field (a further synonym used in the API is `clinicalTrialId`)
 
@@ -244,6 +275,7 @@
 # ctrdata 1.17.0 (2024-01-22)
 
 ## Possibly breaking changes
+
 - Reimplemented `dbGetFieldsIntoDf()` to accelerate and have more predictable, simplified returns, in particular for nested fields; also attempts to recursively expand simply nested data into additional columns in the returned data frame
 - Reimplemented `dbFindFields()` to accelerate; both based on improved `nodbi::docdb_query()`
 - `dbFindFields()` now digests a sample of records to quickly find fields, or all records if `sample = FALSE` but taking increasing time with increasing number of records
@@ -252,12 +284,14 @@
 - Reimplemented typing fields to speed up and to simplify
 
 ## Improvements
+
 - Register data are re-used and not downloaded again in an interactive session (that is, the same temporary folder is now re-used throughout a user's session) 
 - Temporary folder can be set by users with `options(ctrdata.tempdir = "<user_specified_folder>")`
 - Inform MS Windows users if `cygwin` was found so that they may chose to delete it
 - Many fields added for typing e.g. as date in `dbGetFieldsIntoDf()`
 
 ## Bug fixes
+
 - Adapted and corrected information loading to newly available data in `CTIS`
 - Corrected escaping, and back-conversion, of characters in `JSON` from `CTIS`
 
@@ -266,12 +300,14 @@
 ## Possibly breaking changes
 
 ### XML files are converted slightly differently
+
 - EUCTR result-related information in attributes: e.g. new: `{"id":"PostAssignmentPeriod-46349"}`, was: `{"@attributes":{"id":"PostAssignmentPeriod-46349"}}`
 - Consequently, it should work to just delete `@attributes` from field names such as `dbGetFieldsIntoDf("clinical_results.baseline.analyzed_list.analyzed.count_list.count.@attributes.value", db)`
 - EUCTR protocol-related information although no differences were found yet 
 - CTGOV attributes of bare values remain not included in the resulting `NDJSON` (e.g., some but not all records have `<start_date type="Actual">March 15, 2004</start_date>`, and this is converted to `{"start_date":"March 15, 2004"}`)
 
 ### EUCTR: some renaming to harmonise EU and 3rd country trial fields
+
 - new: `e83_single_site_trial`, was (EU trials): `e83_the_trial_involves_single_site_in_the_member_state_concerned`
 - new: `e83_single_site_trial`, was (3rd country trials): `e83_will_this_trial_be_conducted_ at_a_single_site_globally` 
 - new: `e863_trial_sites_planned_in`, was (EU trials): `e863_specify_the_regions_in_which_trial_sites_are_planned` 
@@ -282,6 +318,7 @@
 See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
   
 ## Bug fixes
+
 - corrected batch iterations over CTIS trials accommodating unclear `totalSize` response
 - corrected translation of some fields from the browser URL to the API call for CTGOV2 (closes https://github.com/rfhb/ctrdata/issues/32)
 - corrected minimum curl version to 5.1.0 (closes https://github.com/rfhb/ctrdata/issues/31)
@@ -290,9 +327,11 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 ## Improvements
 
 ### Major 
+
 - **No external tools required any more** (`Cygwin`, `perl`, `cat`, `sed`, `php` functionality for transforming text, XML and `NDJSON` replaced by Javascript using `R` package `V8`); addresses personally communicated concerns and faciliates use of package `ctrdata` in more environments (e.g., https://github.com/rfhb/ctrdata/issues/26); consequently, this might be a breaking change for analysing certain fields, see above which fields are affected. 
 
 ### Other
+
 - added results summary download for CTIS
 - added documents download for ISRCTN
 - factored out document download function
@@ -456,20 +495,19 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 - changes to match nodbi 0.5.0
 - simplifying database operations (user-visible functions:
-   ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf),
+   `ctrLoadQueryIntoDb()`, `dbFindIdsUniqueTrials()`, `dbGetFieldsIntoDf()`),
    without changes to API
 
 # ctrdata 1.7.1 (2021-08-22)
 
 - fix DBI not needed in Imports any more (CRAN Note)
 - fix potential file name issue in conversion script
-- fix dbFindFields() to never return _id (previously depended on database backend)
+- fix `dbFindFields()` to never return _id (previously depended on database backend)
 - changed tests (not on CRAN detection, register availability, additional tests)
 
 # ctrdata 1.7.0 (2021-07-24)
 
-- much reduced database backend-specific code, using nodbi 0.4.3 (released 2021-07-23)
-   which also introduces transactions for sqlite using RSQLite >=2.2.4 (released 2021-03-12)
+- much reduced database backend-specific code, using nodbi 0.4.3 (released 2021-07-23) which also introduces transactions for sqlite using RSQLite >=2.2.4 (released 2021-03-12)
 - temporary directory creation only when needed, more automated deletion
 - changes in detecting non-functioning register servers
 - further streamlined unit testing
@@ -479,16 +517,16 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - added support for ISRCTN
 - refactored checking binaries and caching this info
 - updated EUCTR download parameters
-- refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser
+- refactored `ctrGetQueryUrl()` and `ctrOpenSearchPagesInBrowser()`
 - harmonised error checking
 - avoid some errors with external scripts
 - refactored url / query mangling, added detailed testing
 - refactored storing JSON into database (handle big files, reduce memory)
-- improved dbFindIdsUniqueTrials (speed, memory, register coverage)
+- improved `dbFindIdsUniqueTrials()` (speed, memory, register coverage)
 - factored out conversion to JSON
 - accelerated EUCTR results and history download and storage
 - external scripts now create multiple chunks of records
-- use further identifier fields with dbFindIdsUniqueTrials
+- use further identifier fields with `dbFindIdsUniqueTrials()`
 - adding user info which field entries could not be typed
 
 # ctrdata 1.5.3 (2021-04-19)
@@ -496,10 +534,10 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 - include message how to handle server certificate issues,
    by propagating user settings for httr to curl operations
 - ensure identical return structures when no new trials found
-- dfTrials2Long: harmonise identifier level assignment,
+- `dfTrials2Long()`: harmonise identifier level assignment,
    address cases where field occurs only once in input df
-- dfMergeTwoVariablesRelevel: corrected and improved user info
-- dfName2Value: remove duplicate rows, e.g. from duplicated criteria
+- `dfMergeTwoVariablesRelevel()`: corrected and improved user info
+- `dfName2Value()`: remove duplicate rows, e.g. from duplicated criteria
 
 # ctrdata 1.5.2 (2021-04-05)
 
@@ -507,25 +545,21 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.5.1 (2021-03-21)
 
-- bugfix for non-matching euctr protocol and result ids:
-   any trials from EUCTR for which results were downloaded with
-   version 1.5.0 should be downloaded again (ctrLoadQueryIntoDb)
-- dfTrials2Long refactored and accelerated
-- API change: dfTrials2Long return value (identifier replaces main_id and sub_id)
+- bugfix for non-matching euctr protocol and result ids: any trials from EUCTR for which results were downloaded with version 1.5.0 should be downloaded again (`ctrLoadQueryIntoDb()`)
+- `dfTrials2Long()` refactored and accelerated
+- API change: `dfTrials2Long()` return value (identifier replaces main_id and sub_id)
 - new option to save EUCTR results PDF files in user-specified directory
 
 # ctrdata 1.5.0 (2021-03-14)
 
-- return values of dbGetFieldsIntoDf are now mostly
-   identical whether using src_mongo or src_sqlite,
-   to best ensure portability of analysis code
+- return values of `dbGetFieldsIntoDf()` are now mostly identical whether using `nodbi::src_mongo()` or `nodbi::src_sqlite()`, to best ensure portability of analysis code
 - permit dots in queries / URLs
 - improved handling of queryterm
-- renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl
-- soft deprecated ctrGetQueryUrlFromBrowser
+- renamed `ctrGetQueryUrlFromBrowser()` to `ctrGetQueryUrl()`
+- soft deprecated `ctrGetQueryUrlFromBrowser()`
 - ensure parallel retrievals from EUCTR
-- speed up routines in dbGetFieldsIntoDf
-- make dfTrials2Long handle NA better
+- speed up routines in `dbGetFieldsIntoDf()`
+- make `dfTrials2Long()` handle NA better
 - improved documentation, clarified examples
 - simplified internals for typing fields, start typing results fields
 
@@ -536,12 +570,10 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.4 (2020-10-17)
 
-- new: easy access to variables with
-   dfTrials2Long() + dfName2Value()
-- improved dfMergeTwoVariablesRelevel()
-   to maintain type of data
+- new: easy access to variables with `dfTrials2Long()` and `dfName2Value()`
+- improved `dfMergeTwoVariablesRelevel()` to maintain type of data
 - revised and simplified vignettes
-- deprecated: dfListExtractKey()
+- deprecated: `dfListExtractKey()`
 - refactored parts of euctr retrieval
 - notify user when euctr register server does not permit compression and how long retrieval will take
 - fixed identifying unique ids
@@ -557,11 +589,11 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 # ctrdata 1.3.0 (2020-07-27)
 
 - workaround EUCTR certificate issue
-- streamline ctrGetQueryUrlFromBrowser()
+- streamline `ctrGetQueryUrlFromBrowser()`
 - better handling of complex fields
 - include further tests for query string handling, checking more parameters and return values
 - better clean-up after testing
-- ctrLoadQueryIntoDb(querytorerun = ...) now looks for the date when the querytorerun was last run, to more often use euctr update options
+- `ctrLoadQueryIntoDb(querytorerun = ...)` now looks for the date when the querytorerun was last run, to more often use euctr update options
 - switching from travis to github action
 - upped coverage of code tested
 
@@ -591,10 +623,10 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 1.0 (2019-10-16)
 
-- switch to nodbi::scr_{mongo,sqlite}() with re-implementation of most functions
-- switch from testthat to tinytest, so that users can check with tinytest::test_package("ctrdata")
+- switch to `nodbi::scr_{mongo,sqlite}()` with re-implementation of most functions
+- switch from testthat to tinytest, so that users can check with `tinytest::test_package("ctrdata")`
 - improvements to euctr trial import  
-- new function dfListExtractKey
+- new function `dfListExtractKey()`
 - speed up testing bash commands under windows
 
 # ctrdata 0.18.2 (2019-04-30)
@@ -620,7 +652,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.17 (2019-03-27)
 
-- improve dbFindFields() formatting
+- improve `dbFindFields()` formatting
 - added parameter to force running a query again
 - added further typing (some of the numeric fields)
 - improve cygwin install attempts and information
@@ -664,17 +696,17 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.13.1 (2019-02-24)
 
-- added typing of dates and some logical fields when using dbGetFieldsIntoDf()
+- added typing of dates and some logical fields when using `dbGetFieldsIntoDf()`
 
 # ctrdata 0.13 (2019-01-06)
 
-- dbGetVariablesIntoDf() is deprecated, use dbGetFieldsIntoDf() instead
-- dbFindVariable() is deprecated, use dbFindFields() instead
+- `dbGetVariablesIntoDf()` is deprecated, use `dbGetFieldsIntoDf()` instead
+- `dbFindVariable()` is deprecated, use `dbFindFields()` instead
 - in dbMergeTwoVariablesRelevel() parameter varnames is deprecated, use colnames instead
 
 # ctrdata 0.12.1 (2018-12-15)
 
-- added function ctrFindActiveSubstanceSynonyms() to obtain synonyms for an active substance
+- added function `ctrFindActiveSubstanceSynonyms()` to obtain synonyms for an active substance
 - added user information on number of trials in CTGOV to be downloaded, and limit this to 5000 per query
 - corrected import from EUCTR for details = FALSE
 
@@ -688,7 +720,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.11.1 (2018-04-07)
 
-- improved installFindMongoBinaries(),
+- improved `installFindMongoBinaries()`,
    should now better detect mongo binary locations and use
    for example in cron scripts, which may not have access
    to a user's path information
@@ -729,7 +761,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.9.13 (2017-06-23)
 
-- refactored ctrLoadQueryIntoDb
+- refactored `ctrLoadQueryIntoDb()`
 
 # ctrdata 0.9.12 (2017-06-18)
 
@@ -756,23 +788,23 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 
 # ctrdata 0.9.9.5 (2016-12-14)
 
-- Added option ctrLoadQueryIntoDb(querytoupdate = "last") to re-download last query in collection
+- Added option `ctrLoadQueryIntoDb(querytoupdate = "last")` to re-download last query in collection
 
 # ctrdata 0.9.9.4 (2016-11-18)
 
-- Added progress indicator to ctrLoadQueryIntoDb() to indicate network download traffic
+- Added progress indicator to `ctrLoadQueryIntoDb()` to indicate network download traffic
 
 # ctrdata 0.9.9.3 (2016-11-17)
 
-- deduplication in dbFindIdsUniqueTrials() optimised for speed and memory, added check by ISRCTN
+- deduplication in `dbFindIdsUniqueTrials()` optimised for speed and memory, added check by ISRCTN
 
 # ctrdata 0.9.9.2 (2016-11-13)
 
-- corrected deduplication in dbFindIdsUniqueTrials()
+- corrected deduplication in `dbFindIdsUniqueTrials()`
 
 # ctrdata 0.9.9.1 (2016-11-12)
 
-- renamed ctrQueryHistoryInDb() to dbQueryHistory()
+- renamed `ctrQueryHistoryInDb()` to `dbQueryHistory()`
 - note: change in json format of query history, breaking compatibility
 - refactored all concerned functions to use mongolite
 - rmongodb is no more supported
@@ -785,18 +817,18 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 # ctrdata 0.8.1 (2016-09-07)
 
 - added field to indicate source register
-- improved ctrLoadQueryIntoDb() with details = FALSE
+- improved `ctrLoadQueryIntoDb()` with `details = FALSE`
 - added example for map plotting
 
 # ctrdata 0.8 (2016-09-04)
 
-- dbFindIdsUniqueTrials now encapsulates dfFindIdsUniqueEuctrRecord
-- dfFindIdsUniqueEuctrRecords removed
+- `dbFindIdsUniqueTrials()` now encapsulates `dfFindIdsUniqueEuctrRecord()`
+- `dfFindIdsUniqueEuctrRecords()` removed
 - installation instructions updated after recently rmongodb was removed from CRAN
 
 # ctrdata 0.7 (2016-05-29)
 
-- dbGetVariablesIntoDf changed to concatenate values in array and objects
+- `dbGetVariablesIntoDf()` changed to concatenate values in array and objects
 - completed test adaptation for travis
 - improving perl regex
 - checking helper applications
@@ -812,7 +844,7 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 # ctrdata 0.6 (2016-02-25)
 
 - different update mechanism for EUCTR implemented
-- corrected function name from db... to dfFindUniqueEuctrRecord()
+- corrected function name from db... to `dfFindUniqueEuctrRecord()`
 
 # ctrdata 0.5.9 (2016-01-23)
 
@@ -836,12 +868,12 @@ See also https://github.com/rfhb/ctrdata/issues/26#issuecomment-1749555081
 # ctrdata 0.2.8
 
 - Changed and extended how history of queries is included in database.
-- New function dbCTRQueryHistory()
+- New function `dbCTRQueryHistory()`
 
 # ctrdata 0.2.7
 
 - Added function for merging variables such as from different registers and optionally to merge values into new values
-- Note that function findCTRkey was renamed to dbFindCTRkey because it acts on the database
+- Note that function `findCTRkey()` was renamed to `dbFindCTRkey()` because it acts on the database
 
 # ctrdata 0.2.5
 

@@ -65,7 +65,6 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (11 fields)...
 #> Calculating f.primaryEndpointDescription...                            
-
 trialsDf
 #> # A tibble: 31 × 2
 #>    `_id`             .primaryEndpointDescription

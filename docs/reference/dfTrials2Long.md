@@ -47,23 +47,14 @@ dfwide <- dbGetFieldsIntoDf(
 
 dfTrials2Long(df = dfwide)
 #> clinical_results.participant_flow.recruitment_details                                                                                                                                                   
-
 #> clinical_results.participant_flow.pre_assignment_details                                                                                                                                                
-
 #> clinical_results.participant_flow.group_list.group                                                                                                                                                      
-
 #> clinical_results.participant_flow.period_list.period.title                                                                                                                                              
-
 #> clinical_results.participant_flow.period_list.period.milestone_list.milestone                                                                                                                           
-
 #> clinical_results.participant_flow.period_list.period.drop_withdraw_reason_list.drop_withdraw_reason.title                                                                                               
-
 #> clinical_results.participant_flow.period_list.period.drop_withdraw_reason_list.drop_withdraw_reason.participants_list.participants.group_id                                                             
-
 #> clinical_results.participant_flow.period_list.period.drop_withdraw_reason_list.drop_withdraw_reason.participants_list.participants.count                                                                
-
 #>                                                                                                                                                                                                         
-
 #> . 
 #> . 
 #> 

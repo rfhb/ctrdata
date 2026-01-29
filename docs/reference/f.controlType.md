@@ -70,7 +70,6 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (14 fields)...
 #> Calculating f.controlType...                            
-
 trialsDf
 #> # A tibble: 31 × 3
 #>    `_id`             ctrname .controlType

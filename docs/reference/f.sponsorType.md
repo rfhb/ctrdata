@@ -65,7 +65,6 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (13 fields)...
 #> Calculating f.sponsorType...                            
-
 trialsDf
 #> # A tibble: 31 × 2
 #>    `_id`             .sponsorType  

@@ -40,8 +40,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.26.0.9000" id="ctrdata-12609000">ctrdata 1.26.0.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12609000"></a></h2>
-<p>New development version</p>
-</div>
+<ul><li>
+<code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code> no more errors but returns NULL and a message with a non-existing or empty collection</li>
+<li>Added typing of newly appearing field in CTIS</li>
+<li>Better error message when CTGOV2 query fails</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.26.0" id="ctrdata-1260">ctrdata 1.26.0<a class="anchor" aria-label="anchor" href="#ctrdata-1260"></a></h2><p class="text-muted">CRAN release: 2026-01-18</p>
 <div class="section level3">
@@ -620,13 +623,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0" id="ctrdata-180-2021-11-18">ctrdata 1.8.0 (2021-11-18)<a class="anchor" aria-label="anchor" href="#ctrdata-180-2021-11-18"></a></h2><p class="text-muted">CRAN release: 2021-11-21</p>
 <ul><li>changes to match nodbi 0.5.0</li>
-<li>simplifying database operations (user-visible functions: ctrLoadQueryIntoDb, dbFindIdsUniqueTrials, dbGetFieldsIntoDf), without changes to API</li>
+<li>simplifying database operations (user-visible functions: <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>, <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>, <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>), without changes to API</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.7.1" id="ctrdata-171-2021-08-22">ctrdata 1.7.1 (2021-08-22)<a class="anchor" aria-label="anchor" href="#ctrdata-171-2021-08-22"></a></h2><p class="text-muted">CRAN release: 2021-08-22</p>
 <ul><li>fix DBI not needed in Imports any more (CRAN Note)</li>
 <li>fix potential file name issue in conversion script</li>
-<li>fix dbFindFields() to never return _id (previously depended on database backend)</li>
+<li>fix <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> to never return _id (previously depended on database backend)</li>
 <li>changed tests (not on CRAN detection, register availability, additional tests)</li>
 </ul></div>
     <div class="section level2">
@@ -641,25 +644,30 @@
 <ul><li>added support for ISRCTN</li>
 <li>refactored checking binaries and caching this info</li>
 <li>updated EUCTR download parameters</li>
-<li>refactored ctrGetQueryUrl and ctrOpenSearchPagesInBrowser</li>
+<li>refactored <code><a href="../reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code> and <code><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser()</a></code>
+</li>
 <li>harmonised error checking</li>
 <li>avoid some errors with external scripts</li>
 <li>refactored url / query mangling, added detailed testing</li>
 <li>refactored storing JSON into database (handle big files, reduce memory)</li>
-<li>improved dbFindIdsUniqueTrials (speed, memory, register coverage)</li>
+<li>improved <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> (speed, memory, register coverage)</li>
 <li>factored out conversion to JSON</li>
 <li>accelerated EUCTR results and history download and storage</li>
 <li>external scripts now create multiple chunks of records</li>
-<li>use further identifier fields with dbFindIdsUniqueTrials</li>
+<li>use further identifier fields with <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>
+</li>
 <li>adding user info which field entries could not be typed</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.3" id="ctrdata-153-2021-04-19">ctrdata 1.5.3 (2021-04-19)<a class="anchor" aria-label="anchor" href="#ctrdata-153-2021-04-19"></a></h2><p class="text-muted">CRAN release: 2021-04-19</p>
 <ul><li>include message how to handle server certificate issues, by propagating user settings for httr to curl operations</li>
 <li>ensure identical return structures when no new trials found</li>
-<li>dfTrials2Long: harmonise identifier level assignment, address cases where field occurs only once in input df</li>
-<li>dfMergeTwoVariablesRelevel: corrected and improved user info</li>
-<li>dfName2Value: remove duplicate rows, e.g. from duplicated criteria</li>
+<li>
+<code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code>: harmonise identifier level assignment, address cases where field occurs only once in input df</li>
+<li>
+<code>dfMergeTwoVariablesRelevel()</code>: corrected and improved user info</li>
+<li>
+<code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>: remove duplicate rows, e.g. from duplicated criteria</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.2" id="ctrdata-152-2021-04-05">ctrdata 1.5.2 (2021-04-05)<a class="anchor" aria-label="anchor" href="#ctrdata-152-2021-04-05"></a></h2><p class="text-muted">CRAN release: 2021-04-06</p>
@@ -667,21 +675,25 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.1" id="ctrdata-151-2021-03-21">ctrdata 1.5.1 (2021-03-21)<a class="anchor" aria-label="anchor" href="#ctrdata-151-2021-03-21"></a></h2><p class="text-muted">CRAN release: 2021-03-21</p>
-<ul><li>bugfix for non-matching euctr protocol and result ids: any trials from EUCTR for which results were downloaded with version 1.5.0 should be downloaded again (ctrLoadQueryIntoDb)</li>
-<li>dfTrials2Long refactored and accelerated</li>
-<li>API change: dfTrials2Long return value (identifier replaces main_id and sub_id)</li>
+<ul><li>bugfix for non-matching euctr protocol and result ids: any trials from EUCTR for which results were downloaded with version 1.5.0 should be downloaded again (<code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>)</li>
+<li>
+<code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code> refactored and accelerated</li>
+<li>API change: <code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code> return value (identifier replaces main_id and sub_id)</li>
 <li>new option to save EUCTR results PDF files in user-specified directory</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.0" id="ctrdata-150-2021-03-14">ctrdata 1.5.0 (2021-03-14)<a class="anchor" aria-label="anchor" href="#ctrdata-150-2021-03-14"></a></h2><p class="text-muted">CRAN release: 2021-03-16</p>
-<ul><li>return values of dbGetFieldsIntoDf are now mostly identical whether using src_mongo or src_sqlite, to best ensure portability of analysis code</li>
+<ul><li>return values of <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> are now mostly identical whether using <code><a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo()</a></code> or <code><a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite()</a></code>, to best ensure portability of analysis code</li>
 <li>permit dots in queries / URLs</li>
 <li>improved handling of queryterm</li>
-<li>renamed ctrGetQueryUrlFromBrowser to ctrGetQueryUrl</li>
-<li>soft deprecated ctrGetQueryUrlFromBrowser</li>
+<li>renamed <code>ctrGetQueryUrlFromBrowser()</code> to <code><a href="../reference/ctrGetQueryUrl.html">ctrGetQueryUrl()</a></code>
+</li>
+<li>soft deprecated <code>ctrGetQueryUrlFromBrowser()</code>
+</li>
 <li>ensure parallel retrievals from EUCTR</li>
-<li>speed up routines in dbGetFieldsIntoDf</li>
-<li>make dfTrials2Long handle NA better</li>
+<li>speed up routines in <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
+</li>
+<li>make <code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code> handle NA better</li>
 <li>improved documentation, clarified examples</li>
 <li>simplified internals for typing fields, start typing results fields</li>
 </ul></div>
@@ -692,10 +704,12 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4" id="ctrdata-14-2020-10-17">ctrdata 1.4 (2020-10-17)<a class="anchor" aria-label="anchor" href="#ctrdata-14-2020-10-17"></a></h2>
-<ul><li>new: easy access to variables with dfTrials2Long() + dfName2Value()</li>
-<li>improved dfMergeTwoVariablesRelevel() to maintain type of data</li>
+<ul><li>new: easy access to variables with <code><a href="../reference/dfTrials2Long.html">dfTrials2Long()</a></code> and <code><a href="../reference/dfName2Value.html">dfName2Value()</a></code>
+</li>
+<li>improved <code>dfMergeTwoVariablesRelevel()</code> to maintain type of data</li>
 <li>revised and simplified vignettes</li>
-<li>deprecated: dfListExtractKey()</li>
+<li>deprecated: <code>dfListExtractKey()</code>
+</li>
 <li>refactored parts of euctr retrieval</li>
 <li>notify user when euctr register server does not permit compression and how long retrieval will take</li>
 <li>fixed identifying unique ids</li>
@@ -711,11 +725,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.0" id="ctrdata-130-2020-07-27">ctrdata 1.3.0 (2020-07-27)<a class="anchor" aria-label="anchor" href="#ctrdata-130-2020-07-27"></a></h2><p class="text-muted">CRAN release: 2020-07-27</p>
 <ul><li>workaround EUCTR certificate issue</li>
-<li>streamline ctrGetQueryUrlFromBrowser()</li>
+<li>streamline <code>ctrGetQueryUrlFromBrowser()</code>
+</li>
 <li>better handling of complex fields</li>
 <li>include further tests for query string handling, checking more parameters and return values</li>
 <li>better clean-up after testing</li>
-<li>ctrLoadQueryIntoDb(querytorerun = …) now looks for the date when the querytorerun was last run, to more often use euctr update options</li>
+<li>
+<code>ctrLoadQueryIntoDb(querytorerun = ...)</code> now looks for the date when the querytorerun was last run, to more often use euctr update options</li>
 <li>switching from travis to github action</li>
 <li>upped coverage of code tested</li>
 </ul></div>
@@ -745,10 +761,12 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0" id="ctrdata-10-2019-10-16">ctrdata 1.0 (2019-10-16)<a class="anchor" aria-label="anchor" href="#ctrdata-10-2019-10-16"></a></h2><p class="text-muted">CRAN release: 2019-10-16</p>
-<ul><li>switch to nodbi::scr_{mongo,sqlite}() with re-implementation of most functions</li>
-<li>switch from testthat to tinytest, so that users can check with tinytest::test_package(“ctrdata”)</li>
+<ul><li>switch to <code>nodbi::scr_{mongo,sqlite}()</code> with re-implementation of most functions</li>
+<li>switch from testthat to tinytest, so that users can check with <code>tinytest::test_package("ctrdata")</code>
+</li>
 <li>improvements to euctr trial import<br></li>
-<li>new function dfListExtractKey</li>
+<li>new function <code>dfListExtractKey()</code>
+</li>
 <li>speed up testing bash commands under windows</li>
 </ul></div>
     <div class="section level2">
@@ -774,7 +792,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.17" id="ctrdata-017-2019-03-27">ctrdata 0.17 (2019-03-27)<a class="anchor" aria-label="anchor" href="#ctrdata-017-2019-03-27"></a></h2>
-<ul><li>improve dbFindFields() formatting</li>
+<ul><li>improve <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> formatting</li>
 <li>added parameter to force running a query again</li>
 <li>added further typing (some of the numeric fields)</li>
 <li>improve cygwin install attempts and information</li>
@@ -817,17 +835,20 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13.1" id="ctrdata-0131-2019-02-24">ctrdata 0.13.1 (2019-02-24)<a class="anchor" aria-label="anchor" href="#ctrdata-0131-2019-02-24"></a></h2>
-<ul><li>added typing of dates and some logical fields when using dbGetFieldsIntoDf()</li>
+<ul><li>added typing of dates and some logical fields when using <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13" id="ctrdata-013-2019-01-06">ctrdata 0.13 (2019-01-06)<a class="anchor" aria-label="anchor" href="#ctrdata-013-2019-01-06"></a></h2>
-<ul><li>dbGetVariablesIntoDf() is deprecated, use dbGetFieldsIntoDf() instead</li>
-<li>dbFindVariable() is deprecated, use dbFindFields() instead</li>
+<ul><li>
+<code>dbGetVariablesIntoDf()</code> is deprecated, use <code><a href="../reference/dbGetFieldsIntoDf.html">dbGetFieldsIntoDf()</a></code> instead</li>
+<li>
+<code>dbFindVariable()</code> is deprecated, use <code><a href="../reference/dbFindFields.html">dbFindFields()</a></code> instead</li>
 <li>in dbMergeTwoVariablesRelevel() parameter varnames is deprecated, use colnames instead</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.12.1" id="ctrdata-0121-2018-12-15">ctrdata 0.12.1 (2018-12-15)<a class="anchor" aria-label="anchor" href="#ctrdata-0121-2018-12-15"></a></h2>
-<ul><li>added function ctrFindActiveSubstanceSynonyms() to obtain synonyms for an active substance</li>
+<ul><li>added function <code><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code> to obtain synonyms for an active substance</li>
 <li>added user information on number of trials in CTGOV to be downloaded, and limit this to 5000 per query</li>
 <li>corrected import from EUCTR for details = FALSE</li>
 </ul></div>
@@ -841,7 +862,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11.1" id="ctrdata-0111-2018-04-07">ctrdata 0.11.1 (2018-04-07)<a class="anchor" aria-label="anchor" href="#ctrdata-0111-2018-04-07"></a></h2>
-<ul><li>improved installFindMongoBinaries(), should now better detect mongo binary locations and use for example in cron scripts, which may not have access to a user’s path information</li>
+<ul><li>improved <code>installFindMongoBinaries()</code>, should now better detect mongo binary locations and use for example in cron scripts, which may not have access to a user’s path information</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11" id="ctrdata-011-2018-01-28">ctrdata 0.11 (2018-01-28)<a class="anchor" aria-label="anchor" href="#ctrdata-011-2018-01-28"></a></h2>
@@ -878,7 +899,8 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.13" id="ctrdata-0913-2017-06-23">ctrdata 0.9.13 (2017-06-23)<a class="anchor" aria-label="anchor" href="#ctrdata-0913-2017-06-23"></a></h2>
-<ul><li>refactored ctrLoadQueryIntoDb</li>
+<ul><li>refactored <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.12" id="ctrdata-0912-2017-06-18">ctrdata 0.9.12 (2017-06-18)<a class="anchor" aria-label="anchor" href="#ctrdata-0912-2017-06-18"></a></h2>
@@ -905,23 +927,25 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.9.5" id="ctrdata-0995-2016-12-14">ctrdata 0.9.9.5 (2016-12-14)<a class="anchor" aria-label="anchor" href="#ctrdata-0995-2016-12-14"></a></h2>
-<ul><li>Added option ctrLoadQueryIntoDb(querytoupdate = “last”) to re-download last query in collection</li>
+<ul><li>Added option <code>ctrLoadQueryIntoDb(querytoupdate = "last")</code> to re-download last query in collection</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.9.4" id="ctrdata-0994-2016-11-18">ctrdata 0.9.9.4 (2016-11-18)<a class="anchor" aria-label="anchor" href="#ctrdata-0994-2016-11-18"></a></h2>
-<ul><li>Added progress indicator to ctrLoadQueryIntoDb() to indicate network download traffic</li>
+<ul><li>Added progress indicator to <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> to indicate network download traffic</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.9.3" id="ctrdata-0993-2016-11-17">ctrdata 0.9.9.3 (2016-11-17)<a class="anchor" aria-label="anchor" href="#ctrdata-0993-2016-11-17"></a></h2>
-<ul><li>deduplication in dbFindIdsUniqueTrials() optimised for speed and memory, added check by ISRCTN</li>
+<ul><li>deduplication in <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> optimised for speed and memory, added check by ISRCTN</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.9.2" id="ctrdata-0992-2016-11-13">ctrdata 0.9.9.2 (2016-11-13)<a class="anchor" aria-label="anchor" href="#ctrdata-0992-2016-11-13"></a></h2>
-<ul><li>corrected deduplication in dbFindIdsUniqueTrials()</li>
+<ul><li>corrected deduplication in <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.9.1" id="ctrdata-0991-2016-11-12">ctrdata 0.9.9.1 (2016-11-12)<a class="anchor" aria-label="anchor" href="#ctrdata-0991-2016-11-12"></a></h2>
-<ul><li>renamed ctrQueryHistoryInDb() to dbQueryHistory()</li>
+<ul><li>renamed <code>ctrQueryHistoryInDb()</code> to <code><a href="../reference/dbQueryHistory.html">dbQueryHistory()</a></code>
+</li>
 <li>note: change in json format of query history, breaking compatibility</li>
 <li>refactored all concerned functions to use mongolite</li>
 <li>rmongodb is no more supported</li>
@@ -934,18 +958,23 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.1" id="ctrdata-081-2016-09-07">ctrdata 0.8.1 (2016-09-07)<a class="anchor" aria-label="anchor" href="#ctrdata-081-2016-09-07"></a></h2>
 <ul><li>added field to indicate source register</li>
-<li>improved ctrLoadQueryIntoDb() with details = FALSE</li>
+<li>improved <code><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb()</a></code> with <code>details = FALSE</code>
+</li>
 <li>added example for map plotting</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8" id="ctrdata-08-2016-09-04">ctrdata 0.8 (2016-09-04)<a class="anchor" aria-label="anchor" href="#ctrdata-08-2016-09-04"></a></h2>
-<ul><li>dbFindIdsUniqueTrials now encapsulates dfFindIdsUniqueEuctrRecord</li>
-<li>dfFindIdsUniqueEuctrRecords removed</li>
+<ul><li>
+<code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> now encapsulates <code>dfFindIdsUniqueEuctrRecord()</code>
+</li>
+<li>
+<code>dfFindIdsUniqueEuctrRecords()</code> removed</li>
 <li>installation instructions updated after recently rmongodb was removed from CRAN</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7" id="ctrdata-07-2016-05-29">ctrdata 0.7 (2016-05-29)<a class="anchor" aria-label="anchor" href="#ctrdata-07-2016-05-29"></a></h2>
-<ul><li>dbGetVariablesIntoDf changed to concatenate values in array and objects</li>
+<ul><li>
+<code>dbGetVariablesIntoDf()</code> changed to concatenate values in array and objects</li>
 <li>completed test adaptation for travis</li>
 <li>improving perl regex</li>
 <li>checking helper applications</li>
@@ -961,7 +990,8 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6" id="ctrdata-06-2016-02-25">ctrdata 0.6 (2016-02-25)<a class="anchor" aria-label="anchor" href="#ctrdata-06-2016-02-25"></a></h2>
 <ul><li>different update mechanism for EUCTR implemented</li>
-<li>corrected function name from db… to dfFindUniqueEuctrRecord()</li>
+<li>corrected function name from db… to <code>dfFindUniqueEuctrRecord()</code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.9" id="ctrdata-059-2016-01-23">ctrdata 0.5.9 (2016-01-23)<a class="anchor" aria-label="anchor" href="#ctrdata-059-2016-01-23"></a></h2>
@@ -985,12 +1015,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.8" id="ctrdata-028">ctrdata 0.2.8<a class="anchor" aria-label="anchor" href="#ctrdata-028"></a></h2>
 <ul><li>Changed and extended how history of queries is included in database.</li>
-<li>New function dbCTRQueryHistory()</li>
+<li>New function <code>dbCTRQueryHistory()</code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.7" id="ctrdata-027">ctrdata 0.2.7<a class="anchor" aria-label="anchor" href="#ctrdata-027"></a></h2>
 <ul><li>Added function for merging variables such as from different registers and optionally to merge values into new values</li>
-<li>Note that function findCTRkey was renamed to dbFindCTRkey because it acts on the database</li>
+<li>Note that function <code>findCTRkey()</code> was renamed to <code>dbFindCTRkey()</code> because it acts on the database</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="ctrdata-025">ctrdata 0.2.5<a class="anchor" aria-label="anchor" href="#ctrdata-025"></a></h2>

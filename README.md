@@ -83,7 +83,7 @@ multiple public registers using R package ctrdata.” *Research Synthesis
 Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
 <https://doi.org/10.1017/rsm.2025.10061>. or <br/>Herold R (2026).
 *ctrdata: Retrieve and Analyze Clinical Trials Data from Public
-Registers*. R package version 1.25.1.9000,
+Registers*. R package version 1.26.0.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>
 
@@ -496,8 +496,8 @@ with(
 - Queries to CTGOV and CTGOV2
 
 The new website and API introduced in July 2023
-(<https://www.clinicaltrials.gov/>) is supported by `ctrdata` since
-mid-2023 and identified in `ctrdata` as `CTGOV2`.
+(<https://clinicaltrials.gov/>) is supported by `ctrdata` since mid-2023
+and identified in `ctrdata` as `CTGOV2`.
 
 On 2024-06-25, `CTGOV` retired the classic website and API used by
 `ctrdata` since 2015. To support users, `ctrdata` automatically

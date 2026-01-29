@@ -369,7 +369,7 @@ with(
 <div id="workflow-ctgov-example"></div>
 * Queries to CTGOV and CTGOV2
 
-The new website and API introduced in July 2023 (https://www.clinicaltrials.gov/) is supported by `ctrdata` since mid-2023 and identified in `ctrdata` as `CTGOV2`. 
+The new website and API introduced in July 2023 (https://clinicaltrials.gov/) is supported by `ctrdata` since mid-2023 and identified in `ctrdata` as `CTGOV2`. 
 
 On 2024-06-25, `CTGOV` retired the classic website and API used by `ctrdata` since 2015. To support users, `ctrdata` automatically translates and redirects queries to the current website. This helps with automatically updating previously loaded queries (`ctrLoadQueryIntoDb(querytoupdate = <n>)`), manually migrating queries and reproducible work on clinical trials information. Going forward, users are recommended to change to use `CTGOV2` queries. 
 
