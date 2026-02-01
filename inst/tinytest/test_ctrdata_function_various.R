@@ -431,10 +431,6 @@ expect_equal(
 
 #### ctrLoadQueryIntoDb parameters ####
 
-if (checkInternet()) {
-
-}
-
 # test
 expect_error(
   ctrLoadQueryIntoDb(
@@ -566,6 +562,8 @@ rm(dF, dL)
 #### ctrShowOneTrial ####
 
 expect_true(is.list(ctrdata:::ctrShowOneTrialOutput("x")))
+
+if (!requireNamespace("shiny")) exit_file("shiny not available")
 
 expect_true(is.function(ctrdata:::renderCtrShowOneTrial("")))
 
