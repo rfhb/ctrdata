@@ -560,7 +560,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             .ctrdataenv$ct$call(
               "parsexml",
               # read source file
-              paste0(readLines(xmlFileList[f], warn = FALSE), collapse = ""),
+              readr::read_file(xmlFileList[f]),
               # important parameters for conversion
               V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
                       explicitRoot: false, explicitArray: false, xmlns: false}")),

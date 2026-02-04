@@ -15,6 +15,7 @@
 #' @importFrom rlang hash
 #' @importFrom rvest read_html_live html_attr html_elements
 #' @importFrom dplyr rows_update
+#' @importFrom readr read_file
 #'
 ctrLoadQueryIntoDbIsrctn <- function(
     queryterm = queryterm,
@@ -214,7 +215,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
       .ctrdataenv$ct$call(
         "parsexml",
         # read source xml file
-        paste0(readLines(f, warn = FALSE), collapse = ""),
+        readr::read_file(f),
         # important parameters
         V8::JS("{trim: true, ignoreAttrs: true, explicitArray: false}"))
     ),
