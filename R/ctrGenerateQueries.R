@@ -5,13 +5,14 @@
 #'
 #' From high-level search terms provided by the user, generate specific queries
 #' for each registers with which ctrdata works, see \link{ctrdata-registers}.
+#'
 #' Search terms that are expanded to concepts such as from MeSH and MedDRA
 #' by the search implementations in registers include the 'intervention' and
-#' 'condition'. Logical operators only work with 'searchPhrase'.
+#' 'condition'. Logical operators only work in parameter 'searchPhrase'.
 #'
 #' @param searchPhrase String with optional logical operators ("AND", "OR")
-#' that will be searched in selected fields of registers that can handle logical
-#' operators (general or title fields), should not include quotation marks
+#' that will be searched in selected fields of registers (general or title
+#' fields), should not include quotation marks
 #'
 #' @param condition String with condition / disease
 #'
@@ -48,26 +49,30 @@
 #' @param countries Vector of country names, two- or three-letter ISO 3166 codes
 #'
 #' @returns Named vector of URLs for finding trials in the registers and as
-#' input to functions \link{ctrLoadQueryIntoDb} and
-#' \link{ctrOpenSearchPagesInBrowser}
+#' input to functions \link{ctrLoadQueryIntoDb},
+#' \link{ctrOpenSearchPagesInBrowser} and \link[utils]{browseURL}
 #'
 #' @export
 #'
 #' @examples
 #'
 #' urls <- ctrGenerateQueries(
+#'   searchPhrase = "antibody AND covid",
+#'   recruitment = "ongoing")
+#'
+#' urls <- ctrGenerateQueries(
 #'   intervention = "antibody",
 #'   phase = "phase 3",
-#'   startAfter = "2000-01-01")
+#'   population = "P+A",
+#'   startAfter = "12/31/2020",
+#'   completedBefore = "2025-01-01")
 #'
 #' # open queries in register web interface
-#' sapply(urls, ctrOpenSearchPagesInBrowser)
+#' sapply(urls, utils::browseURL)
 #'
-#' # For CTIS to accept such a search URL and show results, consider installing
-#' # the Tampermonkey browser extension from https://www.tampermonkey.net/,
-#' # click on the extension icon, "Create a new script", "Utility" and then
-#' # "Import from this URL":
-#' # https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
+#' # For CTIS to accept such a search URL and show results,
+#' # consider the extension, script and documentation at
+#' # https://rfhb.github.io/ctrdata/index.html#id_2-script-to-automatically-copy-users-query-from-web-browser
 #'
 #' # find potential research platform and platform trials
 #' urls <- ctrGenerateQueries(
@@ -78,14 +83,6 @@
 #'  phase = "phase 3",
 #'  startAfter = "01/31/2010",
 #'  countries = c("DE", "US", "United Kingdom"))
-#'
-#' # open queries in register web interface
-#' sapply(urls, ctrOpenSearchPagesInBrowser)
-#'
-#' urls <- ctrGenerateQueries(
-#'   searchPhrase = "antibody AND covid",
-#'   recruitment = "completed",
-#'   )
 #'
 #' \dontrun{
 #' # count trials found
@@ -178,18 +175,14 @@ ctrGenerateQueries <- function(
       )
     }
 
-    # ctgov2
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "term=", searchPhraseB)
 
-    # ctgov2expert
     urls["CTGOV2expert"] <- paste0(
       urls["CTGOV2expert"], "(",
       paste0('"', searchPhraseA, '"', collapse = searchPhraseD),
-      ") "
-    )
+      ") ")
 
-    # ctis
     urls["CTIS"] <- paste0(
       urls["CTIS"], ifelse(
         grepl(" AND ", searchPhrase),
@@ -197,11 +190,9 @@ ctrGenerateQueries <- function(
         '"containAny":"'
       ), searchPhraseC, '",')
 
-    # euctr
     urls["EUCTR"] <- paste0(
       urls["EUCTR"], searchPhraseB)
 
-    # isrctn
     urls["ISRCTN"] <- paste0(
       urls["ISRCTN"], "q=", searchPhraseB)
 
@@ -235,7 +226,6 @@ ctrGenerateQueries <- function(
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&intr=", intervention)
 
-    # ctgov2expert
     urls["CTGOV2expert"] <- paste0(
       urls["CTGOV2expert"], ' AND AREA[InterventionSearch]"', intervention, '" ')
 
@@ -340,8 +330,8 @@ ctrGenerateQueries <- function(
       "Parameter 'population' should include only ",
       'P, A, E and +; see help("f.trialPopulation")')
     if (grepl("[+]+", population)) message(
-      "Parameter 'population' containing '+' cannot be used with ",
-      "ISRCTN to indicate that either population can be recruited.")
+      "Parameter 'population = \"", population, "\"' cannot be used with ",
+      "ISRCTN to indicate either population can be recruited")
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&aggFilters=ages:", c(
@@ -471,6 +461,9 @@ ctrGenerateQueries <- function(
   if (!is.null(startAfter)) {
 
     startAfter <- queryDate(startAfter)
+    message(
+      "Parameter 'startAfter = \"", startAfter, "\"' in EUCTR refers to ",
+      "the date wheh the trial was first entered into the EudraCT database")
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&start=", startAfter, "_")
@@ -525,6 +518,7 @@ ctrGenerateQueries <- function(
   if (!is.null(completedAfter)) {
 
     completedAfter <- queryDate(completedAfter)
+    message("Parameter 'completedAfter = \"", completedAfter, "\"' cannot be used for queries in EUCTR")
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&primComp=", completedAfter, "_")
@@ -546,6 +540,7 @@ ctrGenerateQueries <- function(
   if (!is.null(completedBefore)) {
 
     completedBefore <- queryDate(completedBefore)
+    message("Parameter 'completedBefore = \"", completedBefore, "\"' cannot be used for queries in EUCTR")
 
     urls["CTGOV2"] <- ifelse(
       grepl("&primComp=", urls["CTGOV2"]),

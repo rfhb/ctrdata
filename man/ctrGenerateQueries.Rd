@@ -22,8 +22,8 @@ ctrGenerateQueries(
 }
 \arguments{
 \item{searchPhrase}{String with optional logical operators ("AND", "OR")
-that will be searched in selected fields of registers that can handle logical
-operators (general or title fields), should not include quotation marks}
+that will be searched in selected fields of registers (general or title
+fields), should not include quotation marks}
 
 \item{condition}{String with condition / disease}
 
@@ -61,31 +61,37 @@ queries should search only for medicine interventional clinical trial}
 }
 \value{
 Named vector of URLs for finding trials in the registers and as
-input to functions \link{ctrLoadQueryIntoDb} and
-\link{ctrOpenSearchPagesInBrowser}
+input to functions \link{ctrLoadQueryIntoDb},
+\link{ctrOpenSearchPagesInBrowser} and \link[utils]{browseURL}
 }
 \description{
 From high-level search terms provided by the user, generate specific queries
 for each registers with which ctrdata works, see \link{ctrdata-registers}.
+}
+\details{
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the 'intervention' and
-'condition'. Logical operators only work with 'searchPhrase'.
+'condition'. Logical operators only work in parameter 'searchPhrase'.
 }
 \examples{
 
 urls <- ctrGenerateQueries(
+  searchPhrase = "antibody AND covid",
+  recruitment = "ongoing")
+
+urls <- ctrGenerateQueries(
   intervention = "antibody",
   phase = "phase 3",
-  startAfter = "2000-01-01")
+  population = "P+A",
+  startAfter = "12/31/2020",
+  completedBefore = "2025-01-01")
 
 # open queries in register web interface
-sapply(urls, ctrOpenSearchPagesInBrowser)
+sapply(urls, utils::browseURL)
 
-# For CTIS to accept such a search URL and show results, consider installing
-# the Tampermonkey browser extension from https://www.tampermonkey.net/,
-# click on the extension icon, "Create a new script", "Utility" and then
-# "Import from this URL":
-# https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
+# For CTIS to accept such a search URL and show results,
+# consider the extension, script and documentation at
+# https://rfhb.github.io/ctrdata/index.html#id_2-script-to-automatically-copy-users-query-from-web-browser
 
 # find potential research platform and platform trials
 urls <- ctrGenerateQueries(
@@ -96,14 +102,6 @@ urls <- ctrGenerateQueries(
  phase = "phase 3",
  startAfter = "01/31/2010",
  countries = c("DE", "US", "United Kingdom"))
-
-# open queries in register web interface
-sapply(urls, ctrOpenSearchPagesInBrowser)
-
-urls <- ctrGenerateQueries(
-  searchPhrase = "antibody AND covid",
-  recruitment = "completed",
-  )
 
 \dontrun{
 # count trials found
