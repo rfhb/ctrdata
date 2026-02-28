@@ -46,7 +46,8 @@ f.externalLinks <- function(df = NULL) {
     ),
     "ctgov" = c(
       "results_reference.citation",
-      "link"
+      "link.description",
+      "link.url"
     ),
     "ctgov2" = c(
       "protocolSection.referencesModule.seeAlsoLinks.label",
@@ -112,8 +113,20 @@ f.externalLinks <- function(df = NULL) {
             unlist(b, use.names = FALSE))))
           if (all(is.na(r))) NA else paste0(r, collapse = " ")
         },
-        a = .data$results_reference.citation,
-        b = .data$link,
+        a = .data$link.description,
+        b = .data$link.url,
+        USE.NAMES = FALSE
+      ),
+      #
+      linksCtgov = mapply(
+        function(a, b) {
+          r <- na.omit(unique(w(
+            unlist(a, use.names = FALSE),
+            unlist(b, use.names = FALSE))))
+          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+        },
+        a = .data$linksCtgov,
+        b = .data$results_reference.citation,
         USE.NAMES = FALSE
       )
       #
@@ -150,12 +163,12 @@ f.externalLinks <- function(df = NULL) {
       #
       linksCtis = mapply(
         function(a, b, c) {
-            r <- na.omit(unique(w(
-              unlist(a, use.names = FALSE),
-              unlist(b, use.names = FALSE),
-              unlist(c, use.names = FALSE))))
-            if (all(is.na(r))) NA else paste0(r, collapse = " ")
-          },
+          r <- na.omit(unique(w(
+            unlist(a, use.names = FALSE),
+            unlist(b, use.names = FALSE),
+            unlist(c, use.names = FALSE))))
+          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+        },
         a = .data$applications.partI.trialDetails.references,
         b = .data$authorizedApplication.authorizedPartI.trialDetails.references,
         c = .data$authorizedPartI.trialDetails.references,
