@@ -1,10 +1,11 @@
 #### history ####
 # 2025-01-26 first version
+# 2026-02-28 ensure primary EP even if not first in json, add euctr other method
 
-#' Calculate details of a study's primary endpoint analysis and testing
+#' Calculate details of a study's primary endpoint statistical testing
 #'
 #' Trial concept calculated: Calculates several results-related elements of
-#' the primary analysis of the primary endpoint. Requires loading
+#' the primary statistical analysis of the primary endpoint. Requires loading
 #' results-related information.
 #' For CTIS and ISRCTN, such information is not available in structured format.
 #' Recommended to be combined with .controlType, .sampleSize etc. for analyses.
@@ -64,20 +65,14 @@ f.primaryEndpointResults <- function(df = NULL) {
   #### fields ####
   fldsNeeded <- list(
     "euctr" = c(
-      "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value", # ".0134 / 0.0031 / 0.0205 / 0.0053"
-      "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value", # HYPOTHESIS_METHOD.other / HYPOTHESIS_METHOD.other
-      "endPoints.endPoint.type.value", # ENDPOINT_TYPE.primary / ENDPOINT_TYPE.primary
+      "endPoints.endPoint.type.value",
       "endPoints.endPoint"
     ),
     "ctgov" = c(
-      "clinical_results.outcome_list.outcome.analysis_list.analysis.method", # Chi-squared / Chi-squared
-      "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value", # "&gt;0.1 / =0.1"
       "clinical_results.outcome_list.outcome.type",
       "clinical_results.outcome_list.outcome"
     ),
     "ctgov2" = c(
-      "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue", # "0.0044 / 0.0919 / 0.2364"
-      "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod", # "Chi-squared / t-test, 1 sided / t-test, 1 sided"
       "resultsSection.outcomeMeasuresModule.outcomeMeasures.type",
       "resultsSection.outcomeMeasuresModule.outcomeMeasures"
     ),
@@ -112,12 +107,13 @@ f.primaryEndpointResults <- function(df = NULL) {
     # this is quite drastic but minimises
     # ambiguities and different spellings
     trimws(
-    gsub("hypothesis|method", "",
-    gsub("[^a-z1-2 ]", "",
-    gsub("[ ]+", "",
-    gsub("two", "2",
-    tolower(x)
-    )))))
+      gsub("hypothesis|method", "",
+      gsub("[^a-z1-2 ]", "",
+      gsub("[ ]+", "",
+      gsub("two", "2",
+      gsub("ionmial","inomial",
+      tolower(x)
+      ))))))
 
   }
 
@@ -126,58 +122,89 @@ f.primaryEndpointResults <- function(df = NULL) {
   df %>%
     dplyr::mutate(
       #
-      firstPvalueEuctr = vapply(
-        .data$endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value,
-        FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
-        numeric(1L), USE.NAMES = FALSE),
-      #
-      firstPmethodEuctr = vapply(
-        .data$endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value,
-        FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
-        character(1L), USE.NAMES = FALSE),
-      #
       # only use information from the first primary endpoint
       isPrimEpsEuctr = sapply(
         .data$endPoints.endPoint.type.value,
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "ENDPOINT_TYPE.primary")[1],
         USE.NAMES = FALSE),
       #
-      firstPsizeEuctr = mapply(
-        function(x, y) {
-          if (!is.data.frame(x)) return(NA_integer_)
-          x <- x[y, ]
-          # "armReportingGroups" or "subjectAnalysisSetReportingGroups"
-          if (any(grepl("ReportingGroups", names(x)))) {
-            x <- unlist(x)
-            y <- grepl("armReportingGroups.+subjects[0-9]*", names(x))
-            if (!length(y) || !any(y)) {
-              y <- grepl("subjectAnalysisSetReportingGroups.+subjects[0-9]*", names(x))
-            }
-            if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(gsub(",", "", x[y]))))
-          } else return(NA_integer_)
+      # only use information from the first analysis
+      primStatsEuctr = mapply(
+        function(x, y) if (is.na(y)) NA else {
+          o <- x[y, ]$statisticalAnalyses[[1]]
+          if (is.atomic(o)) NA else o$statisticalAnalysis
         },
         x = .data$endPoints.endPoint,
         y = .data$isPrimEpsEuctr,
-        SIMPLIFY = TRUE, USE.NAMES = FALSE
-      )
+        SIMPLIFY = TRUE, USE.NAMES = FALSE),
       #
-    ) -> df
+      #
+      firstPvalueEuctr = sapply(
+        .data$primStatsEuctr,
+        FUN = function(x) if (is.atomic(x)) NA_real_ else {
+          o <- x$statisticalHypothesisTest$value[1]
+          as.numeric(o)
+        }),
+      #
+      firstPmethodEuctr = sapply(
+        .data$primStatsEuctr,
+        FUN = function(x) if (is.atomic(x)) NA_character_ else {
+          o <- x$statisticalHypothesisTest$method$value[1]
+          if (o != "HYPOTHESIS_METHOD.other") o else {
+            o <- x$statisticalHypothesisTest$otherMethod[1]
+            normalise_string(o)
+        }}),
+      #
+      firstPvalueGroups = sapply(
+        .data$primStatsEuctr,
+        FUN = function(x) if (is.atomic(x)) NA_character_ else {
+          o <- x$subjectAnalysisSetComparisonGroupId[[1]]
+          unlist(o)
+        }),
+      #
+      firstPsizeEuctr = mapply(
+        function(x, y, z) {
+          #
+          if (!is.data.frame(x)) return(NA_integer_) else x <- x[y, ]
+          if (!any(grepl("ReportingGroups", names(x)))) return(NA_integer_)
+          #
+          o <- x$subjectAnalysisSetReportingGroups
+          if (!is.null(o)) {
+            o <- o[1][[1]][[1]] # subjectAnalysisSetReportingGroup
+            if (is.data.frame(o)) {
+              o <- o[o$id %in% z, ]
+              o <- o[["subjects"]]
+              return(sum(as.numeric(o)))
+            } else return(NA_integer_)
+          }
+          #
+          o <- x$armReportingGroups
+          if (!is.null(o)) {
+            browser() # TODO
+            o <- o[1][[1]][[1]] # TODO armReportingGroup
+            if (is.data.frame(o)) {
+              o <- o[o$id %in% z, ]
+              o <- o[["subjects"]]
+              return(sum(as.numeric(o)))
+            } else return(NA_integer_)
+          }
+          #
+          return(NA_integer_) # just in case
+        },
+        x = .data$endPoints.endPoint,
+        y = .data$isPrimEpsEuctr,
+        z = .data$firstPvalueGroups,
+        SIMPLIFY = TRUE, USE.NAMES = FALSE)
+      #
+    ) %>%
+    select(!c("endPoints.endPoint", "endPoints.endPoint.type.value",
+              "isPrimEpsEuctr", "primStatsEuctr",
+              "firstPvalueGroups")) -> df
 
 
   #### . CTGOV ####
   df %>%
     dplyr::mutate(
-      #
-      firstPvalueCtgov = vapply(
-        .data$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value,
-        FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
-        numeric(1L), USE.NAMES = FALSE),
-      #
-      firstPmethodCtgov = vapply(
-        .data$clinical_results.outcome_list.outcome.analysis_list.analysis.method,
-        FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
-        character(1L), USE.NAMES = FALSE),
       #
       # only use information from the first primary endpoint
       isPrimEpsCtgov = sapply(
@@ -185,70 +212,188 @@ f.primaryEndpointResults <- function(df = NULL) {
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "Primary")[1],
         USE.NAMES = FALSE),
       #
-      firstPsizeCtgov = mapply(
-        function(x, y) {
-          if (!is.data.frame(x)) return(NA_integer_)
-          x <- x[y, ]
-          # "measure.analyzed_list.analyzed.count_list.count.@attributes.value"
-          if (any(grepl("measure", names(x)))) {
-            x <- unlist(x)
-            y <- grepl("measure.analyzed_list.analyzed.count_list.count.@attributes.value[0-9]*", names(x))
-            if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(gsub(",", "", x[y]))))
-          } else return(NA_integer_)
-        },
+      primStatsCtgov = mapply(
+        function(x, y) if (is.na(y)) NA else x[y, ],
         x = .data$clinical_results.outcome_list.outcome,
         y = .data$isPrimEpsCtgov,
-        SIMPLIFY = TRUE, USE.NAMES = FALSE
+        SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      #
+      firstPvalueCtgov = sapply(
+        .data$primStatsCtgov,
+        function(x) {
+          if (is.null(x)) return(NA_real_)
+          o <- unlist(x)
+          o <- unname(o["analysis_list.analysis.p_value"])
+          as.numeric(trimws(gsub("[^0-9.,]", "", o)))
+        }),
+      #
+      firstPmethodCtgov = sapply(
+        .data$primStatsCtgov,
+        function(x) {
+          if (is.null(x)) return(NA_character_)
+          o <- unlist(x)
+          o <- unname(o["analysis_list.analysis.method"])
+          normalise_string(o)
+          }),
+      #
+      firstPsizeCtgov = sapply(
+        .data$primStatsCtgov,
+        function(x, y) {
+          if (is.atomic(x)) return(NA_integer_)
+          if (!any(grepl("measure", names(x)))) return(NA_integer_)
+          x <- unlist(x)
+          y <- grepl("measure.analyzed_list.analyzed.count_list.count.@attributes.value[0-9]*", names(x))
+          if (!length(y) || !any(y)) return(NA_integer_)
+          return(sum(as.integer(gsub(",", "", x[y]))))
+
+        }
       )
       #
-    ) -> df
+      # firstPvalueCtgov = lapply(
+      #   .data$clinical_results.outcome_list.outcome.analysis_list.analysis.p_value,
+      #   FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]])))),
+      # #
+      # firstPvalueCtgov = mapply(
+      #   function(x, y) if_else(length(x) < y, x[y], NA_real_),
+      #   x = .data$firstPvalueCtgov,
+      #   y = .data$isPrimEpsCtgov,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      # #
+      # #
+      # firstPmethodCtgov = lapply(
+      #   .data$clinical_results.outcome_list.outcome.analysis_list.analysis.method,
+      #   FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]])),
+      # #
+      # firstPmethodCtgov = mapply(
+      #   function(x, y) if_else(length(x) < y, x[y], NA_character_),
+      #   x = .data$firstPmethodCtgov,
+      #   y = .data$isPrimEpsCtgov,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      #
+      #
+      # firstPsizeCtgov = mapply(
+      #   function(x, y) {
+      #     if (!is.data.frame(x)) return(NA_integer_)
+      #     x <- x[y, ]
+      #     # "measure.analyzed_list.analyzed.count_list.count.@attributes.value"
+      #     if (any(grepl("measure", names(x)))) {
+      #       x <- unlist(x)
+      #       y <- grepl("measure.analyzed_list.analyzed.count_list.count.@attributes.value[0-9]*", names(x))
+      #       if (!length(y) || !any(y)) return(NA_integer_)
+      #       return(sum(as.numeric(gsub(",", "", x[y]))))
+      #     } else return(NA_integer_)
+      #   },
+      #   x = .data$clinical_results.outcome_list.outcome,
+      #   y = .data$isPrimEpsCtgov,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE
+      # )
+      #
+    ) %>%
+    select(!c("clinical_results.outcome_list.outcome.type",
+              "clinical_results.outcome_list.outcome",
+              "isPrimEpsCtgov", "primStatsCtgov")) -> df
 
 
   #### . CTGOV2 ####
   df %>%
     dplyr::mutate(
       #
-      firstPvalueCtgov2 = vapply(
-        .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue,
-        FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]][1]))),
-        numeric(1L), USE.NAMES = FALSE),
-      #
-      firstPmethodCtgov2 = vapply(
-        .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod,
-        FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]][1]),
-        character(1L), USE.NAMES = FALSE),
-      #
       # only use information from the first primary endpoint
       isPrimEpsCtgov2 = sapply(
         .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.type,
         function(x) which(stringi::stri_split_fixed(x, " / ")[[1]] == "PRIMARY")[1],
         USE.NAMES = FALSE),
-      #
-      firstPsizeCtgov2 = mapply(
-        function(x, y) {
-          if (!is.data.frame(x)) return(NA_integer_)
-          x <- x[y, ]
-          # "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value"
-          if (any(grepl("denoms", names(x)))) {
-            x <- unlist(x)
-            y <- grepl("denoms.counts.value[0-9]*", names(x))
-            if (!length(y) || !any(y)) return(NA_integer_)
-            return(sum(as.numeric(gsub(",", "", x[y]))))
-          } else return(NA_integer_)
-        },
+
+      primStatsCtgov2 = mapply(
+        function(x, y) if (is.na(y)) NA else x[y, ],
         x = .data$resultsSection.outcomeMeasuresModule.outcomeMeasures,
-        y = .data$isPrimEpsCtgov2,
-        SIMPLIFY = TRUE, USE.NAMES = FALSE
+        y = isPrimEpsCtgov2,
+        SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      #
+      firstPvalueCtgov2 = sapply(
+        primStatsCtgov2,
+        function(x) {
+          if (is.null(x)) return(NA_real_)
+          o <- unlist(x)
+          o <- unname(o["analyses.pValue"])
+          as.numeric(trimws(gsub("[^0-9.,]", "", o)))
+        }),
+      #
+      firstPmethodCtgov2 = sapply(
+        primStatsCtgov2,
+        function(x) {
+          if (is.null(x)) return(NA_character_)
+          o <- unlist(x)
+          o <- unname(o["analyses.statisticalMethod"])
+          normalise_string(o)
+        }),
+      #
+      firstPsizeCtgov2 = sapply(
+        primStatsCtgov2,
+        function(x, y) {
+          if (is.atomic(x)) return(NA_integer_)
+          if (!any(grepl("denoms", names(x)))) return(NA_integer_)
+          x <- unlist(x)
+          y <- grepl("denoms.counts.value[0-9]*", names(x))
+          if (!length(y) || !any(y)) return(NA_integer_)
+          return(sum(as.integer(gsub(",", "", x[y]))))
+        }
       )
       #
-    ) -> df
+      #
+      # firstPvalueCtgov2 = lapply(
+      #   .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue,
+      #   FUN = function(x) as.numeric(trimws(gsub("[^0-9.,]", "", stringi::stri_split_fixed(x, " / ")[[1]])))),
+      # #
+      # firstPvalueCtgov2 = mapply(
+      #   function(x, y) if_else(length(x) < y, x[y], NA_real_),
+      #   x = .data$firstPvalueCtgov2,
+      #   y = .data$isPrimEpsCtgov2,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      # #
+      # #
+      # firstPmethodCtgov2 = lapply(
+      #   .data$resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod,
+      #   FUN = function(x) normalise_string(stringi::stri_split_fixed(x, " / ")[[1]])),
+      # #
+      # firstPmethodCtgov = mapply(
+      #   function(x, y) if_else(length(x) < y, x[y], NA_character_),
+      #   x = .data$firstPmethodCtgov2,
+      #   y = .data$isPrimEpsCtgov2,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE),
+      # #
+      # #
+      # firstPsizeCtgov2 = mapply(
+      #   function(x, y) {
+      #     if (!is.data.frame(x)) return(NA_integer_)
+      #     x <- x[y, ]
+      #     # "resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.value"
+      #     if (any(grepl("denoms", names(x)))) {
+      #       x <- unlist(x)
+      #       y <- grepl("denoms.counts.value[0-9]*", names(x))
+      #       if (!length(y) || !any(y)) return(NA_integer_)
+      #       return(sum(as.numeric(gsub(",", "", x[y]))))
+      #     } else return(NA_integer_)
+      #   },
+      #   x = .data$resultsSection.outcomeMeasuresModule.outcomeMeasures,
+      #   y = .data$isPrimEpsCtgov2,
+      #   SIMPLIFY = TRUE, USE.NAMES = FALSE
+      # )
+      #
+    ) %>%
+    select(!c("resultsSection.outcomeMeasuresModule.outcomeMeasures.type",
+              "resultsSection.outcomeMeasuresModule.outcomeMeasures",
+              "isPrimEpsCtgov2", "primStatsCtgov2")) -> df
 
 
   #### . ISRCTN ####
 
+  # no data fields, see above
+
 
   #### . CTIS ####
+
+  # no data fields, see above
 
 
   #### merge ####
