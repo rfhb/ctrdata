@@ -75,7 +75,7 @@ by the search implementations in registers include the 'intervention' and
 }
 \examples{
 
-urls <- ctrGenerateQueries(
+ctrGenerateQueries(
   searchPhrase = "antibody AND covid",
   recruitment = "ongoing")
 
@@ -105,7 +105,7 @@ urls <- ctrGenerateQueries(
 
 \dontrun{
 # count trials found
-sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
 
 # load queries into database collection
 dbc <- nodbi::src_sqlite(collection = "my_collection")

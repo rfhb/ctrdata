@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_primaryEndpointResults.R
 \name{f.primaryEndpointResults}
 \alias{f.primaryEndpointResults}
-\title{Calculate details of a study's primary endpoint analysis and testing}
+\title{Calculate details of a study's primary endpoint statistical testing}
 \usage{
 f.primaryEndpointResults(df = NULL)
 }
@@ -19,10 +19,11 @@ data frame with columns `_id` and new columns:
 }
 \description{
 Trial concept calculated: Calculates several results-related elements of
-the primary analysis of the primary endpoint. Requires loading
+the primary statistical analysis of the primary endpoint. Requires loading
 results-related information.
 For CTIS and ISRCTN, such information is not available in structured format.
-Recommended to be combined with .controlType, .sampleSize etc. for analyses.
+Recommended to be combined with \link{f.controlType}, \link{f.sampleSize},
+\link{f.assignmentType} and other \link{ctrdata-trial-concepts} for analyses.
 }
 \examples{
 # fields needed

@@ -8,7 +8,8 @@
 #' the primary statistical analysis of the primary endpoint. Requires loading
 #' results-related information.
 #' For CTIS and ISRCTN, such information is not available in structured format.
-#' Recommended to be combined with .controlType, .sampleSize etc. for analyses.
+#' Recommended to be combined with \link{f.controlType}, \link{f.sampleSize},
+#' \link{f.assignmentType} and other \link{ctrdata-trial-concepts} for analyses.
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can

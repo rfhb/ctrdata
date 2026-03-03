@@ -54,7 +54,7 @@ id <- "2014-003556-31-SE"
 id <- "76463425"
 id <- "ISRCTN76463425"
 id <- "NCT03431558"
-id <- "2022-501142-30-00"
+id <- "2023-505613-24-00"
 
 # note these ids also work with
 # ctrGetQueryUrl(url = id) and
