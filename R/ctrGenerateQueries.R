@@ -72,7 +72,8 @@
 #'
 #' # For CTIS to accept such a search URL and show results,
 #' # consider the extension, script and documentation at
-#' # https://rfhb.github.io/ctrdata/index.html#id_2-script-to-automatically-copy-users-query-from-web-browser
+#' # https://rfhb.github.io/ctrdata/index.html#
+#' # id_2-script-to-automatically-copy-users-query-from-web-browser
 #'
 #' # find potential research platform and platform trials
 #' urls <- ctrGenerateQueries(
@@ -463,7 +464,7 @@ ctrGenerateQueries <- function(
     startAfter <- queryDate(startAfter)
     message(
       "Parameter 'startAfter = \"", startAfter, "\"' in EUCTR refers to ",
-      "the date wheh the trial was first entered into the EudraCT database")
+      "the date when the trial was first entered into the EudraCT database")
 
     urls["CTGOV2"] <- paste0(
       urls["CTGOV2"], "&start=", startAfter, "_")

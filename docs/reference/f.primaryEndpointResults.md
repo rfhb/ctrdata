@@ -1,10 +1,16 @@
-# Calculate details of a study's primary endpoint analysis and testing
+# Calculate details of a study's primary endpoint statistical testing
 
 Trial concept calculated: Calculates several results-related elements of
-the primary analysis of the primary endpoint. Requires loading
-results-related information. For CTIS and ISRCTN, such information is
-not available in structured format. Recommended to be combined with
-.controlType, .sampleSize etc. for analyses.
+the primary statistical analysis of the primary endpoint. Requires
+loading results-related information. For CTIS and ISRCTN, such
+information is not available in structured format. Recommended to be
+combined with
+[f.controlType](https://rfhb.github.io/ctrdata/reference/f.controlType.md),
+[f.sampleSize](https://rfhb.github.io/ctrdata/reference/f.sampleSize.md),
+[f.assignmentType](https://rfhb.github.io/ctrdata/reference/f.assignmentType.md)
+and other
+[ctrdata-trial-concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.md)
+for analyses.
 
 ## Usage
 
@@ -36,22 +42,15 @@ across assignment groups).
 # fields needed
 f.primaryEndpointResults()
 #> $euctr
-#> [1] "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.value"       
-#> [2] "endPoints.endPoint.statisticalAnalyses.statisticalAnalysis.statisticalHypothesisTest.method.value"
-#> [3] "endPoints.endPoint.type.value"                                                                    
-#> [4] "endPoints.endPoint"                                                                               
+#> [1] "endPoints.endPoint.type.value" "endPoints.endPoint"           
 #> 
 #> $ctgov
-#> [1] "clinical_results.outcome_list.outcome.analysis_list.analysis.method" 
-#> [2] "clinical_results.outcome_list.outcome.analysis_list.analysis.p_value"
-#> [3] "clinical_results.outcome_list.outcome.type"                          
-#> [4] "clinical_results.outcome_list.outcome"                               
+#> [1] "clinical_results.outcome_list.outcome.type"
+#> [2] "clinical_results.outcome_list.outcome"     
 #> 
 #> $ctgov2
-#> [1] "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.pValue"           
-#> [2] "resultsSection.outcomeMeasuresModule.outcomeMeasures.analyses.statisticalMethod"
-#> [3] "resultsSection.outcomeMeasuresModule.outcomeMeasures.type"                      
-#> [4] "resultsSection.outcomeMeasuresModule.outcomeMeasures"                           
+#> [1] "resultsSection.outcomeMeasuresModule.outcomeMeasures.type"
+#> [2] "resultsSection.outcomeMeasuresModule.outcomeMeasures"     
 #> 
 #> $isrctn
 #> NULL
@@ -68,23 +67,22 @@ trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.primaryEndpointResults",
   con = dbc)
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-#> Querying database (12 fields)...
+#> Querying database (6 fields)...
 #> Calculating f.primaryEndpointResults...                            
+
 trialsDf
-#> # A tibble: 11 × 4
-#>    `_id`    .primaryEndpointFirs…¹ .primaryEndpointFirs…² .primaryEndpointFirs…³
-#>    <chr>                     <dbl> <chr>                                   <dbl>
-#>  1 2012-00…                 0.0134 other                                     185
-#>  2 2012-00…                 0.0134 other                                     185
-#>  3 2014-00…                NA      NA                                         61
-#>  4 2014-00…                NA      NA                                         61
-#>  5 NCT0061…                NA      NA                                         11
-#>  6 NCT0112…                NA      NA                                         60
-#>  7 NCT0148…                NA      NA                                          8
-#>  8 NCT0150…                NA      NA                                         14
-#>  9 NCT0159…                NA      NA                                         54
-#> 10 NCT0262…                NA      NA                                         NA
-#> 11 NCT0332…                NA      NA                                         NA
+#> # A tibble: 9 × 4
+#>   `_id`     .primaryEndpointFirs…¹ .primaryEndpointFirs…² .primaryEndpointFirs…³
+#>   <chr>                      <dbl> <chr>                                   <dbl>
+#> 1 2016-003…                NA      NA                                         NA
+#> 2 2019-000…                NA      NA                                         NA
+#> 3 2019-002…                 0.0001 ancova                                      0
+#> 4 NCT00506…                NA      NA                                        168
+#> 5 NCT00567…                 0.0082 logrank                                   355
+#> 6 NCT00716…                NA      NA                                        104
+#> 7 NCT01035…                NA      NA                                        107
+#> 8 NCT01305…                NA      NA                                        182
+#> 9 NCT01955…                 0.959  mixedmodelsanalysis                       922
 #> # ℹ abbreviated names: ¹​.primaryEndpointFirstPvalue,
 #> #   ²​.primaryEndpointFirstPmethod, ³​.primaryEndpointFirstPsize
 ```

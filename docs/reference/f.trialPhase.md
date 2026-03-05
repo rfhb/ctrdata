@@ -60,19 +60,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (9 fields)...
 #> Calculating f.trialPhase...                            
+
 trialsDf
-#> # A tibble: 31 × 2
+#> # A tibble: 22 × 2
 #>    `_id`             .trialPhase
 #>    <chr>             <ord>      
 #>  1 12949496          phase 3    
 #>  2 13281214          phase 3    
 #>  3 17473621          phase 3    
-#>  4 2012-003632-23-CZ phase 2    
-#>  5 2012-003632-23-SE phase 2+3  
-#>  6 2014-002606-20-PT phase 3    
-#>  7 2014-003556-31-GB phase 2    
-#>  8 2014-003556-31-SE phase 2    
-#>  9 2022-500244-37-00 phase 2    
-#> 10 2022-501142-30-00 phase 4    
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE phase 3    
+#>  5 2019-000338-20-ES phase 2+3  
+#>  6 2019-002663-10-ES phase 2+3  
+#>  7 2022-500244-37-00 phase 2    
+#>  8 2023-505613-24-00 phase 2    
+#>  9 2023-508143-51-01 phase 4    
+#> 10 2024-510663-34-00 phase 2    
+#> # ℹ 12 more rows
 ```

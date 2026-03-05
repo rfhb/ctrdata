@@ -86,17 +86,16 @@ dbc <- nodbi::src_sqlite(
 dbFindIdsUniqueTrials(con = dbc)[1:10]
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 31 found in collection
+#> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - 2 EUCTR _id were not preferred EU Member State record for 11 trials
-#> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 29 records in collection "my_trials"
+#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 22 records in collection "my_trials"
 #>              ISRCTN              ISRCTN              ISRCTN               EUCTR 
-#>          "12949496"          "13281214"          "17473621" "2012-003632-23-SE" 
+#>          "12949496"          "13281214"          "17473621" "2016-003884-20-DE" 
 #>               EUCTR               EUCTR                CTIS                CTIS 
-#> "2014-002606-20-PT" "2014-003556-31-SE" "2022-500244-37-00" "2022-501142-30-00" 
+#> "2019-000338-20-ES" "2019-002663-10-ES" "2022-500244-37-00" "2023-505613-24-00" 
 #>                CTIS                CTIS 
-#> "2023-505613-24-00" "2023-508143-51-01" 
+#> "2023-508143-51-01" "2024-510663-34-00" 
 
 # alternative as of ctrdata version 1.21.0,
 # using defaults of dbFindIdsUniqueTrials()
@@ -107,30 +106,30 @@ df <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (2 fields)...
 #> Calculating f.isUniqueTrial...                            
+
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 31 found in collection
+#> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - 2 EUCTR _id were not preferred EU Member State record for 11 trials
-#> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 29 records in collection "my_trials"
+#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 22 records in collection "my_trials"
 
 # using base R
 df[df[[".isUniqueTrial"]], ]
-#> # A tibble: 29 × 3
+#> # A tibble: 22 × 3
 #>    `_id`             keyword .isUniqueTrial
 #>    <chr>             <chr>   <lgl>         
 #>  1 12949496          NA      TRUE          
 #>  2 13281214          NA      TRUE          
 #>  3 17473621          NA      TRUE          
-#>  4 2012-003632-23-SE NA      TRUE          
-#>  5 2014-002606-20-PT NA      TRUE          
-#>  6 2014-003556-31-SE NA      TRUE          
+#>  4 2016-003884-20-DE NA      TRUE          
+#>  5 2019-000338-20-ES NA      TRUE          
+#>  6 2019-002663-10-ES NA      TRUE          
 #>  7 2022-500244-37-00 NA      TRUE          
-#>  8 2022-501142-30-00 NA      TRUE          
-#>  9 2023-505613-24-00 NA      TRUE          
-#> 10 2023-508143-51-01 NA      TRUE          
-#> # ℹ 19 more rows
+#>  8 2023-505613-24-00 NA      TRUE          
+#>  9 2023-508143-51-01 NA      TRUE          
+#> 10 2024-510663-34-00 NA      TRUE          
+#> # ℹ 12 more rows
 
 if (FALSE) { # \dontrun{
 library(dplyr)

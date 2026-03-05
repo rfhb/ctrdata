@@ -107,22 +107,23 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (25 fields)...
 #> Calculating f.likelyPlatformTrial...                            
+
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 31 found in collection
+#> , 22 found in collection
 trialsDf
-#> # A tibble: 31 × 4
+#> # A tibble: 22 × 4
 #>    `_id`           .likelyPlatformTrial .likelyRelatedTrials .maybeRelatedTrials
 #>    <chr>           <lgl>                <list>               <list>             
 #>  1 12949496        FALSE                <chr [1]>            <chr [1]>          
 #>  2 13281214        FALSE                <chr [1]>            <chr [1]>          
 #>  3 17473621        FALSE                <lgl [1]>            <chr [1]>          
-#>  4 2012-003632-23… FALSE                <chr [2]>            <chr [1]>          
-#>  5 2012-003632-23… FALSE                <chr [2]>            <chr [1]>          
-#>  6 2014-002606-20… FALSE                <chr [1]>            <chr [1]>          
-#>  7 2014-003556-31… FALSE                <chr [2]>            <chr [1]>          
-#>  8 2014-003556-31… FALSE                <chr [2]>            <chr [1]>          
-#>  9 2022-500244-37… FALSE                <chr [1]>            <chr [1]>          
-#> 10 2022-501142-30… FALSE                <lgl [1]>            <chr [1]>          
-#> # ℹ 21 more rows
+#>  4 2016-003884-20… FALSE                <chr [2]>            <chr [1]>          
+#>  5 2019-000338-20… FALSE                <chr [2]>            <chr [1]>          
+#>  6 2019-002663-10… FALSE                <chr [2]>            <chr [1]>          
+#>  7 2022-500244-37… FALSE                <chr [1]>            <chr [1]>          
+#>  8 2023-505613-24… FALSE                <chr [2]>            <chr [1]>          
+#>  9 2023-508143-51… FALSE                <chr [1]>            <chr [1]>          
+#> 10 2024-510663-34… FALSE                <chr [2]>            <chr [1]>          
+#> # ℹ 12 more rows
 ```

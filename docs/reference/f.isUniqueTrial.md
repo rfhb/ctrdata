@@ -41,26 +41,26 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (1 fields)...
 #> Calculating f.isUniqueTrial...                            
+
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 31 found in collection
+#> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - 2 EUCTR _id were not preferred EU Member State record for 11 trials
-#> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 29 records in collection "my_trials"
+#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 22 records in collection "my_trials"
 trialsDf
-#> # A tibble: 31 × 3
+#> # A tibble: 22 × 3
 #>    `_id`             ctrname .isUniqueTrial
 #>    <chr>             <chr>   <lgl>         
 #>  1 12949496          ISRCTN  TRUE          
 #>  2 13281214          ISRCTN  TRUE          
 #>  3 17473621          ISRCTN  TRUE          
-#>  4 2012-003632-23-CZ EUCTR   TRUE          
-#>  5 2012-003632-23-SE EUCTR   FALSE         
-#>  6 2014-002606-20-PT EUCTR   TRUE          
-#>  7 2014-003556-31-GB EUCTR   FALSE         
-#>  8 2014-003556-31-SE EUCTR   TRUE          
-#>  9 2022-500244-37-00 CTIS    TRUE          
-#> 10 2022-501142-30-00 CTIS    TRUE          
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE EUCTR   TRUE          
+#>  5 2019-000338-20-ES EUCTR   TRUE          
+#>  6 2019-002663-10-ES EUCTR   TRUE          
+#>  7 2022-500244-37-00 CTIS    TRUE          
+#>  8 2023-505613-24-00 CTIS    TRUE          
+#>  9 2023-508143-51-01 CTIS    TRUE          
+#> 10 2024-510663-34-00 CTIS    TRUE          
+#> # ℹ 12 more rows
 ```

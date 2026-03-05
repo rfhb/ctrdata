@@ -3,9 +3,6 @@
 From high-level search terms provided by the user, generate specific
 queries for each registers with which ctrdata works, see
 [ctrdata-registers](https://rfhb.github.io/ctrdata/reference/ctrdata-registers.md).
-Search terms that are expanded to concepts such as from MeSH and MedDRA
-by the search implementations in registers include the 'intervention'
-and 'condition'. Logical operators only work with 'searchPhrase'.
 
 ## Usage
 
@@ -32,9 +29,8 @@ ctrGenerateQueries(
 - searchPhrase:
 
   String with optional logical operators ("AND", "OR") that will be
-  searched in selected fields of registers that can handle logical
-  operators (general or title fields), should not include quotation
-  marks
+  searched in selected fields of registers (general or title fields),
+  should not include quotation marks
 
 - condition:
 
@@ -97,42 +93,53 @@ ctrGenerateQueries(
 
 Named vector of URLs for finding trials in the registers and as input to
 functions
-[ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
-and
+[ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md),
 [ctrOpenSearchPagesInBrowser](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)
+and [browseURL](https://rdrr.io/r/utils/browseURL.html)
+
+## Details
+
+Search terms that are expanded to concepts such as from MeSH and MedDRA
+by the search implementations in registers include the 'intervention'
+and 'condition'. Logical operators only work in parameter
+'searchPhrase'.
 
 ## Examples
 
 ``` r
 
+ctrGenerateQueries(
+  searchPhrase = "antibody AND covid",
+  recruitment = "ongoing")
+#>                                                                                                                                                                                                                                                                                                                                                                                 EUCTR 
+#>                                                                                                                                                                             "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"antibody\" AND \"covid\"&status=ongoing&status=trial-now-transitioned&status=suspended-by-ca&status=temporarily-halted&status=restarted" 
+#>                                                                                                                                                                                                                                                                                                                                                                                ISRCTN 
+#>                                                                                                                           "https://www.isrctn.com/search?q=\"antibody\" AND \"covid\"&filters=trialStatus:ongoing,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV" 
+#>                                                                                                                                                                                                                                                                                                                                                                                CTGOV2 
+#>                                                                                                                                                                         "https://clinicaltrials.gov/search?term=(\"antibody\" AND \"covid\") AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT))&intr=Drug OR Biological&aggFilters=status:act rec,studyType:int" 
+#>                                                                                                                                                                                                                                                                                                                                                                          CTGOV2expert 
+#> "https://clinicaltrials.gov/expert-search?term=(\"antibody\" AND \"covid\") AND (AREA[OverallStatus]\"ACTIVE_NOT_RECRUITING\" OR AREA[OverallStatus]\"ENROLLING_BY_INVITATION\" OR AREA[OverallStatus]\"RECRUITING\") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))" 
+#>                                                                                                                                                                                                                                                                                                                                                                                  CTIS 
+#>                                                                                                                                                                                                                                                           "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody, covid\",\"status\":[2,3,4,6,7]}" 
+
 urls <- ctrGenerateQueries(
   intervention = "antibody",
   phase = "phase 3",
-  startAfter = "2000-01-01")
+  population = "P+A",
+  startAfter = "12/31/2020",
+  completedBefore = "2025-01-01")
+#> Parameter 'population = "P+A"' cannot be used with ISRCTN to indicate either population can be recruited
+#> Parameter 'startAfter = "2020-12-31"' in EUCTR refers to the date when the trial was first entered into the EudraCT database
+#> Parameter 'completedBefore = "2025-01-01"' cannot be used for queries in EUCTR
 
 # open queries in register web interface
-sapply(urls, ctrOpenSearchPagesInBrowser)
-#> * Found search query from EUCTR: query=antibody&phase=phase-three&dateFrom=2000-01-01
-#> * Found search query from ISRCTN: &q=&filters=intervention:antibody,phase:Phase III,GT+overallStartDate:2000-01-01,primaryStudyDesign:Interventional
-#> * Found search query from CTGOV2: intr=(antibody) AND (Drug OR Biological)&start=2000-01-01_&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:3,studyType:int
-#> * Found search query from CTGOV2: term=AREA[InterventionSearch]"antibody" AND (AREA[Phase]"PHASE3") AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
-#> * Found search query from CTIS: searchCriteria={"containAll":"antibody","trialPhaseCode":[5],"eeaStartDateFrom":"2000-01-01"}
-#>                                                                                                                                                                                                                                                                                                                    EUCTR 
-#>                                                                                                                                                                                                      "https://www.clinicaltrialsregister.eu/ctr-search/search?query=antibody&phase=phase-three&dateFrom=2000-01-01#tabs" 
-#>                                                                                                                                                                                                                                                                                                                   ISRCTN 
-#>                                                                                                                                                                       "https://www.isrctn.com/search?&q=&filters=intervention:antibody,phase:Phase III,GT+overallStartDate:2000-01-01,primaryStudyDesign:Interventional" 
-#>                                                                                                                                                                                                                                                                                                                   CTGOV2 
-#>                                                                                                                   "https://clinicaltrials.gov/search?intr=(antibody) AND (Drug OR Biological)&start=2000-01-01_&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:3,studyType:int" 
-#>                                                                                                                                                                                                                                                                                                             CTGOV2expert 
-#> "https://clinicaltrials.gov/expert-search?term=AREA[InterventionSearch]\"antibody\" AND (AREA[Phase]\"PHASE3\") AND AREA[StartDate]RANGE[2000-01-01,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))" 
-#>                                                                                                                                                                                                                                                                                                                     CTIS 
-#>                                                                                                                                                                 "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAll\":\"antibody\",\"trialPhaseCode\":[5],\"eeaStartDateFrom\":\"2000-01-01\"}" 
+sapply(urls, utils::browseURL)
+#> Error in FUN(X[[i]], ...): 'browser' must be a non-empty character string
 
-# For CTIS to accept such a search URL and show results, consider installing
-# the Tampermonkey browser extension from https://www.tampermonkey.net/,
-# click on the extension icon, "Create a new script", "Utility" and then
-# "Import from this URL":
-# https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js
+# For CTIS to accept such a search URL and show results,
+# consider the extension, script and documentation at
+# https://rfhb.github.io/ctrdata/index.html#
+# id_2-script-to-automatically-copy-users-query-from-web-browser
 
 # find potential research platform and platform trials
 urls <- ctrGenerateQueries(
@@ -143,33 +150,11 @@ urls <- ctrGenerateQueries(
  phase = "phase 3",
  startAfter = "01/31/2010",
  countries = c("DE", "US", "United Kingdom"))
-
-# open queries in register web interface
-sapply(urls, ctrOpenSearchPagesInBrowser)
-#> * Found search query from EUCTR: query="basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"&phase=phase-three&dateFrom=2010-01-31&country=de&country=gb&country=3rd
-#> * Found search query from ISRCTN: q="basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study"&filters=phase:Phase III,GT+overallStartDate:2010-01-31,primaryStudyDesign:Interventional,recruitmentCountry:Germany,recruitmentCountry:United Kingdom,recruitmentCountry:United States of America
-#> * Found search query from CTGOV2: term=("basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study") AND (AREA[Phase]"PHASE3") AND AREA[StartDate]RANGE[2010-01-31,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL)) AND (AREA[LocationCountry]"Germany" OR AREA[LocationCountry]"United Kingdom" OR AREA[LocationCountry]"United States of America")
-#> * Found search query from CTGOV2: term=("basket" OR "platform" OR "umbrella" OR "master protocol" OR "multiarm" OR "multistage" OR "subprotocol" OR "substudy" OR "multi-arm" OR "multi-stage" OR "sub-protocol" OR "sub-study") AND (AREA[Phase]"PHASE3") AND AREA[StartDate]RANGE[2010-01-31,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL)) AND (AREA[LocationCountry]"Germany" OR AREA[LocationCountry]"United Kingdom" OR AREA[LocationCountry]"United States of America")
-#> * Found search query from CTIS: searchCriteria={"containAny":"basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study","trialPhaseCode":[5],"eeaStartDateFrom":"2010-01-31","msc":[276,826,840]}
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        EUCTR 
-#>                                                                                                                                                                                                                                                                                 "https://www.clinicaltrialsregister.eu/ctr-search/search?query=\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\"&phase=phase-three&dateFrom=2010-01-31&country=de&country=gb&country=3rd#tabs" 
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ISRCTN 
-#>                                                                                                                                                                                          "https://www.isrctn.com/search?q=\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\"&filters=phase:Phase III,GT+overallStartDate:2010-01-31,primaryStudyDesign:Interventional,recruitmentCountry:Germany,recruitmentCountry:United Kingdom,recruitmentCountry:United States of America" 
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       CTGOV2 
-#> "https://clinicaltrials.gov/expert-search?term=(\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\") AND (AREA[Phase]\"PHASE3\") AND AREA[StartDate]RANGE[2010-01-31,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL)) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"United Kingdom\" OR AREA[LocationCountry]\"United States of America\")" 
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 CTGOV2expert 
-#> "https://clinicaltrials.gov/expert-search?term=(\"basket\" OR \"platform\" OR \"umbrella\" OR \"master protocol\" OR \"multiarm\" OR \"multistage\" OR \"subprotocol\" OR \"substudy\" OR \"multi-arm\" OR \"multi-stage\" OR \"sub-protocol\" OR \"sub-study\") AND (AREA[Phase]\"PHASE3\") AND AREA[StartDate]RANGE[2010-01-31,MAX] AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL)) AND (AREA[LocationCountry]\"Germany\" OR AREA[LocationCountry]\"United Kingdom\" OR AREA[LocationCountry]\"United States of America\")" 
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         CTIS 
-#>                                                                                                                                                                                                                                                                                                                              "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"containAny\":\"basket, platform, umbrella, master protocol, multiarm, multistage, subprotocol, substudy, multi-arm, multi-stage, sub-protocol, sub-study\",\"trialPhaseCode\":[5],\"eeaStartDateFrom\":\"2010-01-31\",\"msc\":[276,826,840]}" 
-
-urls <- ctrGenerateQueries(
-  searchPhrase = "antibody AND covid",
-  recruitment = "completed",
-  )
+#> Parameter 'startAfter = "2010-01-31"' in EUCTR refers to the date when the trial was first entered into the EudraCT database
 
 if (FALSE) { # \dontrun{
 # count trials found
-sapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
+lapply(urls, ctrLoadQueryIntoDb, only.count = TRUE)
 
 # load queries into database collection
 dbc <- nodbi::src_sqlite(collection = "my_collection")

@@ -5,10 +5,10 @@
 - **Ralf Herold**. Author, maintainer.
   [](https://orcid.org/0000-0002-8148-6748)
 
-- **Marek Kubica**. Copyright holder.  
+- **Marek Kubica**. Copyright holder.\
   node-xml2js library
 
-- **Ivan Bozhanov**. Copyright holder.  
+- **Ivan Bozhanov**. Copyright holder.\
   jstree library
 
 ## Citation

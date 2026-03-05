@@ -71,19 +71,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (18 fields)...
 #> Calculating f.sampleSize...                            
+
 trialsDf
-#> # A tibble: 31 × 2
+#> # A tibble: 22 × 2
 #>    `_id`             .sampleSize
 #>    <chr>                   <int>
 #>  1 12949496                    9
 #>  2 13281214                   60
 #>  3 17473621                  100
-#>  4 2012-003632-23-CZ          45
-#>  5 2012-003632-23-SE          45
-#>  6 2014-002606-20-PT         300
-#>  7 2014-003556-31-GB          76
-#>  8 2014-003556-31-SE          76
-#>  9 2022-500244-37-00         440
-#> 10 2022-501142-30-00         520
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE         100
+#>  5 2019-000338-20-ES         115
+#>  6 2019-002663-10-ES         145
+#>  7 2022-500244-37-00         440
+#>  8 2023-505613-24-00          32
+#>  9 2023-508143-51-01          11
+#> 10 2024-510663-34-00          11
+#> # ℹ 12 more rows
 ```

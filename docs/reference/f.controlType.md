@@ -70,19 +70,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (14 fields)...
 #> Calculating f.controlType...                            
+
 trialsDf
-#> # A tibble: 31 × 3
+#> # A tibble: 22 × 3
 #>    `_id`             ctrname .controlType
 #>    <chr>             <chr>   <fct>       
 #>  1 12949496          ISRCTN  none        
 #>  2 13281214          ISRCTN  none        
 #>  3 17473621          ISRCTN  other       
-#>  4 2012-003632-23-CZ EUCTR   active      
-#>  5 2012-003632-23-SE EUCTR   active      
-#>  6 2014-002606-20-PT EUCTR   none        
-#>  7 2014-003556-31-GB EUCTR   active      
-#>  8 2014-003556-31-SE EUCTR   active      
-#>  9 2022-500244-37-00 CTIS    placebo     
-#> 10 2022-501142-30-00 CTIS    active      
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE EUCTR   active      
+#>  5 2019-000338-20-ES EUCTR   active      
+#>  6 2019-002663-10-ES EUCTR   active      
+#>  7 2022-500244-37-00 CTIS    placebo     
+#>  8 2023-505613-24-00 CTIS    active      
+#>  9 2023-508143-51-01 CTIS    active      
+#> 10 2024-510663-34-00 CTIS    active      
+#> # ℹ 12 more rows
 ```

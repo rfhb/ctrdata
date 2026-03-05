@@ -93,22 +93,23 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (6 fields)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.trialTitle...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.trialTitle...                            
+</span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 31 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 22 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             .trialTitle                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          The use of milrinone in neonates with persistent pulmonary…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          A randomised controlled trial of early targeted patent duc…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          The effectiveness of the “BLUI Blanket” light emitting dio…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2012-003632-23-CZ A Pilot, Open-label, Single Arm, Multicentre Study to Expl…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2012-003632-23-SE A Phase 2/3, Open-label, Single Arm, Multicentre Study to …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2014-002606-20-PT A RANDOMIZED, OPEN-LABEL, ACTIVE CONTROLLED, SAFETY AND DE…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2014-003556-31-GB Long-term Outcome of Children Enrolled in Study ROPP-2008-…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2014-003556-31-SE Long-term Outcome of Children Enrolled in Study ROPP-2008-…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2022-500244-37-00 A 4-week double-blind, randomized, placebo-controlled, pha…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2022-501142-30-00 Balloon + Oxytocin versus Oral Misoprostol to Induce labor…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 21 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          <span style="color: #949494;">"</span>The use of milrinone in neonates with persistent pulmonar…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          <span style="color: #949494;">"</span>A randomised controlled trial of early targeted patent du…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          <span style="color: #949494;">"</span>The effectiveness of the “BLUI Blanket” light emitting di…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2016-003884-20-DE <span style="color: #949494;">"</span>A Phase 3 Randomized, Active-comparator-controlled Clinic…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2019-000338-20-ES <span style="color: #949494;">"</span>A Phase 2/3 Open-label, Randomized, Active-controlled Cli…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2019-002663-10-ES <span style="color: #949494;">"</span>Escalating Dose and Randomized, Controlled Study of Nusin…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2022-500244-37-00 <span style="color: #949494;">"</span>A 4-week double-blind, randomized, placebo-controlled, ph…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2023-505613-24-00 <span style="color: #949494;">"</span>A Phase 2, Open-Label, Single-Arm, Sequential-Panel Study…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2023-508143-51-01 <span style="color: #949494;">"</span>Pulmonary function and sleep related disorders during cer…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2024-510663-34-00 <span style="color: #949494;">"</span>An open label, single arm study to evaluate single and mu…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

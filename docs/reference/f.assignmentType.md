@@ -61,19 +61,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (8 fields)...
 #> Calculating f.assignmentType...                            
+
 trialsDf
-#> # A tibble: 31 × 3
+#> # A tibble: 22 × 3
 #>    `_id`             ctrname .assignmentType
 #>    <chr>             <chr>   <fct>          
 #>  1 12949496          ISRCTN  R              
 #>  2 13281214          ISRCTN  R              
 #>  3 17473621          ISRCTN  R              
-#>  4 2012-003632-23-CZ EUCTR   NR             
-#>  5 2012-003632-23-SE EUCTR   NR             
-#>  6 2014-002606-20-PT EUCTR   R              
-#>  7 2014-003556-31-GB EUCTR   NR             
-#>  8 2014-003556-31-SE EUCTR   NR             
-#>  9 2022-500244-37-00 CTIS    NR             
-#> 10 2022-501142-30-00 CTIS    R              
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE EUCTR   R              
+#>  5 2019-000338-20-ES EUCTR   R              
+#>  6 2019-002663-10-ES EUCTR   R              
+#>  7 2022-500244-37-00 CTIS    NR             
+#>  8 2023-505613-24-00 CTIS    NR             
+#>  9 2023-508143-51-01 CTIS    NR             
+#> 10 2024-510663-34-00 CTIS    NR             
+#> # ℹ 12 more rows
 ```

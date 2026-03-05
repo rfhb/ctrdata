@@ -1,6 +1,7 @@
 # ctrdata 1.26.0.9000
 
 - `dbQueryHistory()` no more errors but returns NULL and a message with a non-existing or empty collection
+- Addressed marginal cases in `f.primaryEndpointResults()`
 - Added typing of newly appearing field in CTIS
 - Better error message when CTGOV2 query fails
 

@@ -90,14 +90,12 @@ dbGetFieldsIntoDf(
   fields = "b1_sponsor.b31_and_b32_status_of_the_sponsor",
   con = dbc)
 #> Querying database (1 fields)...
-#> # A tibble: 5 × 2
+#> # A tibble: 3 × 2
 #>   `_id`             b1_sponsor.b31_and_b32_status_of_the_sponsor
 #>   <chr>             <chr>                                       
-#> 1 2012-003632-23-CZ Commercial                                  
-#> 2 2012-003632-23-SE Commercial                                  
-#> 3 2014-002606-20-PT Commercial                                  
-#> 4 2014-003556-31-GB Commercial                                  
-#> 5 2014-003556-31-SE Commercial                                  
+#> 1 2016-003884-20-DE Commercial                                  
+#> 2 2019-000338-20-ES Commercial                                  
+#> 3 2019-002663-10-ES Commercial                                  
 
 # fields that are lists of string values are
 # returned by concatenating values with " / "
@@ -105,14 +103,10 @@ dbGetFieldsIntoDf(
   fields = "keyword",
   con = dbc)
 #> Querying database (1 fields)...
-#> # A tibble: 5 × 2
+#> # A tibble: 1 × 2
 #>   `_id`       keyword                                                           
 #>   <chr>       <chr>                                                             
-#> 1 NCT03280147 Neonate / Sepsis / Antibiotics / Duration                         
-#> 2 NCT03325439 Electroencephalographic neonatal seizures / Brivaracetam / Epilep…
-#> 3 NCT03431558 Bovine Lactoferrin, Neonatal infection, Low Birth Weight          
-#> 4 NCT04001712 early caffeine preterm                                            
-#> 5 NCT04041765 IgM-enriched Intravenous Immunoglobulin                           
+#> 1 NCT00506441 Chronic Kidney Disease / Dialysis / Hyperphosphatemia / Phosphate…
 
 # calculate new field(s) from data across trials
 df <- dbGetFieldsIntoDf(
@@ -122,20 +116,22 @@ df <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (25 fields)...
 #> Calculating f.statusRecruitment...                            
+
 #> Calculating f.isUniqueTrial...                            
+
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 31 found in collection
+#> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - 2 EUCTR _id were not preferred EU Member State record for 11 trials
-#> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 29 records in collection "my_trials"
+#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 22 records in collection "my_trials"
 #> Calculating f.startDate...                            
+
 
 table(df$.statusRecruitment, exclude = NULL)
 #> 
 #>     ongoing   completed ended early       other 
-#>           8          16           5           2 
+#>           5          16           0           1 
 
 if (FALSE) { # \dontrun{
 library(dplyr)

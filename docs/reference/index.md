@@ -68,7 +68,7 @@
 - [`f.primaryEndpointDescription()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointDescription.md)
   : Calculate details of a primary endpoint of a study
 - [`f.primaryEndpointResults()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointResults.md)
-  : Calculate details of a study's primary endpoint analysis and testing
+  : Calculate details of a study's primary endpoint statistical testing
 - [`f.resultsDate()`](https://rfhb.github.io/ctrdata/reference/f.resultsDate.md)
   : Calculate date of results of a study
 - [`f.sampleSize()`](https://rfhb.github.io/ctrdata/reference/f.sampleSize.md)

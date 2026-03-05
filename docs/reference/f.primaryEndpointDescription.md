@@ -65,19 +65,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (11 fields)...
 #> Calculating f.primaryEndpointDescription...                            
+
 trialsDf
-#> # A tibble: 31 × 2
+#> # A tibble: 22 × 2
 #>    `_id`             .primaryEndpointDescription
 #>    <chr>             <list>                     
 #>  1 12949496          <chr [1]>                  
 #>  2 13281214          <chr [1]>                  
 #>  3 17473621          <chr [1]>                  
-#>  4 2012-003632-23-CZ <chr [1]>                  
-#>  5 2012-003632-23-SE <chr [1]>                  
-#>  6 2014-002606-20-PT <chr [1]>                  
-#>  7 2014-003556-31-GB <chr [1]>                  
-#>  8 2014-003556-31-SE <chr [1]>                  
-#>  9 2022-500244-37-00 <chr [1]>                  
-#> 10 2022-501142-30-00 <chr [2]>                  
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE <chr [1]>                  
+#>  5 2019-000338-20-ES <chr [1]>                  
+#>  6 2019-002663-10-ES <chr [1]>                  
+#>  7 2022-500244-37-00 <chr [1]>                  
+#>  8 2023-505613-24-00 <chr [14]>                 
+#>  9 2023-508143-51-01 <chr [1]>                  
+#> 10 2024-510663-34-00 <chr [4]>                  
+#> # ℹ 12 more rows
 ```

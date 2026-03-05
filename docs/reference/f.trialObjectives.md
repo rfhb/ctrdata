@@ -81,19 +81,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (27 fields)...
 #> Calculating f.trialObjectives...                            
+
 trialsDf
-#> # A tibble: 31 × 2
+#> # A tibble: 22 × 2
 #>    `_id`             .trialObjectives
 #>    <chr>             <chr>           
 #>  1 12949496          S PD A          
 #>  2 13281214          E PD A          
 #>  3 17473621          NA              
-#>  4 2012-003632-23-CZ E S PD PK A D   
-#>  5 2012-003632-23-SE E S PD PK A D   
-#>  6 2014-002606-20-PT E S             
-#>  7 2014-003556-31-GB E S LT          
-#>  8 2014-003556-31-SE E S LT          
-#>  9 2022-500244-37-00 E S A           
-#> 10 2022-501142-30-00 E S A           
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE E S PK          
+#>  5 2019-000338-20-ES E S PK          
+#>  6 2019-002663-10-ES E S PK A        
+#>  7 2022-500244-37-00 E S A           
+#>  8 2023-505613-24-00 S PK A          
+#>  9 2023-508143-51-01 S PD            
+#> 10 2024-510663-34-00 S PK            
+#> # ℹ 12 more rows
 ```

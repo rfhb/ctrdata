@@ -108,14 +108,14 @@ For use in a Shiny app, see output and render functions in source code
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  (may take some time)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 31 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 22 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - 2 EUCTR _id were not preferred EU Member State record for 11 trials</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 29 records in collection "my_trials"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         CTGOV        ISRCTN        ISRCTN        ISRCTN         CTGOV </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "NCT03325439"    "80181452"    "61070850"    "13281214" "NCT03280147" </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 22 records in collection "my_trials"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               CTGOV              ISRCTN              ISRCTN </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "2019-000338-20-ES"       "NCT01955161"          "88261002"          "76463425" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "13281214" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># all such identifiers work</span></span></span>
 <span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2014-003556-31"</span></span></span>
@@ -123,7 +123,7 @@ For use in a Shiny app, see output and render functions in source code
 <span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"76463425"</span></span></span>
 <span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"ISRCTN76463425"</span></span></span>
 <span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"NCT03431558"</span></span></span>
-<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2022-501142-30-00"</span></span></span>
+<span class="r-in"><span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"2023-505613-24-00"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># note these ids also work with</span></span></span>
 <span class="r-in"><span><span class="co"># ctrGetQueryUrl(url = id) and</span></span></span>

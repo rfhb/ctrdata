@@ -62,19 +62,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (7 fields)...
 #> Calculating f.isMedIntervTrial...                            
+
 trialsDf
-#> # A tibble: 31 × 2
+#> # A tibble: 22 × 2
 #>    `_id`             .isMedIntervTrial
 #>    <chr>             <lgl>            
 #>  1 12949496          TRUE             
 #>  2 13281214          TRUE             
 #>  3 17473621          FALSE            
-#>  4 2012-003632-23-CZ TRUE             
-#>  5 2012-003632-23-SE TRUE             
-#>  6 2014-002606-20-PT TRUE             
-#>  7 2014-003556-31-GB TRUE             
-#>  8 2014-003556-31-SE TRUE             
-#>  9 2022-500244-37-00 TRUE             
-#> 10 2022-501142-30-00 TRUE             
-#> # ℹ 21 more rows
+#>  4 2016-003884-20-DE TRUE             
+#>  5 2019-000338-20-ES TRUE             
+#>  6 2019-002663-10-ES TRUE             
+#>  7 2022-500244-37-00 TRUE             
+#>  8 2023-505613-24-00 TRUE             
+#>  9 2023-508143-51-01 TRUE             
+#> 10 2024-510663-34-00 TRUE             
+#> # ℹ 12 more rows
 ```

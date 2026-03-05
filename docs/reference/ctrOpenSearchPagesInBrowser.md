@@ -69,9 +69,9 @@ for (r in seq_len(nrow(dbh))) {
 #> 
 #> Replace this URL:
 #> 
-#> term=AREA[MaximumAge]+RANGE[0+days,+28+days]&intr=Drugs,+Investigational&strd_s=01/01/2018&strd_e=01/01/2020&type=Intr&phase=2
+#> cond=MCI+OR+Alzheimer&type=Intr&intr=Investigational+Agent
 #> 
 #> with this URL:
 #> 
-#> https://clinicaltrials.gov/search?start=2018-01-01_2020-01-01&term=AREA[MaximumAge] RANGE[0 days, 28 days]&intr=Drugs, Investigational&aggFilters=phase:3,studyType:int
+#> https://clinicaltrials.gov/search?cond=MCI OR Alzheimer&intr=Investigational Agent&aggFilters=studyType:int
 ```

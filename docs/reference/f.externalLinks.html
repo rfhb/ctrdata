@@ -109,22 +109,20 @@ be used with <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>.</p></dd>
 <span class="r-in"><span>  calculate <span class="op">=</span> <span class="st">"f.externalLinks"</span>,</span></span>
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (9 fields)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.externalLinks...                            </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (10 fields)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.externalLinks...                            
+</span>
 <span class="r-in"><span><span class="va">trialsDf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`       .externalLinks                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496    2018 Protocol article in https://www.ncbi.nlm.nih.gov/pubmed/305…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214    2021 Results article in https://pubmed.ncbi.nlm.nih.gov/33069668…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 76463425    2017 Protocol article in https://www.ncbi.nlm.nih.gov/pubmed/281…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 80181452    2010 Protocol article in http://www.ncbi.nlm.nih.gov/pubmed/1959…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 88261002    2018 Results article in https://www.ncbi.nlm.nih.gov/pubmed/3057…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> NCT01483820 Beat Childhood Cancer Consortium http://www.beatcc.org           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> NCT01505608 Beat Childhood Cancer https://beatcc.org/                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> NCT03325439 Pressler R, Boylan G, Dempsey E, Klotz KA, Krauwinkel W, Will E,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> NCT03431558 http://data.worldbank.org/indicator/SH.DYN.NMRT http://www.un.or…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> NCT03876704 Fares S, Sethom MM, Khouaja-Mokrani C, Jabnoun S, Feki M, Kaabac…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `_id`       .externalLinks                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 12949496    <span style="color: #949494;">"</span>2022 Results article in https://pubmed.ncbi.nlm.nih.gov/36385642…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 13281214    <span style="color: #949494;">"</span>2021 Results article in https://pubmed.ncbi.nlm.nih.gov/33069668…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 76463425    <span style="color: #949494;">"</span>2019 Results article in https://www.ncbi.nlm.nih.gov/pubmed/3159…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 80181452    <span style="color: #949494;">"</span>2015 Results article in https://www.nejm.org/doi/full/10.1056/NE…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 88261002    <span style="color: #949494;">"</span>2018 Results article in https://www.ncbi.nlm.nih.gov/pubmed/3057…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> NCT00567567 <span style="color: #949494;">"</span>Data Available: Select individual patient-level data from this t…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> NCT01305200 <span style="color: #949494;">"</span>Data Available: Select individual patient-level data from this t…</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

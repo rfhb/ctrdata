@@ -53,14 +53,14 @@ dbc <- nodbi::src_sqlite(
 sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#>  (may take some time)...
-#> , 31 found in collection
+#> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - 2 EUCTR _id were not preferred EU Member State record for 11 trials
-#> - Unique are 8 / 5 / 5 / 3 / 8 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 29 records in collection "my_trials"
-#>         CTGOV        ISRCTN        ISRCTN        ISRCTN         CTGOV 
-#> "NCT03325439"    "80181452"    "61070850"    "13281214" "NCT03280147" 
+#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 22 records in collection "my_trials"
+#>               EUCTR               CTGOV              ISRCTN              ISRCTN 
+#> "2019-000338-20-ES"       "NCT01955161"          "88261002"          "76463425" 
+#>              ISRCTN 
+#>          "13281214" 
 
 # all such identifiers work
 id <- "2014-003556-31"
@@ -68,7 +68,7 @@ id <- "2014-003556-31-SE"
 id <- "76463425"
 id <- "ISRCTN76463425"
 id <- "NCT03431558"
-id <- "2022-501142-30-00"
+id <- "2023-505613-24-00"
 
 # note these ids also work with
 # ctrGetQueryUrl(url = id) and

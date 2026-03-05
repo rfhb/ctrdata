@@ -5,6 +5,8 @@
 - [`dbQueryHistory()`](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
   no more errors but returns NULL and a message with a non-existing or
   empty collection
+- Addressed marginal cases in
+  [`f.primaryEndpointResults()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointResults.md)
 - Added typing of newly appearing field in CTIS
 - Better error message when CTGOV2 query fails
 
@@ -1042,7 +1044,7 @@ CRAN release: 2019-10-16
   functions
 - switch from testthat to tinytest, so that users can check with
   `tinytest::test_package("ctrdata")`
-- improvements to euctr trial import  
+- improvements to euctr trial import\
 - new function `dfListExtractKey()`
 - speed up testing bash commands under windows
 

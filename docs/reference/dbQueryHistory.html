@@ -85,14 +85,15 @@ ctrLoadQueryIntoDb retrieves at least 1 clinical trial."></head><body>
 <span class="r-in"><span>  flags <span class="op">=</span> <span class="fu">RSQLite</span><span class="fu">::</span><span class="va"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLITE_RO</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">dbQueryHistory</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   `query-timestamp`   `query-register` `query-records` `query-term`             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2024-05-16 14:05:23 EUCTR                          5 <span style="color: #949494;">"</span>query=&amp;age=newborn&amp;phas…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2024-05-16 14:06:43 CTGOV                          8 <span style="color: #949494;">"</span>term=AREA[MaximumAge]+R…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2024-05-16 14:07:32 ISRCTN                         8 <span style="color: #949494;">"</span>q=&amp;filters=ageRange:Neo…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 2024-05-16 14:07:57 CTGOV2                         5 <span style="color: #949494;">"</span>distance=50&amp;cond=neurob…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 2024-06-23 16:14:56 CTIS                           3 <span style="color: #949494;">"</span>searchCriteria={\"conta…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2024-06-17 20:35:31 CTIS                           2 <span style="color: #949494;">""</span>                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 2026-03-03 20:00:15 EUCTR                          3 <span style="color: #949494;">"</span>query=&amp;age=newborn&amp;stat…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 2023-10-23 10:55:45 CTGOV                          3 <span style="color: #949494;">"</span>cond=MCI+OR+Alzheimer&amp;t…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 2026-03-03 20:01:59 ISRCTN                         9 <span style="color: #949494;">"</span>q=&amp;filters=ageRange:Neo…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 2026-03-03 20:02:41 CTGOV2                         3 <span style="color: #949494;">"</span>distance=50&amp;cond=neurob…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> 2026-03-03 20:04:32 CTIS                           2 <span style="color: #949494;">"</span>searchCriteria={\"conta…</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
