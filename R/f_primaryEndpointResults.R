@@ -291,11 +291,11 @@ f.primaryEndpointResults <- function(df = NULL) {
       primStatsCtgov2 = mapply(
         function(x, y) if (is.na(y)) NA else x[y, ],
         x = .data$resultsSection.outcomeMeasuresModule.outcomeMeasures,
-        y = isPrimEpsCtgov2,
+        y = .data$isPrimEpsCtgov2,
         SIMPLIFY = TRUE, USE.NAMES = FALSE),
       #
       firstPvalueCtgov2 = sapply(
-        primStatsCtgov2,
+        .data$primStatsCtgov2,
         function(x) {
           if (is.null(x)) return(NA_real_)
           o <- unlist(x)
@@ -304,7 +304,7 @@ f.primaryEndpointResults <- function(df = NULL) {
         }, simplify = TRUE, USE.NAMES = FALSE),
       #
       firstPmethodCtgov2 = sapply(
-        primStatsCtgov2,
+        .data$primStatsCtgov2,
         function(x) {
           if (is.null(x)) return(NA_character_)
           o <- unlist(x)
@@ -313,7 +313,7 @@ f.primaryEndpointResults <- function(df = NULL) {
         }, simplify = TRUE, USE.NAMES = FALSE),
       #
       firstPsizeCtgov2 = sapply(
-        primStatsCtgov2,
+        .data$primStatsCtgov2,
         function(x, y) {
           if (is.atomic(x)) return(NA_integer_)
           if (!any(grepl("denoms", names(x)))) return(NA_integer_)
