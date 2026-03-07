@@ -352,6 +352,8 @@ rm(res)
 
 #### ctrLoadQueryIntoDb documents ####
 
+if (!requireNamespace("chromote", quietly = TRUE)) exit_file("chromote not available")
+
 tmpDir <- newTempDir()
 unlink(tmpDir, recursive = TRUE)
 on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)

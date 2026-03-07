@@ -44,6 +44,9 @@ tf <- function() {
       "Querying ", "iterating over fields")
   )
 
+  # helper
+  btw <- function(x, l, u = l) isTRUE(l <= x && x <= u)
+
   # test
   expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
   expect_true(ncol(dF) == 28L)
@@ -77,12 +80,12 @@ tf <- function() {
   expect_true(all(dF$.startDate > as.Date("2007-01-09"), na.rm = TRUE))
 
   # strings
-  expect_true(sum(nchar(dF$.externalLinks), na.rm = TRUE) == 3692L)
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) == 32L)
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) == 9121L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) == 19149L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) == 24127L)
-  expect_true(sum(nchar(unlist(dF$.trialTitle))) == 4000L)
+  expect_true(btw(sum(nchar(dF$.externalLinks), na.rm = TRUE), 3692L))
+  expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE), 32L))
+  expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointDescription))), 9121L))
+  expect_true(btw(sum(nchar(unlist(dF$.trialPopulationInclusion))), 19149L))
+  expect_true(btw(sum(nchar(unlist(dF$.trialPopulationExclusion))), 24127L))
+  expect_true(btw(sum(nchar(unlist(dF$.trialTitle))), 4000L))
 
   # lists
   expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 18L)

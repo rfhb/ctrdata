@@ -34,6 +34,16 @@ ctrLoadQueryIntoDbIsrctn <- function(
     verbose,
     queryupdateterm) {
 
+  ## check params
+
+  if (!is.null(documents.path) &&
+      !requireNamespace("chromote", quietly = TRUE)) {
+    stop("downloading documents from ISRCTN requires package chromote ",
+         "to be installed and to find a useable browser, see ",
+         "https://rstudio.github.io/chromote/reference/find_chrome.html",
+         call. = FALSE)
+  }
+
   ## isrctn api ---------------------------------------------------------------
 
   # ISRCTN translation to API draft v0.6 2023-08-18
