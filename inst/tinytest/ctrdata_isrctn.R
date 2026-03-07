@@ -352,7 +352,8 @@ rm(res)
 
 #### ctrLoadQueryIntoDb documents ####
 
-if (!requireNamespace("chromote", quietly = TRUE)) exit_file("chromote not available")
+if (!requireNamespace("chromote", quietly = TRUE) &&
+    is.null(chromote::find_chrome())) exit_file("chromote not available")
 
 tmpDir <- newTempDir()
 unlink(tmpDir, recursive = TRUE)
