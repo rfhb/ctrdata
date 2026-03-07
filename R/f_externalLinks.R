@@ -50,6 +50,7 @@ f.externalLinks <- function(df = NULL) {
       "link.url"
     ),
     "ctgov2" = c(
+      "protocolSection.referencesModule.references",
       "protocolSection.referencesModule.seeAlsoLinks.label",
       "protocolSection.referencesModule.seeAlsoLinks.url"
     ),
@@ -95,7 +96,7 @@ f.externalLinks <- function(df = NULL) {
       # "trialChanges.pubMedReferenceNumbers"
       linksEuctr = sapply(
         .data$trialChanges.pubMedReferenceNumbers.pmid,
-        function(r) if (all(is.na(r))) NA else
+        function(r) if (all(is.na(r))) NA_character_ else
           paste0(na.omit(r), collapse = " "),
         USE.NAMES = FALSE)
       #
@@ -111,7 +112,7 @@ f.externalLinks <- function(df = NULL) {
           r <- na.omit(unique(w(
             unlist(a, use.names = FALSE),
             unlist(b, use.names = FALSE))))
-          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+          if (all(is.na(r))) NA_character_ else paste0(r, collapse = " ")
         },
         a = .data$link.description,
         b = .data$link.url,
@@ -123,7 +124,7 @@ f.externalLinks <- function(df = NULL) {
           r <- na.omit(unique(w(
             unlist(a, use.names = FALSE),
             unlist(b, use.names = FALSE))))
-          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+          if (all(is.na(r))) NA_character_ else paste0(r, collapse = " ")
         },
         a = .data$linksCtgov,
         b = .data$results_reference.citation,
@@ -138,12 +139,17 @@ f.externalLinks <- function(df = NULL) {
     dplyr::mutate(
       #
       linksCtgov2 = mapply(
-        function(a, b) {
-          r <- na.omit(unique(w(
+        function(a, b, c) {
+          r1 <- na.omit(unique(w(
             unlist(a, use.names = FALSE),
             unlist(b, use.names = FALSE))))
-          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+          r2 <- unlist(c)
+          r2 <- r2[grepl("citation", names(r2))]
+          r <- paste0(c(r1, r2), collapse = " ")
+          r <- gsub("doi:[ ]*([0-9])", "https://doi.org/\\1", r)
+          if (is.na(r) || nchar(r)) r else NA_character_
         },
+        c = .data$protocolSection.referencesModule.references,
         a = .data$protocolSection.referencesModule.seeAlsoLinks.label,
         b = .data$protocolSection.referencesModule.seeAlsoLinks.url,
         USE.NAMES = FALSE
@@ -167,7 +173,7 @@ f.externalLinks <- function(df = NULL) {
             unlist(a, use.names = FALSE),
             unlist(b, use.names = FALSE),
             unlist(c, use.names = FALSE))))
-          if (all(is.na(r))) NA else paste0(r, collapse = " ")
+          if (all(is.na(r))) NA_character_ else paste0(r, collapse = " ")
         },
         a = .data$applications.partI.trialDetails.references,
         b = .data$authorizedApplication.authorizedPartI.trialDetails.references,
