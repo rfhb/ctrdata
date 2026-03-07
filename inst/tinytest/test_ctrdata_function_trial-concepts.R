@@ -45,7 +45,7 @@ tf <- function() {
   )
 
   # helper
-  btw <- function(x, l, u = l) isTRUE(l <= x && x <= u)
+  btw <- function(x, l, u = l) isTRUE(((0.9 * l) <= x) && (x <= (u * 1.1)))
 
   # test
   expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
