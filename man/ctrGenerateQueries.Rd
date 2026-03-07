@@ -36,8 +36,8 @@ category, not the union set of "phase 2" and "phase 3")}
 (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited.
 For ISRCTN, works only for "P", "A" or "E" but \emph{not mixed} populations.}
 
-\item{recruitment}{String, one of "ongoing", "completed", "other" (
-which includes "ended early" but this cannot be searched; use trial concept
+\item{recruitment}{String, one of "ongoing", "completed", "other"
+(which includes "ended early" but this cannot be searched; use trial concept
 \link{f.statusRecruitment} to identify this status)}
 
 \item{startBefore}{String that can be interpreted as date (for EUCTR, when

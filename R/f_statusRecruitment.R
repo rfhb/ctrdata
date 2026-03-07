@@ -7,6 +7,10 @@
 #' the trial records. Maps the categories that are in fields which specify
 #' the state of recruitment. Simplifies the status into three categories.
 #'
+#' Note that for EUCTR, `NA` is returned for "Trial now transitioned"
+#' (into CTIS, from which the status can be obtained) and for
+#' "GB - no longer in EU/EEA" (no data source known).
+#'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
 #' be used with \link{dbGetFieldsIntoDf}.
@@ -17,9 +21,6 @@
 #' `completed` (includes ended; ongoing, recruitment ended),
 #' `ended early` (includes prematurely ended, terminated early) and
 #' `other` (includes revoked, withdrawn, planned, stopped).
-#'
-#' "Trial now transitioned" and
-#' "GB - no longer in EU/EEA"
 #'
 #' @export
 #'

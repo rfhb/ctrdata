@@ -24,6 +24,11 @@ Trial concept calculated: status of recruitment at the time of loading
 the trial records. Maps the categories that are in fields which specify
 the state of recruitment. Simplifies the status into three categories.
 }
+\details{
+Note that for EUCTR, `NA` is returned for "Trial now transitioned"
+(into CTIS, from which the status can be obtained) and for
+"GB - no longer in EU/EEA" (no data source known).
+}
 \examples{
 # fields needed
 f.statusRecruitment()

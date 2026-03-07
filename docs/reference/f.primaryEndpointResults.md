@@ -76,12 +76,12 @@ trialsDf
 #>   <chr>                      <dbl> <chr>                                   <dbl>
 #> 1 2016-003…                NA      NA                                         NA
 #> 2 2019-000…                NA      NA                                         NA
-#> 3 2019-002…                 0.0001 ancova                                      0
-#> 4 NCT00506…                NA      NA                                        168
+#> 3 2019-002…                 0.0001 ancova                                     70
+#> 4 NCT00506…                NA      NA                                         NA
 #> 5 NCT00567…                 0.0082 logrank                                   355
-#> 6 NCT00716…                NA      NA                                        104
-#> 7 NCT01035…                NA      NA                                        107
-#> 8 NCT01305…                NA      NA                                        182
+#> 6 NCT00716…                NA      NA                                         NA
+#> 7 NCT01035…                NA      NA                                         NA
+#> 8 NCT01305…                NA      NA                                         NA
 #> 9 NCT01955…                 0.959  mixedmodelsanalysis                       922
 #> # ℹ abbreviated names: ¹​.primaryEndpointFirstPvalue,
 #> #   ²​.primaryEndpointFirstPmethod, ³​.primaryEndpointFirstPsize

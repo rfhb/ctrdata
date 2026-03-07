@@ -25,8 +25,8 @@
 #' (adult and paediatric), "E" (elderly), "P+A+E" participants can be recruited.
 #' For ISRCTN, works only for "P", "A" or "E" but \emph{not mixed} populations.
 #'
-#' @param recruitment String, one of "ongoing", "completed", "other" (
-#' which includes "ended early" but this cannot be searched; use trial concept
+#' @param recruitment String, one of "ongoing", "completed", "other"
+#' (which includes "ended early" but this cannot be searched; use trial concept
 #' \link{f.statusRecruitment} to identify this status)
 #'
 #' @param startBefore String that can be interpreted as date (for EUCTR, when

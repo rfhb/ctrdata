@@ -29,6 +29,12 @@ temporarily halted; suspended; authorised, not started and similar),
 early\` (includes prematurely ended, terminated early) and \`other\`
 (includes revoked, withdrawn, planned, stopped).
 
+## Details
+
+Note that for EUCTR, \`NA\` is returned for "Trial now transitioned"
+(into CTIS, from which the status can be obtained) and for "GB - no
+longer in EU/EEA" (no data source known).
+
 ## Examples
 
 ``` r

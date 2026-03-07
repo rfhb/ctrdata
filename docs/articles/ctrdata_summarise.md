@@ -4,10 +4,16 @@ General information on the `ctrdata` package is available here:
 <https://github.com/rfhb/ctrdata>.
 
 Remember to respect the registers’ terms and conditions (see
-`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). Please cite this
-package in any publication as follows: Ralf Herold (2025). ctrdata:
-Retrieve and Analyze Clinical Trials in Public Registers. R package
-version 1.24.1. <https://cran.r-project.org/package=ctrdata>
+`ctrOpenSearchPagesInBrowser(copyright = TRUE)`). In any publication,
+please cite this package as follows:
+
+Herold R (2025). “Aggregating and analysing clinical trials data from
+multiple public registers using R package ctrdata.” *Research Synthesis
+Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
+<https://doi.org/10.1017/rsm.2025.10061>. or\
+Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
+from Public Registers*. R package version 1.26.0.9000,
+<https://cran.r-project.org/package=ctrdata>.
 
 ## Preparations
 
@@ -58,68 +64,61 @@ result <- lapply(
   euctrresults = TRUE, 
   euctrprotocolsall = FALSE,
   con = db)
-# * Found search query from EUCTR: query=neuroblastoma&age=children&
-# age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-
-# infants&age=under-18
+# * Found search query from EUCTR: query=neuroblastoma&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18
 # * Checking trials in EUCTR, found 106 trials 
-# - Downloading in 6 batch(es) (20 trials each; estimate: 10 MB)
-# - Downloading 106 records of 106 trials (estimate: 6 s)             
-# - Converting to NDJSON (estimate: 0.3 s)...                           
+# - Downloading in 6 batch(es) (20 trials each; estimate: 7 s)...
+# - Downloading 106 records of 106 trials (estimate: 5 s)...          
+# - Converting to NDJSON (estimate: 0.2 s)...                           
 # - Importing records into database...
 # = Imported or updated 106 records on 106 trial(s)
 # * Checking results if available from EUCTR for 106 trials: 
 # - Downloading results...
 # - Extracting results (. = data, F = file[s] and data, x = none): . F . . F . 
-# F . F . . F . . . . F . . F F . . . . . . . . F . . F . F . . . . . F . . . . 
-# F . . F . . 
-# - Data found for 51 trials
-# - Converting to NDJSON (estimate: 2 s)...
-# - Importing 51 results into database (may take some time)...
+# F . F . . F . . . . F . . F F . . . F . . . . . F . . F . F . . . . . F . . . 
+# . F . . F . . 
+# - Data found for 52 trials
+# - Converting to NDJSON (estimate: 1 s)...
+# - Importing 52 results into database (may take some time)...
 # - Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 51 trials
+# = Imported or updated results for 52 trials
+# No history found in expected format.
 # Updated history ("meta-info" in "my_collection_name")
-# * Found search query from ISRCTN: &q=&filters=condition:neuroblastoma,
-# ageRange:Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:
-# Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,
-# phase:Phase II/III,phase:Phase III/IV
+# * Found search query from ISRCTN: &q=&filters=condition:neuroblastoma,ageRange:Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV
 # * Checking trials in ISRCTN, found 1 trials 
-# - Downloading trial file (estimate: 0.02 MB)
-# - Converting to NDJSON (estimate: 0.006 s)...
+# - Downloading trial file (estimate: 0.03 s)...
+# - Converting to NDJSON (estimate: 0.002 s)...
 # - Importing records into database...
 # = Imported or updated 1 trial(s)                 
 # Updated history ("meta-info" in "my_collection_name")
 # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=ages:child,studyType:int
-# * Checking trials in CTGOV2, found 467 trials
-# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)
+# * Checking trials in CTGOV2, found 474 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 1.3 s)...
 # - Load and convert batch 1...
 # - Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported or updated 467 trial(s)
+# = Imported or updated 474 trial(s)
 # Updated history ("meta-info" in "my_collection_name")
-# * Found search query from CTGOV2: term=AREA[ConditionSearch]"neuroblastoma" 
-# AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL) AND 
-# (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND 
-# (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
-# * Checking trials in CTGOV2, found 467 trials
-# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)
+# * Found search query from CTGOV2: term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
+# * Checking trials in CTGOV2, found 474 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 1.3 s)...
 # - Load and convert batch 1...
 # - Importing records into database...
 # JSON file #: 1 / 1                               
-# = Imported or updated 467 trial(s)
+# = Imported or updated 474 trial(s)
 # Updated history ("meta-info" in "my_collection_name")
-# * Found search query from CTIS: searchCriteria={"medicalCondition":
-# "neuroblastoma","ageGroupCode":[2]}
-# * Checking trials in CTIS, found 22 trials 
-# - Downloading and processing trial data... (estimate: 3 Mb)
+# * Found search query from CTIS: searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}
+# * Checking trials in CTIS, found 23 trials 
+# - Downloading and processing trial list (estimate: 0.9 s)...
+# - Downloading and processing trial data (estimate: 6 s)...
 # - Importing records into database...
 # - Updating with additional data: .               
-# = Imported 22, updated 22 record(s) on 22 trial(s)
+# = Imported 23, updated 23 record(s) on 23 trial(s)
 # Updated history ("meta-info" in "my_collection_name")
 
 # Show results of loading
 sapply(result, "[[", "n")
 # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
-#   106            1          467          467           21 
+#   106            1          474          474           23 
 ```
 
 ## Find fields / variables of interest
@@ -220,21 +219,18 @@ attributes(result)
 # [1] "my_collection_name"
 # 
 # $`ctrdata-dbqueryhistory`
-# A tibble: 6 × 4
-#   `query-timestamp`   `query-register` `query-records`
-#   <chr>               <chr>                      <int>
-# 1 2025-08-21 12:06:09 EUCTR                        106
-# 2 2025-08-21 12:06:10 ISRCTN                         1
-# 3 2025-08-21 12:06:13 CTGOV2                       467
-# 4 2025-08-21 12:06:16 CTGOV2                       467
-# 5 2025-08-21 12:06:19 CTIS                          22
-# `query-term`                                           
-# <chr>
-# "query=neuroblastoma&age=children&age=adolescent&age=i…
-# "&q=&filters=condition:neuroblastoma,ageRange:Child,pr…
-# "cond=neuroblastoma&intr=Drug OR Biological&term=AREA[…
-# "term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA…
-# "searchCriteria={\"medicalCondition\":\"neuroblastoma\…
+#       query-timestamp query-register query-records
+# 1 2026-03-07 17:55:44          EUCTR           106
+# 2 2026-03-07 17:55:45         ISRCTN             1
+# 3 2026-03-07 17:55:47         CTGOV2           474
+# 4 2026-03-07 17:55:50         CTGOV2           474
+# 5 2026-03-07 17:55:53           CTIS            23
+#query-term
+# 1 query=neuroblastoma&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18
+# 2 &q=&filters=condition:neuroblastoma,ageRange:Child,primaryStudyDesign:Interventional,phase:Phase 0,phase:Phase I,phase:Phase II,phase:Phase III,phase:Phase IV,phase:Phase I/II,phase:Phase II/III,phase:Phase III/IV
+# 3 cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=ages:child,studyType:int
+# 4 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[StdAge]"CHILD") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
+# 5 searchCriteria={"medicalCondition":"neuroblastoma","ageGroupCode":[2]}
 ```
 
 ## De-duplicate records
@@ -261,17 +257,17 @@ ids <- dbFindIdsUniqueTrials(
   preferregister = "EUCTR",
   con = db
 )
-# Searching for duplicate trials... 
-# - Getting all trial identifiers, 596 found in collection
+#Searching for duplicate trials... 
+# - Getting all trial identifiers (may take some time), 604 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - Keeping 106 / 0 / 315 / 0 / 9 records from EUCTR / CTGOV / CTGOV2 / ISRCTN / CTIS
-# = Returning keys (_id) of 430 records in collection "my_collection_name"
+# - Unique are 0 / 322 / 9 / 106 / 0 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+# = Returning keys (_id) of 437 records in collection "my_collection_name"
 
 # Eliminate duplicate trials records:
 result <- result[result[["_id"]] %in% ids, ]
 
 nrow(result)
-# [1] 415
+# [1] 422
 #
 # Note that "ids" are the identifiers of unique trials in the whole collection,
 # whereas the data frame "result" only includes those trials in which any of 
@@ -297,16 +293,16 @@ result <- dbGetFieldsIntoDf(
 # To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 # Querying database (8 fields)...
 # Searching for duplicate trials...                         
-# - Getting all trial identifiers, 596 found in collection
+# - Getting all trial identifiers, 604 found in collection
 # - Finding duplicates among registers' and sponsor ids...
-# - Keeping 467 / 52 / 0 / 0 / 12 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
-# = Returning keys (_id) of 531 records in collection "my_collection_name"
+# - Unique are 0 / 474 / 13 / 51 / 0 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+# = Returning keys (_id) of 538 records in collection "my_collection_name"
 
 # Eliminate duplicate trials records:
 result <- result[result[[".isUniqueTrial"]], ]
 
 nrow(result)
-# [1] 531
+# [1] 538
 #
 # Note this has used a different register as priority.
 # Also, the data frame result includes all trials which
@@ -384,11 +380,11 @@ result <- dbGetFieldsIntoDf(
 )
 
 str(result)
-# tibble [596 × 4] (S3: tbl_df/tbl/data.frame)
-#  $ _id           : chr [1:596] "2004-004386-15-ES" "2005-000915-80-IT" ...
-#  $ ctrname       : chr [1:596] "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...
-#  $ .isUniqueTrial: logi [1:596] FALSE FALSE FALSE FALSE TRUE TRUE ...
-#  $ .startDate    : Date[1:596], format: "2005-11-15" "2005-04-21" "2005-07-08" ...
+# 'data.frame': 604 obs. of  4 variables:
+#  $ _id           : chr  "2004-004386-15-ES" "2005-000915-80-IT" "2005-001267-63-IT" ...
+#  $ ctrname       : chr  "EUCTR" "EUCTR" "EUCTR" "EUCTR" ...
+#  $ .isUniqueTrial: logi  FALSE FALSE FALSE FALSE TRUE TRUE ...
+#  $ .startDate    : Date, format: "2005-11-15" "2005-04-21" "2005-07-08" ...
 
 # Open file for saving
 png("vignettes/nb1.png")
@@ -544,26 +540,25 @@ ctrLoadQueryIntoDb(
   ctgov2history = 5L
 )
 # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=ages:child,studyType:int
-# * Checking trials in CTGOV2, found 467 trials
-# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 47 Mb total)
+# * Checking trials in CTGOV2, found 474 trials
+# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 1.3 s)...
 # - Load and convert batch 1...
 # - Importing records into database...
 # JSON file #: 1 / 1                               
-# * Checking and processing historic versions... 
-# - Downloading 2148 historic versions (estimate: 82 MB total)...         
-# - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . . .
+# * Checking and processing historic versions (estimate: 24 s)...
+# - Downloading 2173 historic versions (estimate: 109 s)...               
+# - Merging trial versions . . . . . . . . . . . . . . . . . . . . . . . . . . 
 # - Updating trial records . . . . . . . . . . . . . . . . . . . . . . . . . . 
-# Updated 467 trial(s) with historic versions
-# = Imported or updated 467 trial(s)
-# No history found in expected format.
+# Updated 474 trial(s) with historic versions
+# = Imported or updated 474 trial(s)
 # Updated history ("meta-info" in "my_collection_name")
 # $n
-# [1] 467
+# [1] 474
 
 # Get relevant fields
 result <- dbGetFieldsIntoDf(
   fields = c(
-    # only CTGOV2 has structured historic information
+    # use CTGOV2 structured historic information
     "history.history_version.version_date",
     "history.protocolSection.designModule.enrollmentInfo.count"
   ),
@@ -710,15 +705,14 @@ result <- result[result[[".isUniqueTrial"]], ]
 # rows for each trial, with one row per field):
 # 
 long_result <- dfTrials2Long(df = result)
-# Total 95118 rows, 160 unique names of variables
+# Total 98225 rows, 160 unique names of variables
 long_result[c(100, 10000, 80000), ]
 # # A tibble: 3 × 4
-#   `_id`             identifier name                                                       value
-#   <chr>             <chr>      <chr>                                                      <chr>
-# 1 2007-000371-42-DE 36         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.di… false
-# 2 2013-000885-13-FR 92         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.di… false
-# 3 NCT01747876       1          resultsSection.outcomeMeasuresModule.outcomeMeasures.repo… POST…
-
+#   `_id`             identifier name                                                                 value
+#   <chr>             <chr>      <chr>                                                                <chr>
+# 1 2007-000371-42-DE 36         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.dictionaryOv… false
+# 2 2013-000885-13-FR 92         adverseEvents.seriousAdverseEvents.seriousAdverseEvent.dictionaryOv… false
+# 3 NCT01767194       1.2        resultsSection.outcomeMeasuresModule.outcomeMeasures.denoms.counts.… 17 
 
 #### 3. and 4. Obtain values for measures of interest 
 #
@@ -744,7 +738,7 @@ clinicalDuration <- dfName2Value(
     "endPoints.*armReportingGroup.armId"
   )
 )
-# Returning values for 56 out of 531 trials
+# Returning values for 61 out of 538 trials
 
 
 #### 5. Tabulate the results
@@ -803,18 +797,18 @@ clinicalDuration %>%
 
 clinicalDuration[sample(seq_len(nrow(clinicalDuration)), 10L), ]
 # # A tibble: 10 × 4
-#    group_id             where                                                              arm_names  days
-#    <chr>                <chr>                                                              <chr>     <dbl>
-#  1 NCT01121588_8        Progression-Free Survival (PFS) Based on Investigator Assessement  " ALCL A…  NA  
-#  2 NCT01587703_54       Progression Free Survival-Part 2                                   " Partic… 240  
-#  3 NCT01483820_3        Number of Days Participants Experienced Progression Free Survival… " TPI 28…  46  
-#  4 NCT01742286_4        Progression Free Survival (PFS) Based on Investigator Assessment   " ALK-ac…  57  
-#  5 NCT01587703_52       Progression Free Survival-Part 1 QD                                " Part 1…   9  
-#  6 NCT01505608_5        Progression Free Survival (PFS) of Participants Using Days Until … " Arm A-… 125  
-#  7 NCT01962103_22       Phase 2: Progression-Free Survival (PFS)                           " Phase …  35.7
-#  8 NCT01742286_3        Duration of Response (DoR) Per Investigator Assessment             " ALK-ac…  NA  
-#  9 2014-004685-25-ES_12 Duration of Response (DOR) as Determined by the Investigator usin… ""         NA  
-# 10 NCT02761915_8        To Evaluate Anti-tumour Activity (Progression Free Survival)       " Dose L… 113  
+#    group_id             where                                                             arm_names  days
+#    <chr>                <chr>                                                             <chr>     <dbl>
+#  1 NCT00867568_4        Progression Free Survival (PFS) of Participants Using Days From … " TPI 28…  186 
+#  2 2013-003595-12-ES_3  Progression Free Survival (PFS) as assessed by the Investigator … "Arm-115…  162 
+#  3 2014-004685-25-ES_14 DOR as Determined by the Investigator RANO criteria for Particip… ""          NA 
+#  4 2014-004685-25-ES_10 PFS as Determined by the Investigator using RECIST v1.1 criteria… ""          NA 
+#  5 NCT01587703_53       Progression Free Survival-Part 1 BID                              " Part 1…  240 
+#  6 2014-004697-41-ES_17 DOR as Determined by the Investigator Using mINRC in Participant… "Arm-104…   NA 
+#  7 NCT01125800_8        Duration of Response by Treatment                                 " Pediat…  146.
+#  8 NCT01742286_3        Duration of Response (DoR) Per Investigator Assessment            " ALK-ac…   NA 
+#  9 NCT04029688_15       Part 1b: PFS in Participants With TP53 WT Neuroblastoma Assessed… " Part 1…   51 
+# 10 2014-004685-25-ES_11 PFS as Determined by the Investigator using RANO criteria for Pa… ""          NA  
 ```
 
 ## Analysing primary endpoints
@@ -856,7 +850,7 @@ result$pep_is_efs <- grepl(
 # Tabulate
 table(result$pep_is_efs)
 # FALSE  TRUE
-#   464    67
+#   471    67
 
 # Plot
 library(ggplot2)
@@ -950,13 +944,12 @@ knitr::kable(tmp)
 
 | Var1                      | Freq |
 |:--------------------------|-----:|
-| logrank                   |    4 |
-| fisherexact               |    3 |
+| logrank                   |    3 |
+| fisherexact               |    2 |
 | wilcoxon                  |    1 |
 | ttest2sided               |    1 |
 | regressioncox             |    1 |
 | exactonesidedbinomialtest |    1 |
-| cochranarmitagetrendtest  |    1 |
 | chisquared                |    1 |
 
 ![phase23_paed_p_values](phase23_paed_p_values.png)
@@ -1007,7 +1000,7 @@ number_authorised <- sapply(
 table(number_authorised, exclude = "")
 # number_authorised
 #    0    1    2    3    4    5    7 <NA> 
-#   19   13    7    4    2    3    1  482
+#   19   12    7    4    2    3    1  490 
 
 result[["any_authorised"]] <- number_authorised > 0L
 
@@ -1063,7 +1056,7 @@ m <- mongo(
 
 # Number of records in  collection
 m$count()
-# [1] 597
+# [1] 605
 
 # Number of EUCTR records, using JSON for query
 m$count(query = '{"_id": {"$regex": "[0-9]{4}-[0-9]{6}-[0-9]{2}-[3A-Z]{2,3}", "$options": "i"}}')
@@ -1075,11 +1068,11 @@ m$count(query = '{"ctrname": "EUCTR"}')
 
 # Number of CTGOV records
 m$count(query = '{"_id": {"$regex": "NCT[0-9]{8}", "$options": "i"}}')
-# [1] 467
+# [1] 474
 
 # Alternative
 m$count(query = '{"ctrname": "CTGOV2"}')
-# [1] 467
+# [1] 474
 
 # To best define regular expressions for analyses, inspect the field:
 head(
@@ -1130,12 +1123,12 @@ out <- m$aggregate(
 )
 head(out)
 #           _id       date
-# 1 NCT04897880 2019-01-09
-# 2 NCT00801931 2007-09-06
-# 3 NCT06948994 2025-05-01
-# 4 NCT02176967 2014-08-08
-# 5 NCT05303727    2022-08
-# 6 NCT00445965    2006-01
+# 1 NCT00793845    2008-08
+# 2 NCT05303727    2022-08
+# 3 NCT00923351 2007-06-02
+# 4 NCT03275402 2018-12-11
+# 5 NCT04897880 2019-01-09
+# 6 NCT00637637    2007-09
 ```
 
 ### Mapreduce
@@ -1165,8 +1158,8 @@ m$aggregate(pipeline = '
 ')
 #     _id count
 # 1    NA   157
-# 2     0   357
-# 3   100    48
+# 2     0   364
+# 3   100    49
 # 4   200    11
 # 5   300     4
 # 6   400     6

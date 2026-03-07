@@ -53,14 +53,15 @@ dbc <- nodbi::src_sqlite(
 sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
+#>  (may take some time)...
 #> , 22 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
 #> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
 #> = Returning keys (_id) of 22 records in collection "my_trials"
-#>               EUCTR               CTGOV              ISRCTN              ISRCTN 
-#> "2019-000338-20-ES"       "NCT01955161"          "88261002"          "76463425" 
+#>              ISRCTN              ISRCTN               EUCTR               EUCTR 
+#>          "76463425"          "61070850" "2019-000338-20-ES" "2019-002663-10-ES" 
 #>              ISRCTN 
-#>          "13281214" 
+#>          "88261002" 
 
 # all such identifiers work
 id <- "2014-003556-31"

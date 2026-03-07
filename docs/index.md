@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-01-18 for version 1.26.0.9000.
+package. This README was reviewed on 2026-03-07 for version 1.26.0.9000.
 
 ## Main features
 
@@ -364,19 +364,20 @@ ctrLoadQueryIntoDb(
 )
 # * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children
 # * Checking trials in EUCTR, found 73 trials 
-# - Downloading in 4 batch(es) (20 trials each; estimate: 9 MB)
-# - Downloading 73 records of 73 trials (estimate: 4 s)               
+# - Downloading in 4 batch(es) (20 trials each; estimate: 5 s)...
+# - Downloading 73 records of 73 trials (estimate: 4 s)...            
 # - Converting to NDJSON (estimate: 0.2 s)...                           
 # - Importing records into database...
 # = Imported or updated 73 records on 73 trial(s)  
 # * Checking results if available from EUCTR for 73 trials: 
 # - Downloading results...
-# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . . F . . F . . . . . . . F . F F . . . . . . F . . . . 
-# - Data found for 33 trials
+# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . .
+# F . . F . . . . . . . F . F F F . . . . . . F . . . . 
+# - Data found for 34 trials
 # - Converting to NDJSON (estimate: 1 s)...
-# - Importing 33 results into database (may take some time)...
+# - Importing 34 results into database (may take some time)...
 # - Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 33 trials
+# = Imported or updated results for 34 trials
 # No history found in expected format.
 # Updated history ("meta-info" in "collection_name")
 # $n
@@ -425,7 +426,7 @@ result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
 
 sapply(result, "[[", "n")
 # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
-#   180            0          105          105            1
+#   180            0          105          105            2
 ```
 
 - Analyse
@@ -465,8 +466,8 @@ with(
 #                   a7_trial_is_part_of_a_paediatric_investigation_plan
 # .statusRecruitment FALSE TRUE
 #        ongoing         4    3
-#        completed      13    6
-#        ended early     6    2
+#        completed      11    6
+#        ended early     7    3
 #        other           8    2
 ```
 
@@ -531,7 +532,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 67
+# [1] 70
 ```
 
 - Queries to CTIS
@@ -542,7 +543,7 @@ copied to the clipboard so that a user can paste them into `queryterm`,
 see
 [here](#id_2-script-to-automatically-copy-users-query-from-web-browser).
 Subsequent to the relaunch of CTIS on 2024-07-24, there are now more
-than 10,600 trials publicly accessible in CTIS. See
+than 11,050 trials publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
 ``` r
@@ -554,7 +555,7 @@ ctrLoadQueryIntoDb(
   only.count = TRUE
 )
 # $n
-# [1] 10683
+# [1] 11057
 
 # Trials in therapeutic area neoplasms (ICD C04):
 ctrLoadQueryIntoDb(
@@ -566,7 +567,7 @@ ctrLoadQueryIntoDb(
 # * Checking trials in CTIS, found 3532 trials 
 # = Not done (only.count = TRUE): Imported 3532 trial(s)
 # $n
-# [1] 3532
+# [1] 3622
 ```
 
 - Inspect and search structure of trial information
@@ -613,12 +614,18 @@ library(ggplot2)
 result <- dbGetFieldsIntoDf(
   calculate = c(
     "f.statusRecruitment", 
-    "f.isUniqueTrial", 
     "f.startDate"),
   con = db
 )
-# To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-# Querying database (24 fields)...
+
+# not using trial concept f.isUniqueTrial
+# but using dbFindIdsUniqueTrials() in 
+# order to prefer CTIS over EUCTR
+result$.isUniqueTrial <- result$`_id` %in% 
+  dbFindIdsUniqueTrials(
+    preferregister = c("CTGOV2", "CTIS", "EUCTR", "CTGOV", "ISRCTN"),
+    con = db
+  ) 
 
 # plot concepts
 result %>%
@@ -873,50 +880,50 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 
-# 2026-01-11
+# 2026-03-07
 tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   79 tests OK 52.4s
+# test_ctrdata_duckdb_ctgov2.R..   79 tests OK 55.3s
 # test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
 # test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s
-# test_ctrdata_function_params.R   25 tests OK 1.3s
-# test_ctrdata_function_trial-concepts.R   92 tests OK 1.7s
-# test_ctrdata_function_various.R   79 tests OK 6.2s
-# test_ctrdata_mongo_local_euctr.R  117 tests OK 42.9s
-# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.2s
-# test_ctrdata_sqlite_ctgov.R...   44 tests OK 29.0s
-# test_ctrdata_sqlite_ctis.R....   95 tests OK 5.1s
-# test_ctrdata_sqlite_isrctn.R..   47 tests OK 13.6s
+# test_ctrdata_function_params.R   25 tests OK 1.5s
+# test_ctrdata_function_trial-concepts.R   93 tests OK 1.7s
+# test_ctrdata_function_various.R   79 tests OK 13.4s
+# test_ctrdata_mongo_local_euctr.R  117 tests OK 44.9s
+# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.0s
+# test_ctrdata_sqlite_ctgov.R...   48 tests OK 30.8s
+# test_ctrdata_sqlite_ctis.R....   95 tests OK 7.4s
+# test_ctrdata_sqlite_isrctn.R..   47 tests OK 13.3s
 # test_euctr_error_sample.R.....    8 tests OK 0.1s
-# All ok, 604 results (7m 40.0s)
+# All ok, 609 results (10m 9.4s)
 ```
 
 ``` r
 
-# 2026-01-11
+# 2026-03-07
 covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 93.65%
+# ctrdata Coverage: 94.26%
 # R/zzz.R: 55.56%
-# R/ctrRerunQuery.R: 78.64%
 # R/ctrShowOneTrial.R: 84.21%
-# R/ctrLoadQueryIntoDbEuctr.R: 87.78%
-# R/util_functions.R: 88.27%
+# R/ctrLoadQueryIntoDbEuctr.R: 87.97%
 # R/ctrFindActiveSubstanceSynonyms.R: 88.89%
 # R/ctrGetQueryUrl.R: 89.18%
+# R/f_primaryEndpointResults.R: 89.24%
 # R/dbGetFieldsIntoDf.R: 89.47%
+# R/util_functions.R: 89.83%
 # R/ctrLoadQueryIntoDbCtis.R: 90.00%
-# R/f_sponsorType.R: 92.00%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.53%
-# R/ctrLoadQueryIntoDbIsrctn.R: 95.70%
+# R/f_sponsorType.R: 90.00%
+# R/ctrRerunQuery.R: 92.22%
+# R/ctrLoadQueryIntoDbCtgov2.R: 92.48%
+# R/ctrLoadQueryIntoDbIsrctn.R: 95.68%
 # R/dbFindFields.R: 95.88%
-# R/f_primaryEndpointResults.R: 96.00%
 # R/ctrLoadQueryIntoDb.R: 96.40%
 # R/dfMergeVariablesRelevel.R: 96.55%
-# R/ctrGenerateQueries.R: 97.13%
+# R/ctrGenerateQueries.R: 97.16%
+# R/f_externalLinks.R: 97.30%
 # R/ctrOpenSearchPagesInBrowser.R: 97.50%
+# R/f_likelyPlatformTrial.R: 98.78%
 # R/dbFindIdsUniqueTrials.R: 98.81%
-# R/f_externalLinks.R: 98.92%
 # R/f_numTestArmsSubstances.R: 98.95%
-# R/f_likelyPlatformTrial.R: 99.19%
 # R/dbQueryHistory.R: 100.00%
 # R/dfName2Value.R: 100.00%
 # R/dfTrials2Long.R: 100.00%

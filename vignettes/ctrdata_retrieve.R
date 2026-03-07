@@ -5,6 +5,9 @@ knitr::opts_chunk$set(eval = FALSE)
 # library(ctrdata)
 # citation("ctrdata")
 
+## ----cite_ctrdata, eval=TRUE, results='asis', echo=c(-1)----------------------
+cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
+
 ## -----------------------------------------------------------------------------
 # # Please review and respect register copyrights:
 # ctrOpenSearchPagesInBrowser(
@@ -40,9 +43,8 @@ knitr::opts_chunk$set(eval = FALSE)
 #   queryterm = q,
 #   only.count = TRUE
 # )$n
-# # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Checking trials in EUCTR, found 390 trials
-# # [1] 392
+# # * Checking trials in EUCTR, found 409 trials
+# # [1] 409
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
@@ -55,23 +57,21 @@ knitr::opts_chunk$set(eval = FALSE)
 #   queryterm = q,
 #   con = db
 # )
-# # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Checking trials in EUCTR, found 392 trials
-# # - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
-# # - Downloading 1544 records of 392 trials (estimate: 90 s)
-# # - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . .
-# #   . . . . . . . . . . . .
+# # * Checking trials in EUCTR, found 409 trials
+# # - Downloading in 21 batch(es) (20 trials each; estimate: 30 s)...
+# # - Downloading 1628 records of 409 trials (estimate: 80 s)...
+# # - Converting to NDJSON (estimate: 4 s)...
 # # - Importing records into database...
-# # = Imported or updated 1544 records on 392 trial(s)
+# # = Imported or updated 1628 records on 409 trial(s)
 # # No history found in expected format.
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 1544
+# # [1] 1628
 # 
 # # Show which queries have been downloaded into database
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-07-20 10:27:25          EUCTR          1544
+# # 1 2026-03-07 16:51:19          EUCTR          1628
 # #                                                    query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 
@@ -82,16 +82,15 @@ knitr::opts_chunk$set(eval = FALSE)
 #   euctrprotocolsall = FALSE,
 #   con = db
 # )
-# # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Checking trials in EUCTR, found 392 trials
-# # - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
-# # - Downloading 392 records of 392 trials (estimate: 20 s)
-# # - Converting to NDJSON (estimate: 0.8 s) . . . . . . . .
+# # * Checking trials in EUCTR, found 409 trials
+# # - Downloading in 21 batch(es) (20 trials each; estimate: 30 s)...
+# # - Downloading 409 records of 409 trials (estimate: 20 s)...
+# # - Converting to NDJSON (estimate: 1 s)...
 # # - Importing records into database...
-# # = Imported or updated 392 records on 392 trial(s)
+# # = Imported or updated 409 records on 409 trial(s)
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 392
+# # [1] 409
 
 ## -----------------------------------------------------------------------------
 # # Show all queries
@@ -103,8 +102,8 @@ knitr::opts_chunk$set(eval = FALSE)
 #   only.count = TRUE,
 #   con = db
 # )
-# # Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Query last run: 2025-07-02 20:27:25
+# # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
+# # * Query last run: 2026-03-07
 # # * Checking for new or updated trials...
 # # First result page empty - no (new) trials found?
 # # Updated history ("meta-info" in "test")
@@ -114,38 +113,41 @@ knitr::opts_chunk$set(eval = FALSE)
 ## -----------------------------------------------------------------------------
 # ctrLoadQueryIntoDb(
 #   querytoupdate = "last",
+#   euctrprotocolsall = FALSE,
 #   forcetoupdate = TRUE,
 #   euctrresults = TRUE,
 #   con = db
 # )
 # # * Found search query from EUCTR: query=cancer&age=under-18&resultsstatus=trials-with-results
-# # * Query last run: 2025-07-02 20:27:25
-# # * Checking trials in EUCTR, found 390 trials
-# # - Downloading in 20 batch(es) (20 trials each; estimate: 50 MB)
-# # - Downloading 1541 records of 390 trials (estimate: 90 s)
-# # - Converting to NDJSON (estimate: 3 s) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+# # * Query last run: 2026-03-07
+# # * Checking trials in EUCTR, found 409 trials
+# # - Downloading in 21 batch(es) (20 trials each; estimate: 30 s)...
+# # - Downloading 409 records of 409 trials (estimate: 20 s)...
+# # - Converting to NDJSON (estimate: 1 s)...
 # # - Importing records into database...
-# # = Imported or updated 1541 records on 390 trial(s)
-# # * Checking results if available from EUCTR for 390 trials:
+# # = Imported or updated 409 records on 409 trial(s)
+# # * Checking results if available from EUCTR for 409 trials:
 # # - Downloading results...
-# # - Extracting results (. = data, F = file[s] and data, x = none): F F . . . .
-# # F . . F . . . F . . F F F . . . . F F F . . F . . . . F F . F . . . . . . . .
-# # F . . . . . . . . . . . F . F . . . . . . . F . . . . . . . . . . . . . . . F
-# # . . . . . . F . . F F F . . . . F F . . F . . . . . . . . . . . F . . . . . .
-# # . F . . . . . . . . . . . F . . . . . . F . . . . . . . . . F . F . . . . . .
-# # . . . . . F . . . F F . . F . . . . . . . . . . . . F . . . . . F . . . . . .
-# # F . . . . . F . . . F F . . . . . . F . F . . . . . F . . F . . . . F . . . .
-# # . . . . . . . . . F F . F . . . F . . . F F . . . . . . . . . . . F . . . . F
-# # . . . . . . F F . F . . . . . . . . . . F F . F F . . . . F F . . . F . F . .
-# # . F . . . . . . . . . . . F . F . . . . . F . F . . . F . F . . F . F . . F .
-# # . . . F F F . . . . . . . . . . . . F . . . . . . . . . . . . . .
-# # - Converting to NDJSON (estimate: 40 s)...
-# # - Importing results into database (may take some time)...
+# # - Extracting results (. = data, F = file[s] and data, x = none): F F . . . . F
+# # . . F . . . F . . F F F . . . . F F F . . . F . . . . F F . F . . . . . F . .
+# # . . . . . . . . . F . . . . . . F . . . . . . . . . F . F . . . . . . . . . .
+# # . . . . . . . F F . F . . . F . . . F F . . . . . . . . . . . . F F . F . . .
+# # . . . . . . . F F . F F . . . . F F . . . F . F . . . F . . . . . . . . . . .
+# # F . F . . . . . F . F . . . F F F . F . . F . F . . F . . . . . F F . F . . .
+# # . . . . . . . . . F . . . . . . . . . . . . . . . . . . F . . . F . . . . . .
+# # . . F . F . . . . . . . F . . . . . . . . . . . . . . . F F . . . . . . F . .
+# # . . F F F . . . . . F F . . F . . . . . . . . . . . . F . . . . . F . . . . F
+# # . . . F F . . F . . . . . . . . . . . . . F . . . . . F . . . . . . . F . . .
+# # F . . F . . . F F . . . . . . F . F . . . . . F . . F . . . . F . . . . F F .
+# # . . . F . . . . . . . .
+# # - Data found for 409 trials
+# # - Converting to NDJSON (estimate: 10 s)...
+# # - Importing 409 results into database (may take some time)...
 # # - Results history: not retrieved (euctrresultshistory = FALSE)
-# # = Imported or updated results for 390 trials
+# # = Imported or updated results for 409 trials
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 1541
+# # [1] 409
 
 ## -----------------------------------------------------------------------------
 # # Loading specific query into same collection
@@ -154,16 +156,16 @@ knitr::opts_chunk$set(eval = FALSE)
 #   register = "CTGOV2",
 #   con = db
 # )
-# # * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
-# # * Checking trials in CTGOV, found 110 trials
-# # - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)
-# # - Converting to NDJSON...
+# #  Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# # * Checking trials in CTGOV2, found 113 trials
+# # - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 0.31 s)...
+# # - Load and convert batch 1...
 # # - Importing records into database...
 # # JSON file #: 1 / 1
-# # = Imported or updated 110 trial(s)
+# # = Imported or updated 113 trial(s)
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 110
+# # [1] 113
 # 
 # # Use same query details to obtain queries
 # queries <- ctrGenerateQueries(
@@ -182,28 +184,31 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Show results of loading
 # sapply(result, "[[", "n")
 # # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS
-# #   180            0          110          110            1
+# #   180            0          105          105            2
 # 
 # # Overview of queries
 # dbQueryHistory(con = db)
 # #       query-timestamp query-register query-records
-# # 1 2025-07-02 20:27:25          EUCTR          1541
-# # 2 2025-07-02 20:30:46          EUCTR             0
-# # 3 2025-07-02 20:33:38          EUCTR          1541
-# # 4 2025-07-02 20:39:41         CTGOV2           110
-# # 5 2025-07-02 20:40:18          EUCTR           180
-# # 6 2025-07-02 20:40:20         CTGOV2           110
-# # 7 2025-07-02 20:40:21         CTGOV2           110
-# # 8 2025-07-02 20:40:22           CTIS             1
-# #query-term
+# # 1 2026-03-07 16:51:19          EUCTR          1628
+# # 2 2026-03-07 17:04:08          EUCTR           409
+# # 3 2026-03-07 17:05:22          EUCTR             0
+# # 4 2026-03-07 17:08:23          EUCTR           409
+# # 5 2026-03-07 17:09:27         CTGOV2           113
+# # 6 2026-03-07 17:10:13          EUCTR           180
+# # 7 2026-03-07 17:10:14         CTGOV2           105
+# # 8 2026-03-07 17:10:15         CTGOV2           105
+# # 9 2026-03-07 17:10:16           CTIS             2
+# #
+# # query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 # # 2 query=cancer&age=under-18&resultsstatus=trials-with-results
 # # 3 query=cancer&age=under-18&resultsstatus=trials-with-results
-# # 4 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
-# # 5 query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed
-# # 6 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int
-# # 7 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL)
-# # 8 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
+# # 4 query=cancer&age=under-18&resultsstatus=trials-with-results
+# # 5 cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com
+# # 6 query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed
+# # 7 cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:2,ages:child,status:com,studyType:int
+# # 8 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
+# # 9 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
 
 ## -----------------------------------------------------------------------------
 # # Annotate a query in CTGOV2 defined above
@@ -213,27 +218,30 @@ knitr::opts_chunk$set(eval = FALSE)
 #   annotation.mode = "append",
 #   con = db
 # )
-# # * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com,studyType:int
-# # * Checking trials in CTGOV, found 110 trials
-# # - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 11 Mb total)
-# # - Converting to NDJSON...
+# # * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:2,ages:child,status:com,studyType:int
+# # * Checking trials in CTGOV2, found 105 trials
+# # - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 0.29 s)...
+# # - Load and convert batch 1...
 # # - Importing records into database...
 # # JSON file #: 1 / 1
-# # = Imported or updated 110 trial(s)
-# # = Annotated retrieved records (110 records)
+# # = Imported or updated 105 trial(s)
+# # = Annotated retrieved records (105 records)
 # # Updated history ("meta-info" in "test")
 # # $n
-# # [1] 110
+# # [1] 105
 
 ## -----------------------------------------------------------------------------
 # # Search for synonyms
 # ctrFindActiveSubstanceSynonyms(
 #   activesubstance = "imatinib"
 # )
-# #  [1] "imatinib"          "CGP 57148"         "CGP 57148B"
-# #  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
-# #  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
-# # [10] "ST1571"            "STI 571"           "STI571"
+# #  [1] "imatinib"          "Bosulif"           "Carcemia"          "CGP 57148"
+# #  [5] "CGP 57148B"        "CGP57148"          "CGP57148B"         "Gleevac"
+# #  [9] "Gleevec"           "Glevec"            "GLIVEC"            "Imarech"
+# # [13] "Imat"              "Imatinib"          "Imatinib Mesylate" "Imkeldi"
+# # [17] "Impentri"          "NSC #716051"       "NSC 716051"        "PegIntron"
+# # [21] "QTI571"            "Sprycel"           "STI 571"           "STI571"
+# # [25] "Tasigna"
 
 ## ----include=FALSE------------------------------------------------------------
 # # cleanup
@@ -259,11 +267,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # 
 # sapply(result, "[[", "n")
 # # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS
-# #  1635          165         1559         1559          237
-# 
-# # Note that for EUCTR, the number of trials is shown;
-# # since each trial can have multiple records in this
-# # register, the number is higher when actually loaded
+# #  1635          236         2507         2507          302
 # 
 # # Connect to a database and chose a collection (table)
 # db <- nodbi::src_sqlite(
@@ -272,11 +276,13 @@ knitr::opts_chunk$set(eval = FALSE)
 # )
 # 
 # # Load studies, include EUCTR results data for analysis
-# result <- lapply(queries, ctrLoadQueryIntoDb, con = db, euctrresults = TRUE)
+# result <- lapply(
+#   queries, ctrLoadQueryIntoDb, con = db,
+#   euctrprotocolsall = FALSE, euctrresults = TRUE)
 # 
 # sapply(result, "[[", "n")
 # # EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS
-# #  7673          166         1562         1562          243
+# #  1633          236         2507         2507          302
 # 
 # # See next section for adding related trials
 
@@ -297,13 +303,12 @@ knitr::opts_chunk$set(eval = FALSE)
 # # To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 # # Querying database (25 fields)...
 # # Searching for duplicate trials...
-# # - Getting all trial identifiers (may take some time), 9644 found in collection
+# # - Getting all trial identifiers (may take some time), 4678 found in collection
 # # - Finding duplicates among registers' and sponsor ids...
-# # - 5596 EUCTR _id were not preferred EU Member State record for 1767 trials
-# # - Keeping 1562 / 1479 / 0 / 124 / 98 records from CTGOV2 / EUCTR / CTGOV / ISRCTN / CTIS
-# # = Returning keys (_id) of 3263 records in collection "test"
+# # - Unique are 0 / 2507 / 149 / 474 / 202 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+# # = Returning keys (_id) of 3332 records in collection "test"
 # # Searching for duplicate trials... ..
-# # - Getting all trial identifiers, 9644 found in collection
+# # - Getting all trial identifiers, 4678 found in collection
 # # Calculating f.trialTitle...
 # 
 # # Show names of calculated columns in the
@@ -320,21 +325,25 @@ knitr::opts_chunk$set(eval = FALSE)
 # # Reduce to unique trials
 # df <- df[df$.isUniqueTrial, ]
 # nrow(df)
-# # [1] 3263
+# # [1] 3332
 # 
 # # Number of recognised set of trials
 # length(unique(df$.maybeRelatedTrials))
-# # 181
+# # 224
 # 
 # # Trials with which _id are missing?
-# missingIds <- na.omit(setdiff(unlist(df$.maybeRelatedTrials), df$`_id`))
+# missingIds <- unique(na.omit(setdiff(
+#   unlist(df$.maybeRelatedTrials), df$`_id`)))
 # 
 # # Load missing trials by _id
 # res <- list()
 # for (i in seq_along(missingIds)) {
 #   message(i, ": ", missingIds[i])
 #   res <- c(res, suppressMessages(
-#     list(ctrLoadQueryIntoDb(missingIds[i], euctrresults = TRUE, con = db))))
+#     list(ctrLoadQueryIntoDb(
+#       missingIds[i], euctrresults = TRUE,
+#       euctrprotocolsall = FALSE, con = db)
+#     )))
 # }
 # 
 # # Trials that could not be loaded are likely phase 1 trials

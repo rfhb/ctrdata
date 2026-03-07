@@ -75,7 +75,15 @@ dbc <- nodbi::src_sqlite(
   flags = RSQLite::SQLITE_RO)
 
 dbFindFields(namepart = "date", con = dbc)[1:5]
-#> Using cache of fields. 
+#> Finding fields in database collection
+#>  (sampling 5 trial records per register) 
+#> . 
+#> . 
+#> . 
+#> . 
+#> . 
+#> 
+#> Field names cached for this session.
 #>                                                EUCTR 
 #>             "n_date_of_competent_authority_decision" 
 #>                                                EUCTR 
@@ -90,7 +98,15 @@ dbFindFields(namepart = "date", con = dbc)[1:5]
 # view names of all 3838 fields from all registers:
 
 allFields <- dbFindFields(con = dbc, sample = FALSE)
-#> Using cache of fields. 
+#> Finding fields in database collection
+#>  (may take some time) 
+#> . 
+#> . 
+#> . 
+#> . 
+#> . 
+#> 
+#> Field names cached for this session.
 
 if (interactive()) View(data.frame(
   register = names(allFields),

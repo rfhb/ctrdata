@@ -53,7 +53,7 @@ ctrGenerateQueries(
 
 - recruitment:
 
-  String, one of "ongoing", "completed", "other" ( which includes "ended
+  String, one of "ongoing", "completed", "other" (which includes "ended
   early" but this cannot be searched; use trial concept
   [f.statusRecruitment](https://rfhb.github.io/ctrdata/reference/f.statusRecruitment.md)
   to identify this status)
