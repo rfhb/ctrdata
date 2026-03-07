@@ -131,8 +131,7 @@ f.primaryEndpointResults <- function(df = NULL) {
       #
       # only use information from the first statistical analysis
       primStatsEuctr = mapply(
-        function(x, y) if (is.na(y)) NA else {
-          o <- x$statisticalAnalyses
+        function(o, y) if (is.na(y)) NA else {
           # cater for different data structures, "o"
           # can correspond to array, list, data frame
           while ((is.list(o) && length(o) == 1L) ||
@@ -140,13 +139,25 @@ f.primaryEndpointResults <- function(df = NULL) {
           #
           if (is.data.frame(o)) {
             o <- o[y, ]
-            as.list(o)
+            o <- as.list(o)
           } else {
             o <- o[[1]]
-            if (length(o) == 1L) o[[1]]
+            if (length(o) == 1L) o <- o[[1]]
           }
+          #
+          o <- o$statisticalAnalyses
+          while ((is.list(o) && length(o) == 1L) ||
+                 (is.data.frame(o) && (ncol(o) == 1L))) o <- o[[1]]
+          #
+          if (is.data.frame(o)) {
+            o <- o[1, ]
+            o <- as.list(o)
+          }
+          #
+          if (is.atomic(o) && o == "") return(NA)
+          o
         },
-        x = .data$endPoints.endPoint,
+        o = .data$endPoints.endPoint,
         y = .data$isPrimEpsEuctr,
         SIMPLIFY = TRUE, USE.NAMES = FALSE),
       #
@@ -173,8 +184,8 @@ f.primaryEndpointResults <- function(df = NULL) {
       firstPvalueGroups = lapply(
         .data$primStatsEuctr,
         FUN = function(x) if (is.atomic(x)) NA_character_ else {
-          o1 <- x$subjectAnalysisSetComparisonGroupId[1]
-          o2 <- x$armComparisonGroupId[1]
+          o1 <- x$subjectAnalysisSetComparisonGroupId
+          o2 <- x$armComparisonGroupId
           unique(c(unlist(o1), unlist(o2)))
         }),
       #
@@ -197,20 +208,16 @@ f.primaryEndpointResults <- function(df = NULL) {
           while ((is.list(o2) && length(o2) == 1L) ||
                  (is.data.frame(o2) && (ncol(o2) == 1L))) o2 <- o2[[1]]
           #
-          if (is.data.frame(o1)) {
-            o1 <- o1[o1$id %in% z, ]
-            o1 <- o1[["subjects"]]
-            o1 <- as.numeric(o1)
-          } else o1 <- NA_integer_
+          if (is.data.frame(o1)) o1 <- o1[o1$id %in% z, ]
+          if (!any("subjects" == names(o1))) o1 <-
+            NA_integer_ else o1 <- as.numeric(o1$subjects)
+          if (is.data.frame(o1)) o1 <- o1[o1$id %in% z, ]
           #
-          if (is.data.frame(o2)) {
-            o2 <- o2[o2$id %in% z, ]
-            o2 <- o2[["subjects"]]
-            o2 <- as.numeric(o2)
-          } else o2 <- NA_integer_
+          if (is.data.frame(o2)) o2 <- o2[o2$id %in% z, ]
+          if (!any("subjects" == names(o2))) o2 <-
+            NA_integer_ else o2 <- as.numeric(o2$subjects)
           #
           return(sum(o1, o2, na.rm = TRUE))
-
         },
         x = .data$endPoints.endPoint,
         y = .data$isPrimEpsEuctr,
@@ -267,7 +274,7 @@ f.primaryEndpointResults <- function(df = NULL) {
           if (is.atomic(x)) return(NA_integer_)
           if (!any(grepl("measure", names(x)))) return(NA_integer_)
           x <- unlist(x)
-          y <- grepl("measure.analyzed_list.analyzed.count_list.count.@attributes.value[0-9]*", names(x))
+          y <- grepl("measure.analyzed_list.analyzed.count_list.count.(@attributes.|)value[0-9]*", names(x))
           if (!length(y) || !any(y)) return(NA_integer_)
           return(sum(as.integer(gsub("[,.]", "", x[y]))))
         }, simplify = TRUE, USE.NAMES = FALSE)
@@ -347,7 +354,9 @@ f.primaryEndpointResults <- function(df = NULL) {
       .primaryEndpointFirstPmethod = dplyr::coalesce(
         .data$firstPmethodEuctr, .data$firstPmethodCtgov2, .data$firstPmethodCtgov, .ptype = character()),
       .primaryEndpointFirstPsize = dplyr::coalesce(
-        .data$firstPsizeEuctr, .data$firstPsizeCtgov2, .data$firstPsizeCtgov, .ptype = numeric())
+        .data$firstPsizeEuctr, .data$firstPsizeCtgov2, .data$firstPsizeCtgov, .ptype = numeric()),
+      .primaryEndpointFirstPsize = if_else(
+        is.na(.data$.primaryEndpointFirstPvalue), NA_integer_, .data$.primaryEndpointFirstPsize)
     ) %>%
     # keep only outcome columns
     dplyr::select(c(

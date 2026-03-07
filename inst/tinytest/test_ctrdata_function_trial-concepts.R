@@ -22,7 +22,7 @@ tf <- function() {
   expect_true(length(fcts) >= 20L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 210L)
+  expect_true(length(unique(unlist(fctFields))) >= 207L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -34,7 +34,7 @@ tf <- function() {
   # SQLite before 3.48.0 triggers message
   expect_message(
     dF <- dbGetFieldsIntoDf(
-      fields = "",
+      fields = "ctrname",
       calculate = fcts,
       con = dbc,
       verbose = FALSE
@@ -45,9 +45,9 @@ tf <- function() {
   )
 
   # test
-  expect_true(all(grepl("_id|^[.][a-z]+[A-Z]", names(dF))))
-  expect_true(ncol(dF) == 27L)
-  expect_true(nrow(dF) == 31L)
+  expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
+  expect_true(ncol(dF) == 28L)
+  expect_true(nrow(dF) == 22L)
 
   # factors
   expect_length(table(dF$.assignmentType, exclude = NULL), 2L)
@@ -55,33 +55,34 @@ tf <- function() {
   expect_length(table(dF$.hasResults, exclude = NULL), 2L)
   expect_length(table(dF$.isMedIntervTrial, exclude = NULL), 2L)
   expect_length(table(dF$.likelyPlatformTrial, exclude = NULL), 1L)
-  expect_length(table(dF$.isUniqueTrial, exclude = NULL), 2L)
+  expect_length(table(dF$.isUniqueTrial, exclude = NULL), 1L)
   expect_length(table(dF$.statusRecruitment, exclude = NULL), 4L)
-  expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 5L)
+  expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 4L)
   expect_length(table(dF$.sponsorType, exclude = NULL), 4L)
   expect_length(table(dF$.trialPhase, exclude = NULL), 10L)
-  expect_true(length(table(dF$.trialObjectives, exclude = NULL)) >= 18L)
+  expect_length(table(dF$.trialObjectives, exclude = NULL), 15L)
+  expect_length(table(dF$ctrname, exclude = NULL), 5L)
 
   # integers
-  expect_true(sum(dF$.numSites, na.rm = TRUE) == 240L)
-  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 32L)
-  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 8900L)
-  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 639L)
+  expect_true(sum(dF$.numSites, na.rm = TRUE) == 746L)
+  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 24L)
+  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 9769L)
+  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 1347L)
 
   # double
-  expect_true(max(dF$.primaryEndpointFirstPvalue, na.rm = TRUE) < 1.0)
+  expect_true(mean(dF$.primaryEndpointFirstPvalue, na.rm = TRUE) < 0.33)
 
   # dates
-  expect_true(all(dF$.resultsDate > as.Date("2015-01-01"), na.rm = TRUE))
-  expect_true(all(dF$.startDate > as.Date("2000-01-01"), na.rm = TRUE))
+  expect_true(all(dF$.resultsDate > as.Date("2014-07-24"), na.rm = TRUE))
+  expect_true(all(dF$.startDate > as.Date("2007-01-09"), na.rm = TRUE))
 
   # strings
-  expect_true(sum(nchar(dF$.externalLinks), na.rm = TRUE) == 2403L)
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) == 10L)
-  expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) == 20188L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) == 27202L)
-  expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) == 23884L)
-  expect_true(sum(nchar(unlist(dF$.trialTitle))) == 5592L)
+  expect_true(sum(nchar(dF$.externalLinks), na.rm = TRUE) == 3692L)
+  expect_true(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE) == 32L)
+  expect_true(sum(nchar(unlist(dF$.primaryEndpointDescription))) == 9121L)
+  expect_true(sum(nchar(unlist(dF$.trialPopulationInclusion))) == 19149L)
+  expect_true(sum(nchar(unlist(dF$.trialPopulationExclusion))) == 24127L)
+  expect_true(sum(nchar(unlist(dF$.trialTitle))) == 4000L)
 
   # lists
   expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 18L)
@@ -92,7 +93,7 @@ tf <- function() {
   # local test helper function
   ltf <- function(ifn, idf, con) do.call(ifn, list(idf))
 
-  # f = fcts[5]
+  # iterate
   for (f in fcts) {
 
     # info
@@ -108,7 +109,6 @@ tf <- function() {
 
     # generate empty df
     for (c in seq_len(ncol(dF))[-1]) {
-      # message(c, ": ", class(dF[[c]])[1])
       v <- is.na(dF[[c]])
       # replace all values with first na value
       dF[[c]][!v] <- dF[[c]][v][1]

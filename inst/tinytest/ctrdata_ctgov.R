@@ -102,7 +102,7 @@ expect_message(
   suppressWarnings(
     ctrLoadQueryIntoDb(
       # dbQueryHistory(tmpDb)
-      querytoupdate = 2L,
+      querytoupdate = 3L,
       verbose = TRUE,
       con = tmpDb)),
   "LastUpdatePostDate")
@@ -256,8 +256,7 @@ expect_equal(
     function(x) {
       if (all(is.na(x))) return(0L) else
         length(x[["facility"]][["name"]])
-    })))
-  [1:2], c(12, 7))
+    }))), c(137, 71, 0))
 
 # test
 expect_true("character" == class(result[[
@@ -286,7 +285,7 @@ expect_true(
 # test
 expect_true(
   length(unlist(strsplit(
-    result[["location.facility.name"]], " / "))) >= 22L)
+    result[["location.facility.name"]], " / "))) >= 200L)
 
 # test
 expect_true("list" == class(result[[
@@ -306,7 +305,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 1000L
+  nrow(df) > 6000L
 )
 
 # test
