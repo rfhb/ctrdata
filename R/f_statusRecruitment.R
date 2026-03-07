@@ -18,6 +18,9 @@
 #' `ended early` (includes prematurely ended, terminated early) and
 #' `other` (includes revoked, withdrawn, planned, stopped).
 #'
+#' "Trial now transitioned" and
+#' "GB - no longer in EU/EEA"
+#'
 #' @export
 #'
 #' @importFrom dplyr if_else mutate case_when case_match pull `%>%`
@@ -104,9 +107,8 @@ f.statusRecruitment <- function(df = NULL) {
       .data$trialInformation.isGlobalEndOfTrialReached ~ "Completed",
       .default = as.character(.data$p_end_of_trial_status)
     ),
-    out = tolower(.data$helper)
-  ) %>%
-    dplyr::pull("out") -> df$euctr
+    euctr = tolower(.data$helper)
+  ) -> df
 
 
   #### . CTGOV ####
@@ -126,9 +128,8 @@ f.statusRecruitment <- function(df = NULL) {
         .data$last_known_status,
         .data$overall_status)
     ),
-    out = tolower(.data$helper)
-  ) %>%
-    dplyr::pull("out") -> df$ctgov
+    ctgov = tolower(.data$helper)
+  ) -> df
 
 
   #### . CTGOV2 ####
@@ -147,9 +148,8 @@ f.statusRecruitment <- function(df = NULL) {
       Sys.Date() < .data$participants.recruitmentStart ~ "Planned",
       .data$participants.recruitmentEnd > .data$participants.recruitmentStart ~ "Ongoing"
     ),
-    out = tolower(.data$helper)
-  ) %>%
-    dplyr::pull("out") -> df$isrctn
+    isrctn = tolower(.data$helper)
+  ) -> df
 
 
   #### . CTIS ####
@@ -189,9 +189,8 @@ f.statusRecruitment <- function(df = NULL) {
         !is.na(.data$ctStatus) ~ as.character(.data$ctStatus),
       .default = as.character(.data$helper_ctPublicStatusCode)
     ),
-    out = tolower(.data$helper)
-  ) %>%
-    dplyr::pull("out") -> df$ctis
+    ctis = tolower(.data$helper)
+  ) -> df
 
   #### mapping ####
 

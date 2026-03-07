@@ -83,8 +83,6 @@ f.resultsDate <- function(df = NULL) {
   `%>%` <- dplyr::`%>%`
 
 
-  #### CTIS ####
-
   # all registers
   df %>%
     dplyr::mutate(
@@ -95,8 +93,8 @@ f.resultsDate <- function(df = NULL) {
         .data$results_first_posted,
         .data$protocolSection.statusModule.resultsFirstPostDateStruct.date,
         .data$results.intentToPublish,
-        .data$results.clinicalStudyReports.submitDate,
         .data$results.summaryResults.submissionDate,
+        .data$results.clinicalStudyReports.submitDate,
         .ptype = as.Date(character(0L))
       )
     ) %>%
