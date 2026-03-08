@@ -134,14 +134,14 @@ function) can be calculated at the time of creating a data frame with
 <span class="r-in"><span><span class="fu">dbFindIdsUniqueTrials</span><span class="op">(</span>con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 22 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 24 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 22 records in collection "my_trials"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 24 records in collection "my_trials"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              ISRCTN              ISRCTN              ISRCTN               EUCTR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2016-003884-20-DE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          "12949496"          "13281214"          "17473621" "2016-004489-24-DE" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               EUCTR               EUCTR                CTIS                CTIS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "2019-000338-20-ES" "2019-002663-10-ES" "2022-500244-37-00" "2023-505613-24-00" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "2019-002663-10-ES" "2022-000099-20-DE" "2022-500244-37-00" "2023-505613-24-00" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                CTIS                CTIS </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "2023-508143-51-01" "2024-510663-34-00" </span>
 <span class="r-in"><span></span></span>
@@ -157,27 +157,27 @@ function) can be calculated at the time of creating a data frame with
 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Getting all trial identifiers...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , 22 found in collection</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> , 24 found in collection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> - Finding duplicates among registers' and sponsor ids...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 22 records in collection "my_trials"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> = Returning keys (_id) of 24 records in collection "my_trials"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using base R</span></span></span>
 <span class="r-in"><span><span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">[[</span><span class="st">".isUniqueTrial"</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 22 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    `_id`             keyword .isUniqueTrial</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 12949496          <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 13281214          <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 17473621          <span style="color: #BB0000;">NA</span>      TRUE          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2016-003884-20-DE <span style="color: #BB0000;">NA</span>      TRUE          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2019-000338-20-ES <span style="color: #BB0000;">NA</span>      TRUE          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2019-002663-10-ES <span style="color: #BB0000;">NA</span>      TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2016-004489-24-DE <span style="color: #BB0000;">NA</span>      TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2019-002663-10-ES <span style="color: #BB0000;">NA</span>      TRUE          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2022-000099-20-DE <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2022-500244-37-00 <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2023-505613-24-00 <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2023-508143-51-01 <span style="color: #BB0000;">NA</span>      TRUE          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2024-510663-34-00 <span style="color: #BB0000;">NA</span>      TRUE          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>

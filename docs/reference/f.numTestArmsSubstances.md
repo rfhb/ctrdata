@@ -70,18 +70,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.numTestArmsSubstances...                            
 
 trialsDf
-#> # A tibble: 22 × 2
+#> # A tibble: 24 × 2
 #>    `_id`             .numTestArmsSubstances
 #>    <chr>                              <int>
 #>  1 12949496                               1
 #>  2 13281214                               1
 #>  3 17473621                              NA
-#>  4 2016-003884-20-DE                      1
-#>  5 2019-000338-20-ES                      2
-#>  6 2019-002663-10-ES                      2
+#>  4 2016-004489-24-DE                      1
+#>  5 2019-002663-10-ES                      2
+#>  6 2022-000099-20-DE                      1
 #>  7 2022-500244-37-00                      1
 #>  8 2023-505613-24-00                      2
 #>  9 2023-508143-51-01                      1
 #> 10 2024-510663-34-00                      1
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 ```

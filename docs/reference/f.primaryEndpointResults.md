@@ -71,18 +71,20 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.primaryEndpointResults...                            
 
 trialsDf
-#> # A tibble: 9 × 4
-#>   `_id`     .primaryEndpointFirs…¹ .primaryEndpointFirs…² .primaryEndpointFirs…³
-#>   <chr>                      <dbl> <chr>                                   <dbl>
-#> 1 2016-003…                NA      NA                                         NA
-#> 2 2019-000…                NA      NA                                         NA
-#> 3 2019-002…                 0.0001 ancova                                     70
-#> 4 NCT00506…                NA      NA                                         NA
-#> 5 NCT00567…                 0.0082 logrank                                   355
-#> 6 NCT00716…                NA      NA                                         NA
-#> 7 NCT01035…                NA      NA                                         NA
-#> 8 NCT01305…                NA      NA                                         NA
-#> 9 NCT01955…                 0.959  mixedmodelsanalysis                       922
+#> # A tibble: 11 × 4
+#>    `_id`    .primaryEndpointFirs…¹ .primaryEndpointFirs…² .primaryEndpointFirs…³
+#>    <chr>                     <dbl> <chr>                                   <dbl>
+#>  1 2016-00…                 0.001  cochranmantelhaenszel                     178
+#>  2 2019-00…                 0.0001 ancova                                     70
+#>  3 2022-00…                 0.0001 exactusingbinomialdis…                   8057
+#>  4 NCT0056…                 0.0082 logrank                                   355
+#>  5 NCT0071…                NA      NA                                         NA
+#>  6 NCT0130…                NA      NA                                         NA
+#>  7 NCT0198…                NA      NA                                         NA
+#>  8 NCT0327…                NA      NA                                         NA
+#>  9 NCT0332…                NA      NA                                         NA
+#> 10 NCT0344…                NA      NA                                         NA
+#> 11 NCT0354…                NA      NA                                         NA
 #> # ℹ abbreviated names: ¹​.primaryEndpointFirstPvalue,
 #> #   ²​.primaryEndpointFirstPmethod, ³​.primaryEndpointFirstPsize
 ```

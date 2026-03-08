@@ -93,9 +93,9 @@ dbGetFieldsIntoDf(
 #> # A tibble: 3 × 2
 #>   `_id`             b1_sponsor.b31_and_b32_status_of_the_sponsor
 #>   <chr>             <chr>                                       
-#> 1 2016-003884-20-DE Commercial                                  
-#> 2 2019-000338-20-ES Commercial                                  
-#> 3 2019-002663-10-ES Commercial                                  
+#> 1 2016-004489-24-DE Commercial                                  
+#> 2 2019-002663-10-ES Commercial                                  
+#> 3 2022-000099-20-DE Commercial                                  
 
 # fields that are lists of string values are
 # returned by concatenating values with " / "
@@ -103,10 +103,11 @@ dbGetFieldsIntoDf(
   fields = "keyword",
   con = dbc)
 #> Querying database (1 fields)...
-#> # A tibble: 1 × 2
+#> # A tibble: 2 × 2
 #>   `_id`       keyword                                                           
 #>   <chr>       <chr>                                                             
-#> 1 NCT00506441 Chronic Kidney Disease / Dialysis / Hyperphosphatemia / Phosphate…
+#> 1 NCT03325556 Dementia / Dementia-related psychosis / Dementia associated with …
+#> 2 NCT03548584 Agitation                                                         
 
 # calculate new field(s) from data across trials
 df <- dbGetFieldsIntoDf(
@@ -121,17 +122,17 @@ df <- dbGetFieldsIntoDf(
 
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 22 found in collection
+#> , 24 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 22 records in collection "my_trials"
+#> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 24 records in collection "my_trials"
 #> Calculating f.startDate...                            
 
 
 table(df$.statusRecruitment, exclude = NULL)
 #> 
 #>     ongoing   completed ended early       other 
-#>           5          16           0           1 
+#>           5          15           3           1 
 
 if (FALSE) { # \dontrun{
 library(dplyr)

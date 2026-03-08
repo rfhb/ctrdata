@@ -86,14 +86,14 @@ dbc <- nodbi::src_sqlite(
 dbFindIdsUniqueTrials(con = dbc)[1:10]
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 22 found in collection
+#> , 24 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 22 records in collection "my_trials"
+#> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 24 records in collection "my_trials"
 #>              ISRCTN              ISRCTN              ISRCTN               EUCTR 
-#>          "12949496"          "13281214"          "17473621" "2016-003884-20-DE" 
+#>          "12949496"          "13281214"          "17473621" "2016-004489-24-DE" 
 #>               EUCTR               EUCTR                CTIS                CTIS 
-#> "2019-000338-20-ES" "2019-002663-10-ES" "2022-500244-37-00" "2023-505613-24-00" 
+#> "2019-002663-10-ES" "2022-000099-20-DE" "2022-500244-37-00" "2023-505613-24-00" 
 #>                CTIS                CTIS 
 #> "2023-508143-51-01" "2024-510663-34-00" 
 
@@ -109,27 +109,27 @@ df <- dbGetFieldsIntoDf(
 
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
-#> , 22 found in collection
+#> , 24 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - Unique are 3 / 3 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 22 records in collection "my_trials"
+#> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 24 records in collection "my_trials"
 
 # using base R
 df[df[[".isUniqueTrial"]], ]
-#> # A tibble: 22 × 3
+#> # A tibble: 24 × 3
 #>    `_id`             keyword .isUniqueTrial
 #>    <chr>             <chr>   <lgl>         
 #>  1 12949496          NA      TRUE          
 #>  2 13281214          NA      TRUE          
 #>  3 17473621          NA      TRUE          
-#>  4 2016-003884-20-DE NA      TRUE          
-#>  5 2019-000338-20-ES NA      TRUE          
-#>  6 2019-002663-10-ES NA      TRUE          
+#>  4 2016-004489-24-DE NA      TRUE          
+#>  5 2019-002663-10-ES NA      TRUE          
+#>  6 2022-000099-20-DE NA      TRUE          
 #>  7 2022-500244-37-00 NA      TRUE          
 #>  8 2023-505613-24-00 NA      TRUE          
 #>  9 2023-508143-51-01 NA      TRUE          
 #> 10 2024-510663-34-00 NA      TRUE          
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 
 if (FALSE) { # \dontrun{
 library(dplyr)

@@ -72,18 +72,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.controlType...                            
 
 trialsDf
-#> # A tibble: 22 × 3
+#> # A tibble: 24 × 3
 #>    `_id`             ctrname .controlType
 #>    <chr>             <chr>   <fct>       
 #>  1 12949496          ISRCTN  none        
 #>  2 13281214          ISRCTN  none        
 #>  3 17473621          ISRCTN  other       
-#>  4 2016-003884-20-DE EUCTR   active      
-#>  5 2019-000338-20-ES EUCTR   active      
-#>  6 2019-002663-10-ES EUCTR   active      
+#>  4 2016-004489-24-DE EUCTR   active      
+#>  5 2019-002663-10-ES EUCTR   active      
+#>  6 2022-000099-20-DE EUCTR   active      
 #>  7 2022-500244-37-00 CTIS    placebo     
 #>  8 2023-505613-24-00 CTIS    active      
 #>  9 2023-508143-51-01 CTIS    active      
 #> 10 2024-510663-34-00 CTIS    active      
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 ```

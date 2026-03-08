@@ -76,18 +76,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.statusRecruitment...                            
 
 trialsDf
-#> # A tibble: 22 × 2
+#> # A tibble: 24 × 2
 #>    `_id`             .statusRecruitment
 #>    <chr>             <fct>             
 #>  1 12949496          other             
 #>  2 13281214          completed         
 #>  3 17473621          completed         
-#>  4 2016-003884-20-DE completed         
-#>  5 2019-000338-20-ES completed         
-#>  6 2019-002663-10-ES completed         
+#>  4 2016-004489-24-DE completed         
+#>  5 2019-002663-10-ES completed         
+#>  6 2022-000099-20-DE completed         
 #>  7 2022-500244-37-00 ongoing           
 #>  8 2023-505613-24-00 ongoing           
 #>  9 2023-508143-51-01 ongoing           
 #> 10 2024-510663-34-00 ongoing           
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 ```

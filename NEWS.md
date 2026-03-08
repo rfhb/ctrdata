@@ -1,9 +1,11 @@
 # ctrdata 1.26.0.9000
 
-- `dbQueryHistory()` no more errors but returns NULL and a message with a non-existing or empty collection
+## Bug fix
+
 - Addressed marginal cases in `f.primaryEndpointResults()`, added more references to `f.externalLinks()`
+- `dbQueryHistory()` no more errors but returns NULL and a message with a non-existing or empty collection
 - Added typing of newly appearing field in CTIS
-- Better error message when CTGOV2 query fails
+- Improved error message for failed CTGOV2 queries
 
 # ctrdata 1.26.0
 

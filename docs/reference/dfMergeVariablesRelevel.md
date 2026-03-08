@@ -78,10 +78,10 @@ table(
 ))
 #> Columns identified to be merged: protocolSection.eligibilityModule.healthyVolunteers, f31_healthy_volunteers, eligibility.healthy_volunteers, isrctnhealthy, ctis1healthy, ctis2healthy
 #>         
-#>          FALSE
-#>   CTGOV      3
-#>   CTGOV2     3
-#>   CTIS       3
-#>   EUCTR      3
-#>   ISRCTN     0
+#>          FALSE TRUE
+#>   CTGOV      3    0
+#>   CTGOV2     5    0
+#>   CTIS       3    0
+#>   EUCTR      2    1
+#>   ISRCTN     0    0
 ```

@@ -46,6 +46,10 @@ dfwide <- dbGetFieldsIntoDf(
 #> Querying database (1 fields)...
 
 dfTrials2Long(df = dfwide)
+#> clinical_results.participant_flow.pre_assignment_details                                                                                                                                                
+
+#> clinical_results.participant_flow.recruitment_details                                                                                                                                                   
+
 #> clinical_results.participant_flow.group_list.group                                                                                                                                                      
 
 #> clinical_results.participant_flow.period_list.period                                                                                                                                                    
@@ -55,19 +59,19 @@ dfTrials2Long(df = dfwide)
 #> . 
 #> . 
 #> 
-#> Total 293 rows, 10 unique names of variables
-#> # A tibble: 293 × 4
+#> Total 442 rows, 13 unique names of variables
+#> # A tibble: 442 × 4
 #>    `_id`       identifier name                                             value
 #>    <chr>       <chr>      <chr>                                            <chr>
-#>  1 NCT00506441 1          clinical_results.participant_flow.group_list.gr… "Ope…
-#>  2 NCT00506441 2          clinical_results.participant_flow.group_list.gr… "Dou…
-#>  3 NCT00506441 1          clinical_results.participant_flow.group_list.gr… "P1" 
-#>  4 NCT00506441 2          clinical_results.participant_flow.group_list.gr… "P2" 
-#>  5 NCT00506441 1          clinical_results.participant_flow.group_list.gr… "MCI…
-#>  6 NCT00506441 2          clinical_results.participant_flow.group_list.gr… "Pla…
-#>  7 NCT00506441 1.1.1      clinical_results.participant_flow.period_list.p… "21" 
-#>  8 NCT00506441 1.1.2      clinical_results.participant_flow.period_list.p… "0"  
-#>  9 NCT00506441 1.2.1      clinical_results.participant_flow.period_list.p… "13" 
-#> 10 NCT00506441 1.2.2      clinical_results.participant_flow.period_list.p… "0"  
-#> # ℹ 283 more rows
+#>  1 NCT03325556 1          clinical_results.participant_flow.group_list.gr… Pima…
+#>  2 NCT03325556 2          clinical_results.participant_flow.group_list.gr… Pima…
+#>  3 NCT03325556 3          clinical_results.participant_flow.group_list.gr… Plac…
+#>  4 NCT03325556 1          clinical_results.participant_flow.group_list.gr… P1   
+#>  5 NCT03325556 2          clinical_results.participant_flow.group_list.gr… P2   
+#>  6 NCT03325556 3          clinical_results.participant_flow.group_list.gr… P3   
+#>  7 NCT03325556 1          clinical_results.participant_flow.group_list.gr… Pima…
+#>  8 NCT03325556 2          clinical_results.participant_flow.group_list.gr… Pima…
+#>  9 NCT03325556 3          clinical_results.participant_flow.group_list.gr… Plac…
+#> 10 NCT03325556 1.1.1      clinical_results.participant_flow.period_list.p… 70   
+#> # ℹ 432 more rows
 ```

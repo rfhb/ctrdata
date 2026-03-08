@@ -1,8 +1,8 @@
 ## Test environments
 
-* local: R Under development (unstable) (2026-01-16 r89305) on aarch64-apple-darwin20 (ok)
+* local: R Under development (unstable) (2026-02-28 r89501) on aarch64-apple-darwin20 (ok)
 
-* Win-builder: R version 4.4.3 (2025-02-28 ucrt); R version 4.5.2 (2025-10-31 ucrt); R Under development (unstable) (2026-01-16 r89305 ucrt) (ok)
+* Win-builder: R version 4.5.2 Patched (2026-02-13 r89426 ucrt), R version 4.4.3 Patched (2026-02-12 r89426 ucrt), R Under development (unstable) (2026-03-07 r89568 ucrt) (ok)
 
 * GitHub actions: windows-2022, r: 'release'; macOS-latest, r: 'release'; macOS-latest, r: 'oldrel' (ok)
 
@@ -16,10 +16,7 @@
 
 ## Submission reason
 
-- Address CRAN Note concerning links between help pages and vignettes
-- Refactored downloading data and documents to run, throttle and retry more robustly
-- Updated user info, clarify history is updated only if at least one trial is loaded
-- Bug fixes for evolving and edge cases
+- Minor fixes marginal cases for trial concept functions
 
 
 ## Reverse dependency checks

@@ -64,18 +64,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.isMedIntervTrial...                            
 
 trialsDf
-#> # A tibble: 22 × 2
+#> # A tibble: 24 × 2
 #>    `_id`             .isMedIntervTrial
 #>    <chr>             <lgl>            
 #>  1 12949496          TRUE             
 #>  2 13281214          TRUE             
 #>  3 17473621          FALSE            
-#>  4 2016-003884-20-DE TRUE             
-#>  5 2019-000338-20-ES TRUE             
-#>  6 2019-002663-10-ES TRUE             
+#>  4 2016-004489-24-DE TRUE             
+#>  5 2019-002663-10-ES TRUE             
+#>  6 2022-000099-20-DE TRUE             
 #>  7 2022-500244-37-00 TRUE             
 #>  8 2023-505613-24-00 TRUE             
 #>  9 2023-508143-51-01 TRUE             
 #> 10 2024-510663-34-00 TRUE             
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 ```

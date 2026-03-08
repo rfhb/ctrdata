@@ -2,15 +2,17 @@
 
 ## ctrdata 1.26.0.9000
 
-- [`dbQueryHistory()`](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
-  no more errors but returns NULL and a message with a non-existing or
-  empty collection
+### Bug fix
+
 - Addressed marginal cases in
   [`f.primaryEndpointResults()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointResults.md),
   added more references to
   [`f.externalLinks()`](https://rfhb.github.io/ctrdata/reference/f.externalLinks.md)
+- [`dbQueryHistory()`](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
+  no more errors but returns NULL and a message with a non-existing or
+  empty collection
 - Added typing of newly appearing field in CTIS
-- Better error message when CTGOV2 query fails
+- Improved error message for failed CTGOV2 queries
 
 ## ctrdata 1.26.0
 

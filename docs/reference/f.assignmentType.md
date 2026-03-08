@@ -63,18 +63,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.assignmentType...                            
 
 trialsDf
-#> # A tibble: 22 × 3
+#> # A tibble: 24 × 3
 #>    `_id`             ctrname .assignmentType
 #>    <chr>             <chr>   <fct>          
 #>  1 12949496          ISRCTN  R              
 #>  2 13281214          ISRCTN  R              
 #>  3 17473621          ISRCTN  R              
-#>  4 2016-003884-20-DE EUCTR   R              
-#>  5 2019-000338-20-ES EUCTR   R              
-#>  6 2019-002663-10-ES EUCTR   R              
+#>  4 2016-004489-24-DE EUCTR   R              
+#>  5 2019-002663-10-ES EUCTR   R              
+#>  6 2022-000099-20-DE EUCTR   R              
 #>  7 2022-500244-37-00 CTIS    NR             
 #>  8 2023-505613-24-00 CTIS    NR             
 #>  9 2023-508143-51-01 CTIS    NR             
 #> 10 2024-510663-34-00 CTIS    NR             
-#> # ℹ 12 more rows
+#> # ℹ 14 more rows
 ```
