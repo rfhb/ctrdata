@@ -2,6 +2,12 @@
 
 ## ctrdata 1.26.0.9000
 
+- New development version
+
+## ctrdata 1.26.1
+
+CRAN release: 2026-03-08
+
 ### Bug fix
 
 - Addressed marginal cases in

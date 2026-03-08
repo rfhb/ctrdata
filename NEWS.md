@@ -1,5 +1,9 @@
 # ctrdata 1.26.0.9000
 
+- New development version
+
+# ctrdata 1.26.1
+
 ## Bug fix
 
 - Addressed marginal cases in `f.primaryEndpointResults()`, added more references to `f.externalLinks()`
