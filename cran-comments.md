@@ -16,7 +16,7 @@
 
 ## Submission reason
 
-- Minor fixes marginal cases for trial concept functions
+- Minor fixes, including for marginal cases for trial concept functions
 
 
 ## Reverse dependency checks
