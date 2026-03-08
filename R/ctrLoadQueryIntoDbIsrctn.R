@@ -37,8 +37,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ## check params
 
   if (!is.null(documents.path) &&
-      !requireNamespace("chromote", quietly = TRUE) &&
-      is.null(chromote::find_chrome())) {
+      !requireNamespace("chromote", quietly = TRUE)) {
     stop("downloading documents from ISRCTN requires package chromote ",
          "to be installed and to find a useable browser, see ",
          "https://rstudio.github.io/chromote/reference/find_chrome.html",
