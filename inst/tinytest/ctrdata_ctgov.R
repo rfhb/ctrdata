@@ -256,7 +256,7 @@ expect_equal(
     function(x) {
       if (all(is.na(x))) return(0L) else
         length(x[["facility"]][["name"]])
-    }))), c(137, 71, 0))
+    }))), c(155, 83, 1))
 
 # test
 expect_true("character" == class(result[[
@@ -285,7 +285,7 @@ expect_true(
 # test
 expect_true(
   length(unlist(strsplit(
-    result[["location.facility.name"]], " / "))) >= 200L)
+    result[["location.facility.name"]], " / "))) >= 230L)
 
 # test
 expect_true("list" == class(result[[
@@ -305,7 +305,7 @@ expect_identical(
 
 # test
 expect_true(
-  nrow(df) > 6000L
+  nrow(df) > 8000L
 )
 
 # test
