@@ -50,7 +50,7 @@ tf <- function() {
   # test
   expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
   expect_true(ncol(dF) == 28L)
-  expect_true(nrow(dF) == 22L)
+  expect_true(nrow(dF) == 24L)
 
   # factors
   expect_length(table(dF$.assignmentType, exclude = NULL), 2L)
@@ -60,35 +60,35 @@ tf <- function() {
   expect_length(table(dF$.likelyPlatformTrial, exclude = NULL), 1L)
   expect_length(table(dF$.isUniqueTrial, exclude = NULL), 1L)
   expect_length(table(dF$.statusRecruitment, exclude = NULL), 4L)
-  expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 4L)
+  expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 3L)
   expect_length(table(dF$.sponsorType, exclude = NULL), 4L)
   expect_length(table(dF$.trialPhase, exclude = NULL), 10L)
-  expect_length(table(dF$.trialObjectives, exclude = NULL), 15L)
+  expect_length(table(dF$.trialObjectives, exclude = NULL), 17L)
   expect_length(table(dF$ctrname, exclude = NULL), 5L)
 
   # integers
-  expect_true(sum(dF$.numSites, na.rm = TRUE) == 746L)
-  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 24L)
-  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 9769L)
-  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 1347L)
+  expect_true(sum(dF$.numSites, na.rm = TRUE) == 1017L)
+  expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 26L)
+  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 18226L)
+  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 8660L)
 
   # double
-  expect_true(mean(dF$.primaryEndpointFirstPvalue, na.rm = TRUE) < 0.33)
+  expect_true(btw(mean(dF$.primaryEndpointFirstPvalue, na.rm = TRUE), 0.0024, 0.0025))
 
   # dates
-  expect_true(all(dF$.resultsDate > as.Date("2014-07-24"), na.rm = TRUE))
-  expect_true(all(dF$.startDate > as.Date("2007-01-09"), na.rm = TRUE))
+  expect_true(all(dF$.resultsDate >= as.Date("2017-05-09"), na.rm = TRUE))
+  expect_true(all(dF$.startDate >= as.Date("2007-01-10"), na.rm = TRUE))
 
   # strings
-  expect_true(btw(sum(nchar(dF$.externalLinks), na.rm = TRUE), 3692L))
-  expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointFirstPmethod)), na.rm = TRUE), 32L))
-  expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointDescription))), 9121L))
-  expect_true(btw(sum(nchar(unlist(dF$.trialPopulationInclusion))), 19149L))
-  expect_true(btw(sum(nchar(unlist(dF$.trialPopulationExclusion))), 24127L))
-  expect_true(btw(sum(nchar(unlist(dF$.trialTitle))), 4000L))
+  expect_true(btw(sum(nchar(dF$.externalLinks), na.rm = TRUE), 4818L))
+  expect_true(btw(sum(nchar(dF$.primaryEndpointFirstPmethod), na.rm = TRUE), 64L))
+  expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointDescription))), 13994L))
+  expect_true(btw(sum(nchar(dF$.trialPopulationInclusion)), 24730L))
+  expect_true(btw(sum(nchar(dF$.trialPopulationExclusion)), 26312L))
+  expect_true(btw(sum(nchar(dF$.trialTitle)), 4299L))
 
   # lists
-  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 18L)
+  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 19L)
   expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L) # since no platform trial or similar
 
   # test robustness against NAs
@@ -113,7 +113,7 @@ tf <- function() {
     # generate empty df
     for (c in seq_len(ncol(dF))[-1]) {
       v <- is.na(dF[[c]])
-      # replace all values with first na value
+      # replace all values with first NA value
       dF[[c]][!v] <- dF[[c]][v][1]
     }
 
