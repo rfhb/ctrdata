@@ -20,7 +20,7 @@ multiple public registers using R package ctrdata.” *Research Synthesis
 Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
 <https://doi.org/10.1017/rsm.2025.10061>. or\
 Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.26.0.9000,
+from Public Registers*. R package version 1.26.1.9000,
 <https://cran.r-project.org/package=ctrdata>.
 
 ### Open register’s advanced search page in browser
