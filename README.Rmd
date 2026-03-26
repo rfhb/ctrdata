@@ -120,7 +120,7 @@ install.packages("ctrdata")
 
 # Alternatively, install development version:
 install.packages("devtools")
-devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
+remotes::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package's dependencies (`jsonlite`, `httr2`, `xml2`, `nodbi`, `stringi`, `lubridate`, `jqr`, `dplyr`, `zip`, `readr`, `rlang`, `htmlwidgets`, `stringdist` and `V8`).

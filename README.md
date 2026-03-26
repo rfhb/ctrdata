@@ -83,7 +83,7 @@ multiple public registers using R package ctrdata.” *Research Synthesis
 Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
 <https://doi.org/10.1017/rsm.2025.10061>. or <br/>Herold R (2026).
 *ctrdata: Retrieve and Analyze Clinical Trials Data from Public
-Registers*. R package version 1.26.0.9000,
+Registers*. R package version 1.26.1.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>
 
@@ -164,7 +164,7 @@ install.packages("ctrdata")
 
 # Alternatively, install development version:
 install.packages("devtools")
-devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
+remotes::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package’s dependencies (`jsonlite`,
