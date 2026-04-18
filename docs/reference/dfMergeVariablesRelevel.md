@@ -65,6 +65,7 @@ df <- dbGetFieldsIntoDf(
   con = dbc
 )
 #> Querying database (7 fields)...
+#> , typing fields...
 
 df$isrctnhealthy <- "Healthy volunteer" == df[, 6]
 df$ctis1healthy <- "Healthy volunteers" == df[ ,7]

@@ -69,11 +69,11 @@ ctrLoadQueryIntoDb(
   Either the word "last", or the row number of a query in the data frame
   returned by
   [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)
-  that should be run to retrieve any new or update trial records since
+  that should be run to retrieve any new or updated trial records since
   this query was run the last time. This parameter takes precedence over
   `queryterm`. For "EUCTR" and "CTIS", updates are available only for
-  the last seven days; the query is run again fully if more time has
-  passed since it was run last.
+  the last 7 days; the query is run again fully if more time has passed
+  since it was run last.
 
 - forcetoupdate:
 

@@ -35,6 +35,11 @@ Useful links:
 **Maintainer**: Ralf Herold <ralf.herold@mailbox.org>
 ([ORCID](https://orcid.org/0000-0002-8148-6748))
 
+Authors:
+
+- Ralf Herold <ralf.herold@mailbox.org>
+  ([ORCID](https://orcid.org/0000-0002-8148-6748))
+
 Other contributors:
 
 - Marek Kubica (node-xml2js library) \[copyright holder\]

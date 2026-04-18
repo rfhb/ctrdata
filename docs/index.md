@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-03-07 for version 1.26.0.9000.
+package. This README was reviewed on 2026-04-18 for version 1.26.1.9000.
 
 ## Main features
 
@@ -70,7 +70,7 @@ in any publication or work as follows:
 > Synthesis Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
 > <https://doi.org/10.1017/rsm.2025.10061>. or\
 > Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
-> from Public Registers*. R package version 1.26.0.9000,
+> from Public Registers*. R package version 1.26.1.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
 ## References
@@ -135,7 +135,7 @@ install.packages("ctrdata")
 
 # Alternatively, install development version:
 install.packages("devtools")
-devtools::install_github("rfhb/ctrdata", build_vignettes = TRUE)
+remotes::install_github("rfhb/ctrdata", build_vignettes = TRUE)
 ```
 
 These commands also install the package’s dependencies (`jsonlite`,

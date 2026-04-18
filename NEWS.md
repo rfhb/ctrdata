@@ -1,6 +1,7 @@
-# ctrdata 1.26.0.9000
+# ctrdata 1.26.1.9000
 
-- New development version
+- Updated user and editorial info
+- Minor typing function speed up
 
 # ctrdata 1.26.1
 

@@ -79,6 +79,7 @@ dfwide <- dbGetFieldsIntoDf(
     ), con = dbc
 )
 #> Querying database (4 fields)...
+#> , typing fields...
 
 dflong <- dfTrials2Long(df = dfwide)
 #> clinical_results.outcome_list.outcome                                                                                                                                                                   

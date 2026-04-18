@@ -44,6 +44,7 @@ dfwide <- dbGetFieldsIntoDf(
   fields = "clinical_results.participant_flow",
   con = dbc)
 #> Querying database (1 fields)...
+#> , typing fields...
 
 dfTrials2Long(df = dfwide)
 #> clinical_results.participant_flow.pre_assignment_details                                                                                                                                                
