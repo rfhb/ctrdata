@@ -28,9 +28,9 @@ from Public Registers*. R package version 1.26.1.9000,
       url = {https://cran.r-project.org/package=ctrdata},
     }
 
-Herold R (2025). “Aggregating and analysing clinical trials data from
+Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, 1–33.
+Methods*, **17**(3), 624–656. ISSN 1759-2879, 1759-2887,
 [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061).
 
     @Article{,
@@ -38,6 +38,12 @@ Methods*, 1–33.
       doi = {10.1017/rsm.2025.10061},
       journal = {Research Synthesis Methods},
       author = {Ralf Herold},
-      year = {2025},
-      pages = {1–33},
+      language = {en},
+      journal = {Research Synthesis Methods},
+      issn = {1759-2879, 1759-2887},
+      year = {2026},
+      volume = {17},
+      number = {3},
+      month = {may},
+      pages = {624--656},
     }

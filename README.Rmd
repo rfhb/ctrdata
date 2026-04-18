@@ -71,7 +71,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 
 An introduction to the package, together with worked examples and technical explanations is in: 
 
-* Herold R. Aggregating and analysing clinical trials data from multiple public registers using R package ctrdata. Research Synthesis Methods. Published online 2025:1-33 [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
+* Herold R. Aggregating and analysing clinical trials data from multiple public registers using R package ctrdata. Research Synthesis Methods. 2026;17(3):624-656.  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 Package `ctrdata` has been used for unpublished works and these publications: 
 

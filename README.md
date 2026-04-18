@@ -78,12 +78,12 @@ in any publication or work as follows:
 
 <blockquote>
 
-Herold R (2025). “Aggregating and analysing clinical trials data from
+Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, 1–33. <doi:10.1017/rsm.2025.10061>
-<https://doi.org/10.1017/rsm.2025.10061>. or <br/>Herold R (2026).
-*ctrdata: Retrieve and Analyze Clinical Trials Data from Public
-Registers*. R package version 1.26.1.9000,
+Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887,
+<doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
+or <br/>Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials
+Data from Public Registers*. R package version 1.26.1.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>
 
@@ -94,7 +94,7 @@ technical explanations is in:
 
 - Herold R. Aggregating and analysing clinical trials data from multiple
   public registers using R package ctrdata. Research Synthesis Methods.
-  Published online 2025:1-33
+  2026;17(3):624-656.
   [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 Package `ctrdata` has been used for unpublished works and these
