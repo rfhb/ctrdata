@@ -29,7 +29,6 @@ Description: A system for querying, retrieving and analyzing
         across registers.
         See overview in Herold, R. (2025) <doi:10.1017/rsm.2025.10061>.
 License: MIT + file LICENSE
-RoxygenNote: 7.3.3
 Suggests: devtools, knitr, rmarkdown, RSQLite, mongolite, tinytest (>= 1.2.1), 
         RPostgres, duckdb, httr, tibble, clipr, chromote
 VignetteBuilder: knitr
@@ -45,3 +44,4 @@ Authors@R: c(person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
         )
 Language: en-GB
 Depends: R (>= 4.1)
+Config/roxygen2/version: 7.3.3.9000

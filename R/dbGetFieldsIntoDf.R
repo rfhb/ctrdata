@@ -297,7 +297,7 @@ dbGetFieldsIntoDf <- function(
 #'
 #' internal workhorse
 #'
-#' @returns tibble or data frame, depending on loaded packages
+#' @returns data frame
 #'
 #' @inheritParams dbGetFieldsIntoDf
 #'
@@ -378,6 +378,7 @@ dbGetFieldsIntoDf <- function(
   Sys.setlocale("LC_TIME", "C")
 
   # iterates over columns for typing
+  message("\b\b\b\b, typing fields...")
   nm <- names(dfi)
   for (i in seq_len(ncol(dfi))) {
 
@@ -414,4 +415,4 @@ dbGetFieldsIntoDf <- function(
   # return
   return(dfi)
 
-} # end dbGetFieldsIntoDf
+} # end .dbGetFieldsIntoDf

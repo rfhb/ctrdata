@@ -336,6 +336,9 @@ dbFindIdsUniqueTrials <- function(
       xname = paste0("listofids_", con$db, "/", con$collection, "_timestamp"),
       xvalue = cacheRef, verbose = FALSE
     )
+  } else {
+    # inform user
+    message("\b\b\b (cached)...", appendLF = FALSE)
   } # if outdated
 
   # inform user
@@ -668,7 +671,7 @@ dfFindUniqueEuctrRecord <- function(
   if (length(result) > 0L) {
     message(
       "- ", length(result),
-      " EUCTR _id were not preferred EU Member State record for ",
+      " EUCTR _id's were the not preferred EU Member State records for ",
       totalEuctr, " trials"
     )
   }
