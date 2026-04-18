@@ -483,8 +483,8 @@ ctrRerunQuery <- function(
           warning(
             "'querytoupdate=", querytoupdate, "' not possible because no ",
             "effcient way was found so far to query CTIS only for new ",
-            "or changed trials (last checked 2026-04-18). Reverting to ",
-            "normal full download. ", call. = FALSE, immediate. = TRUE)
+            "or changed trials (last checked 2026-04-18). Need to ",
+            "download iteratively. ", call. = FALSE, immediate. = TRUE)
 
           res <- ctisApi1(
             queryterm, only.count,
