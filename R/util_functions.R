@@ -690,29 +690,45 @@ ctrDb <- function(con) {
 #'
 typeField <- function(dv, fn) {
 
+  # early exit if already date or logical
+  if (all(sapply(dv, class) %in%
+          c("logical", "Date", "POSIXct", "POSIXt"))) return(dv)
+
   # get function name
   ft <- typeVars[[fn]]
 
   # expand to function
   if (!is.null(ft)) ft <- switch(
+    #
     typeVars[[fn]],
+    #
+    # to integer
     "ctrFactor" = "as.factor(x = x)",
     "ctrInt" = "as.integer(x = x)",
-    "ctrIntList" = 'sapply(x, function(i) {i[i == "NA"] <- NA; as.integer(i)}, USE.NAMES = FALSE)',
-    "ctrYesNo" = 'sapply(x, function(i) if (is.na(i)) NA else
-       switch(i, "Yes" = TRUE, "No" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
-    "ctrFalseTrue" = 'if (is.numeric(x)) as.logical(x) else
-       sapply(x, function(i) switch(tolower(i), "true" = TRUE, "false" = FALSE, NA), USE.NAMES = FALSE)',
+    "ctrIntList" = 'sapply(x, function(i)
+       {i[i == "NA"] <- NA_integer_; as.integer(i)},
+       simplify = TRUE, USE.NAMES = FALSE)',
+    #
+    # to logical
+    "ctrYesNo" = 'sapply(tolower(x), function(i) switch(
+       i, "yes" = TRUE, "no" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
+    "ctrFalseTrue" = 'sapply(tolower(x), function(i) switch(
+       i, "true" = TRUE, "false" = FALSE, NA), simplify = TRUE, USE.NAMES = FALSE)',
+    #
+    # to date
     "ctrDate" = 'as.Date(x, tryFormats =
        c("%Y-%m-%d", "%Y-%m", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S",
     "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S%z"))',
     "ctrDateUs" = 'as.Date(x, tryFormats = c("%b %e, %Y", "%Y-%m-%d", "%Y-%m"))',
     "ctrDateTime" = "lubridate::ymd_hms(x)",
+    #
+    # to difftime
     "ctrDifftime" = 'as.difftime(as.numeric(lubridate::duration(
        tolower(x)), units = "days"), units = "days")',
     "ctrDifftimeDays" = "lubridate::ddays(x = as.numeric(x))",
     "ctrDifftimeMonths" = "lubridate::dmonths(x = as.numeric(x))",
     "ctrDifftimeYears" = "lubridate::dyears(x = as.numeric(x))",
+    #
     NULL
   )
 
@@ -768,26 +784,27 @@ typeField <- function(dv, fn) {
 
   }
 
-  # early exit if already date or logical
-  if (all(sapply(dv, class) %in%
-          c("logical", "Date", "POSIXct", "POSIXt"))) return(dv)
-
   # record length of input dv for NULL handling
   lenDv <- length(dv)
 
   # apply typing function, returning
   # if possible a vector over list
+  #message("\n\n", ft)
+  #tmgs <- microbenchmark::microbenchmark(
   tryCatch(
     expr = {
       dv <- lapply(dv, function(x) {
+        #
         # - text mangling
-        x <- ifelse(grepl("Information not present in EudraCT", x), NA, x)
+        x[x == "Information not present in EudraCT"] <- NA_character_
+        #
         # - give Month Year a Day to allow conversion
         if (grepl("date", fn, ignore.case = TRUE)) {
           x <- sub("^ClinicalTrials.gov processed this data on ", "", x)
           x <- sub("^([a-zA-Z]+) ([0-9]{4})$", "\\1 15, \\2", x)
           x <- sub("^([0-9]{4}-[0-9]{2})$", "\\1-15", x)
         }
+        #
         # - apply function to x
         eval(parse(text = ft))
       })
@@ -805,13 +822,15 @@ typeField <- function(dv, fn) {
       return(dv)
     }
   )
+  #, times = 1L)
+  #print(tmgs$time)
 
   # exceptional case inform user
   if (is.null(dv)) {
     warning(paste0(
       fn, " could not be typed, please report here: ",
       "https://github.com/rfhb/ctrdata/issues"))
-    dv <- rep_len(NA, lenDv)
+    dv <- rep_len(NA_character_, lenDv)
   }
 
   # make original classes (e.g., Date) reappear
