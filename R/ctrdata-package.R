@@ -9,8 +9,6 @@
 #' use different database backends in an identical way.
 #' A database connection object is specified once and then can be used as
 #' parameter `con` in subsequent calls of `ctrdata` functions.
-#' Specifying \code{collection = "<my trial data collection's name>"}
-#' indicates the table in the database that package `ctrdata` should use.
 #'
 #' *Database* | *Connection object*
 #' -------- | ---------
@@ -39,9 +37,9 @@
 #'
 #' @section 4 - Operate on a trial data frame from dbGetFieldsIntoDf:
 #'
+#' \link{ctrdata-trial-concepts} (calculate pre-defined trial concepts across registers),
 #' \link{dfTrials2Long} (convert fields with nested elements into long format),
-#' \link{dfName2Value} (get values for variable(s) of interest),
-#' \link{ctrdata-trial-concepts} (calculate pre-defined trial concepts for every register).
+#' \link{dfName2Value} (get values for variable(s) of interest).
 #'
 #' @name ctrdata
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}

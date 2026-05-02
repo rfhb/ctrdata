@@ -95,11 +95,10 @@ ctrLoadQueryIntoDbCtgov2 <- function(
        is.na(queryValues["state"]) &&
        is.na(queryValues["city"]))) {
     stop(
-      "Parameter 'locStr' provided, but no 'country', 'state' or 'city'; ",
-      "please check in CTGOV; e.g., the name of a trial site should go ",
-      "into Facility Name in the webinterface or parameter 'locn' in the ",
-      "search URL.",
-      call. = FALSE
+      "Parameter 'locStr' provided, but no 'country', 'state', 'city', 'lat' ",
+      "etc.; check in CTGOV; note that the name of a trial site should go ",
+      "into the field 'Facility Name' in the web interface or parameter ",
+      "'locn' in the search URL.", call. = FALSE
     )
   }
 

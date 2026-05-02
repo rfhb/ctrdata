@@ -47,7 +47,7 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-04-18 for version 1.26.1.9000.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-05-02 for version 1.26.1.9000.
 
 
 ## Main features
@@ -721,6 +721,29 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "collection_name")
 # $n
 # [1] 440
+#
+# explore types of documents
+ctrLoadQueryIntoDb(
+  queryterm = paste0(
+    "https://euclinicaltrials.eu/ctis-public/search#",
+    'searchCriteria={"containAny":"cancer","status":[8]}'),
+  documents.path = "./files-ctis/",
+  documents.regexp = NULL,
+  con = db
+)
+#
+# get names of document files
+docNames <- dir(
+  path = "./files-ctis/", 
+  recursive = TRUE)
+# get type of document
+docNames <- sub(".+/(.+?) - .+", "\\1", docNames)
+# 
+table(docNames)
+# ClnclStdyRpr LyprsnsSmmoR     Protocol Prtcl-Extrct RcrtmntArrng 
+#           48          538         1800            2         1634 
+# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr 
+#            2         5595          495          176         1516 
 ```
 
 

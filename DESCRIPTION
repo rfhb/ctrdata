@@ -44,4 +44,4 @@ Authors@R: c(person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
         )
 Language: en-GB
 Depends: R (>= 4.1)
-Config/roxygen2/version: 7.3.3.9000
+Config/roxygen2/version: 8.0.0

@@ -31,3 +31,5 @@ codecov.yml$
 ^tools
 ^files
 ^scripts
+^\.positai$
+^\.claude$

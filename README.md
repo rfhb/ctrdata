@@ -40,7 +40,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-04-18 for version 1.26.1.9000.
+package. This README was reviewed on 2026-05-02 for version 1.26.1.9000.
 
 ## Main features
 
@@ -80,7 +80,7 @@ in any publication or work as follows:
 
 Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887,
+Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or <br/>Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials
 Data from Public Registers*. R package version 1.26.1.9000,
@@ -911,6 +911,29 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "collection_name")
 # $n
 # [1] 440
+#
+# explore types of documents
+ctrLoadQueryIntoDb(
+  queryterm = paste0(
+    "https://euclinicaltrials.eu/ctis-public/search#",
+    'searchCriteria={"containAny":"cancer","status":[8]}'),
+  documents.path = "./files-ctis/",
+  documents.regexp = NULL,
+  con = db
+)
+#
+# get names of document files
+docNames <- dir(
+  path = "./files-ctis/", 
+  recursive = TRUE)
+# get type of document
+docNames <- sub(".+/(.+?) - .+", "\\1", docNames)
+# 
+table(docNames)
+# ClnclStdyRpr LyprsnsSmmoR     Protocol Prtcl-Extrct RcrtmntArrng 
+#           48          538         1800            2         1634 
+# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr 
+#            2         5595          495          176         1516 
 ```
 
 ## Tests and coverage
