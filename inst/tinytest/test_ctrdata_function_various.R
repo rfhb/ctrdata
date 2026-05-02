@@ -200,6 +200,16 @@ expect_equal(
     "ThisDoesNotExist")),
   NULL)
 
+q <- "https://clinicaltrials.gov/search?locn=Charité-Universitäts\x7Fmedizin
+ \tBerlin\b\n&cond=cancer"
+
+# test
+expect_equal(
+  ctrGetQueryUrl(q)$`query-term`,
+  "locn=Charité-Universitätsmedizin Berlin&cond=cancer")
+
+# ctrLoadQueryIntoDb(queryterm = q, only.count = TRUE) # ca 270
+
 q <- "https://classic.clinicaltrials.gov/ct2/results?type=Intr&cond=cancer&age=0"
 
 tmpTest <- suppressMessages(

@@ -275,19 +275,6 @@ ctrLoadQueryIntoDb <- function(
       )
     }
 
-    ## sanity checks
-    if (grepl(regQueryterm, gsub(
-      "\\[", "", gsub("\\]", "", utils::URLencode(queryterm))))) {
-      stop("Parameter 'queryterm' has unexpected characters: ",
-           queryterm, ", expected are: ",
-           gsub("^\\[\\^(.+)\\]$", "\\1", regQueryterm),
-           call. = FALSE
-      )
-    }
-
-    # remove trailing or leading whitespace, line breaks
-    queryterm <- gsub("^\\s+|\\s+$|\n|\r", "", queryterm)
-
   } # if not querytoupdate
 
   # check annotation parameters

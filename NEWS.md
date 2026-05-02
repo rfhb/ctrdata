@@ -1,5 +1,6 @@
 # ctrdata 1.26.1.9000
 
+- Enable international characters in `queryterm`
 - Updated user and editorial info
 - Minor typing function speed up
 

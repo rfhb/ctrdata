@@ -169,7 +169,22 @@ ctrGetQueryUrl <- function(
 
   # output value for return
   outdf <- function(qt, reg) {
+
+    # decode, clean
     qt <- utils::URLdecode(qt)
+    qt <- gsub("[[:cntrl:]]", "", qt, perl = TRUE)
+    qt <- trimws(qt)
+    qt <- gsub("  +", " ", qt)
+
+    # check
+    # [:punct:] equals "!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~"
+    unExp <- "[!$<>*`|~\\^\\\\\u00A7[:cntrl:]]"
+    if (grepl(unExp, qt, perl = TRUE)) {
+      stop("Parameter 'queryterm' has unexpected characters '",
+           gsub(sub("\\[", "[^", unExp), "", qt, perl = TRUE),
+           "', check: '", qt, "'", call. = FALSE)
+    }
+
     message("* Found search query from ", reg, ": ", qt)
     out <- data.frame(
       `query-term` = qt,
@@ -203,10 +218,7 @@ ctrGetQueryUrl <- function(
 
     # sanity correction for naked terms
     queryterm <- sub(
-      paste0(
-        "(^|&|[&]?\\w+=\\w+&)(",
-        gsub("[=&^]", "", regQueryterm),
-        "+)($|&\\w+=\\w+)"),
+      "(^|&|[&]?\\w+=\\w+&)([^=&]+)($|&\\w+=\\w+)",
       "\\1query=\\2\\3",
       queryterm
     )
