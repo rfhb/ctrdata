@@ -953,8 +953,8 @@ ctrMultiDownload <- function(
         httr2::req_throttle(
           # ensures that function never makes more
           # than capacity requests in fill_time_s
-          capacity = 40L,
-          fill_time_s = 2L
+          capacity = 100L,
+          fill_time_s = 15L
         ) |>
         # include retries in request
         httr2::req_retry(
