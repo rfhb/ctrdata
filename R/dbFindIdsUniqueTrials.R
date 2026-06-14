@@ -531,7 +531,7 @@ dbFindIdsUniqueTrials <- function(
 #'   the columns "_id" and "a2_eudract_number", for example created with
 #'   function dbGetFieldsIntoDf(c("_id", "a2_eudract_number")).
 #'
-#' @inheritParams dfFindIdsUniqueTrials
+#' @inheritParams dbFindIdsUniqueTrials
 #'
 #' @returns A data frame as subset of \code{df} corresponding to the sought
 #'   records.
@@ -545,7 +545,7 @@ dfFindUniqueEuctrRecord <- function(
     include3rdcountrytrials = include3rdcountrytrials) {
 
   # check parameters
-  if (!any(class(df) %in% "data.frame")) {
+  if (!any(class(df) == "data.frame")) {
     stop("Parameter df is not a data frame.", call. = FALSE)
   }
   #
@@ -615,7 +615,8 @@ dfFindUniqueEuctrRecord <- function(
 
     # preferred MS found, return all but this record, early exit.
     # fnd should be only a single string, may need to be checked
-    if (sum(fnd <- grepl(prefermemberstate, recordnames)) > 0L) {
+    fnd <- grepl(prefermemberstate, recordnames)
+    if (sum(fnd) > 0L) {
       result <- recordnames[!fnd]
       return(result)
     }
@@ -662,7 +663,7 @@ dfFindUniqueEuctrRecord <- function(
   df <- df[!(df[["_id"]] %in% result), , drop = FALSE]
 
   # also eliminate the meta-info record
-  df <- df[!(df[["_id"]] == "meta-info"), , drop = FALSE]
+  df <- df[df[["_id"]] != "meta-info", , drop = FALSE]
 
   # remove row names
   row.names(df) <- NULL

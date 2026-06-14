@@ -168,7 +168,7 @@ f.primaryEndpointDescription <- function(df = NULL) {
         )
       }
       o <- unlist(apply(data.frame(s), 1, paste, collapse = " == "))
-      if (!length(o)) NA else o
+      if (length(o)) o else NA
     })
   }
 

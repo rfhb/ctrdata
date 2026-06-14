@@ -188,11 +188,7 @@ ctrLoadQueryIntoDbCtis <- function(
     unlink(downloadsNdjson)
 
     # check if any documents
-    if (!nrow(dlFiles)) {
-
-      message("= No documents identified for downloading.")
-
-    } else {
+    if (nrow(dlFiles)) {
 
       # remove duplicate files based on their title
 
@@ -235,7 +231,11 @@ ctrLoadQueryIntoDbCtis <- function(
         multiplex = FALSE,
         verbose = verbose)
 
-    } # if (!nrow(dlFiles))
+    } else {
+
+      message("= No documents identified for downloading.")
+
+    } # if (nrow(dlFiles))
 
   } # !is.null(documents.path)
 
@@ -339,7 +339,7 @@ ctisApi1 <- function(
   on.exit(unlink(dir(tempDir, "ctis_api1_page_.*.json", full.names = TRUE)), add = TRUE)
 
   jsonApi1Pages <- paste0(
-    # add pagination parameters
+    # add pagination parameters for multiple pages
     paste0(
       '{"pagination":{"page":', pageNo, ',"size":', nRecords, "},"),
     # add search criteria
@@ -348,7 +348,7 @@ ctisApi1 <- function(
       # handle empty search query terms
       ifelse(
         queryterm != "", queryterm,
-        'searchCriteria={}'),
+        'searchCriteria={}')
     ),
     # remaining parameters needed for proper server response
     ',"sort":{"property":"decisionDate","direction":"DESC"}}'

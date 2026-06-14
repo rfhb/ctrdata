@@ -245,7 +245,7 @@ ctrGenerateQueries <- function(
   #### phase ####
   if (!is.null(phase)) {
 
-    stopifnot(is.atomic(phase) && length(phase) == 1L)
+    stopifnot(is.atomic(phase), length(phase) == 1L)
     if (!grepl("phase ", phase)) stop(
       "Parameter 'phase' should include the word ",
       '"phase", see help("f.trialPhase")')
@@ -326,7 +326,7 @@ ctrGenerateQueries <- function(
   #### population ####
   if (!is.null(population)) {
 
-    stopifnot(is.atomic(population) && length(population) == 1L)
+    stopifnot(is.atomic(population), length(population) == 1L)
     if (grepl("[^PAE+]+", population)) stop(
       "Parameter 'population' should include only ",
       'P, A, E and +; see help("f.trialPopulation")')
@@ -404,7 +404,7 @@ ctrGenerateQueries <- function(
   #### recruitment ####
   if (!is.null(recruitment)) {
 
-    stopifnot(is.atomic(recruitment) && length(recruitment) == 1L)
+    stopifnot(is.atomic(recruitment), length(recruitment) == 1L)
 
     # see also f.statusRecruitment
 

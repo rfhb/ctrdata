@@ -445,7 +445,7 @@ expect_equal(
 expect_error(
   ctrLoadQueryIntoDb(
     queryterm = "somethingnonexisting",
-    querytoupdate = 1L,
+    querytoupdate = 1L
   ), "cannot"
 )
 

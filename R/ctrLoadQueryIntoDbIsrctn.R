@@ -294,11 +294,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
       file(downloadsNdjson), pagesize = 5000L, verbose = FALSE)
 
     # check if any documents
-    if (!nrow(dlFiles)) {
-
-      message("\n= No documents identified for downloading.")
-
-    } else {
+    if (nrow(dlFiles)) {
 
       # check for which ids fileref2 could not be determined
       ids <- unique(dlFiles[is.na(dlFiles$fileref2), "_id", drop = TRUE])
@@ -346,7 +342,11 @@ ctrLoadQueryIntoDbIsrctn <- function(
         documents.regexp,
         verbose = verbose)
 
-    } # if (!nrow(dlFiles))
+    } else {
+
+      message("\n= No documents identified for downloading.")
+
+    } # if (nrow(dlFiles))
 
   } # !is.null(documents.path)
 

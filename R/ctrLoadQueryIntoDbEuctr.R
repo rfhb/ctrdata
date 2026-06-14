@@ -622,9 +622,9 @@ ctrLoadQueryIntoDbEuctr <- function(
       # inform user on failed trial
       if (inherits(res, "try-error")) {
 
-        warning(paste0(
-          "Import of results failed for trial ", eudractNumber),
-          immediate. = TRUE)
+        warning(
+          "Import of results failed for trial ",
+          eudractNumber, immediate. = TRUE)
         res <- 0L
 
       } else {

@@ -255,7 +255,7 @@ ctrLoadQueryIntoDb <- function(
 
     # check register
     if (length(register) != 1L ||
-        !all(class(register) %in% "character") ||
+        !all(class(register) == "character") ||
         is.na(register)) {
       stop("'register' has to be a non-empty string: ",
            register,
@@ -266,7 +266,7 @@ ctrLoadQueryIntoDb <- function(
     # check queryterm
     if (register != "CTIS" &&
         (length(queryterm) != 1L ||
-         !all(class(queryterm) %in% "character") ||
+         !all(class(queryterm) == "character") ||
          is.na(queryterm) ||
          nchar(queryterm) == 0L)) {
       stop("'queryterm' has to be a non-empty string: ",

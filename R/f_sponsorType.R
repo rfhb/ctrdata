@@ -252,7 +252,7 @@ f.sponsorType <- function(df = NULL) {
         .data$primarySponsor.isCommercial,
         function(i) {
           if (is.na(i)) return(NA_character_)
-          if (i == TRUE) stc else stn
+          if (i) stc else stn
         }),
       #
       helper4 = sapply(
@@ -270,7 +270,7 @@ f.sponsorType <- function(df = NULL) {
         function(i) {
           r <- na.omit(i)
           if (!length(r)) return(NA_character_)
-          if (any(r == TRUE) & any(r == FALSE)) return(stm)
+          if (any(r) & any(!r)) return(stm)
           if (all(r)) return(stc)
           if (!all(r)) return(stn)
         }),
@@ -290,7 +290,7 @@ f.sponsorType <- function(df = NULL) {
         function(i) {
           r <- na.omit(i)
           if (!length(r)) return(NA_character_)
-          if (any(r == TRUE) & any(r == FALSE)) return(stm)
+          if (any(r) & any(!r)) return(stm)
           if (all(r)) return(stc)
           if (!all(r)) return(stn)
         }),      #

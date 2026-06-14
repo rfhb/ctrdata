@@ -55,12 +55,12 @@ dbQueryHistory <- function(con, verbose = FALSE) {
   if (isFALSE(hist) ||
       is.null(hist) ||
       nrow(hist) == 0L) {
-    #
+
     message("No history found in expected format.")
-    #
+
     # return (class data.frame is expected)
     return(invisible(data.frame(NULL)))
-    #
+
   }
 
   # access data frame of queries

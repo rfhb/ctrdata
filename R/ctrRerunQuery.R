@@ -41,7 +41,7 @@ ctrRerunQuery <- function(
     querytoupdate <- nrow(rerunquery)
 
   # check parameters
-  if (!(as.integer(querytoupdate) == querytoupdate))
+  if (as.integer(querytoupdate) != querytoupdate)
     stop("'querytoupdate' needs to be an integer number", call. = FALSE)
   querytoupdate <- as.integer(querytoupdate)
 
@@ -75,12 +75,12 @@ ctrRerunQuery <- function(
   # - change to Date class and get
   #   index of latest (max) date,
   initialdayindex <- try(which.max(as.Date(initialday, format = "%Y-%m-%d")))
-  if (!inherits(initialdayindex, "try-error")) {
-    # - keep initial (reference) date of this query
-    initialday <- initialday[initialdayindex]
-  } else {
+  if (inherits(initialdayindex, "try-error")) {
     # - fallback to number (querytoupdate) as specified by user
     initialday <- rerunquery[querytoupdate, "query-timestamp", drop = TRUE]
+  } else {
+    # - keep initial (reference) date of this query
+    initialday <- initialday[initialdayindex]
   }
   message("* Query last run: ", initialday)
 

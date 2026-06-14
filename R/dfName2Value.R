@@ -99,9 +99,8 @@ dfName2Value <- function(df, valuename = "",
   }
 
   # indices of valuename
-  indexVnames <- which(grepl(valuename, df[["name"]],
-                             perl = TRUE, ignore.case = TRUE
-  ))
+  indexVnames <- grep(valuename, df[["name"]],
+                      perl = TRUE, ignore.case = TRUE)
   if (!length(indexVnames)) stop("No rows found for 'valuename' = ", valuename)
 
   # if no where... are specified, just

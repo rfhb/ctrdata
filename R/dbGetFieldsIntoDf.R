@@ -110,7 +110,7 @@ dbGetFieldsIntoDf <- function(
 
   # check fields
   if (!is.vector(fields) ||
-      !all(class(fields) %in% "character")) {
+      !all(class(fields) == "character")) {
     stop("Input should be a vector of strings of field names.", call. = FALSE)
   }
 

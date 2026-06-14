@@ -826,9 +826,9 @@ typeField <- function(dv, fn) {
 
   # exceptional case inform user
   if (is.null(dv)) {
-    warning(paste0(
+    warning(
       fn, " could not be typed, please report here: ",
-      "https://github.com/rfhb/ctrdata/issues"))
+      "https://github.com/rfhb/ctrdata/issues")
     dv <- rep_len(NA_character_, lenDv)
   }
 
@@ -1783,7 +1783,9 @@ fctChkFlds <- function(df, flds) {
   fldsM <- flds[!sapply(flds, function(i) any(i == nms))]
 
   if (length(fldsM)) stop(
-    "Fields missing in 'df':\n", paste0(fldsM, "\n"),
+    "Fields missing in 'df':\n",
+    # one line per field
+    paste0(fldsM, "\n"),
     call. = FALSE)
 
   return(df[, c("_id", flds), drop = FALSE])

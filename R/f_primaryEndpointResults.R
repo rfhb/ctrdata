@@ -194,7 +194,7 @@ f.primaryEndpointResults <- function(df = NULL) {
         function(x, y, z) {
           #
           if (all(is.na(z))) return(NA_integer_)
-          if (!is.data.frame(x)) return(NA_integer_) else x <- x[y, ]
+          if (is.data.frame(x)) x <- x[y, ] else return(NA_integer_)
           if (!any(grepl("ReportingGroups", names(x)))) return(NA_integer_)
           #
           # after review of results for various trials,
@@ -210,13 +210,13 @@ f.primaryEndpointResults <- function(df = NULL) {
                  (is.data.frame(o2) && (ncol(o2) == 1L))) o2 <- o2[[1]]
           #
           if (is.data.frame(o1)) o1 <- o1[o1$id %in% z, ]
-          if (!any("subjects" == names(o1))) o1 <-
-            NA_integer_ else o1 <- as.numeric(o1$subjects)
+          if (any("subjects" == names(o1))) o1 <-
+            as.numeric(o1$subjects) else o1 <- NA_integer_
           if (is.data.frame(o1)) o1 <- o1[o1$id %in% z, ]
           #
           if (is.data.frame(o2)) o2 <- o2[o2$id %in% z, ]
-          if (!any("subjects" == names(o2))) o2 <-
-            NA_integer_ else o2 <- as.numeric(o2$subjects)
+          if (any("subjects" == names(o2)))  o2 <-
+            as.numeric(o2$subjects) else o2 <- NA_integer_
           #
           return(sum(o1, o2, na.rm = TRUE))
         },

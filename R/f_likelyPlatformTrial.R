@@ -240,7 +240,7 @@ f.likelyPlatformTrial <- function(df = NULL) {
     apply(t, 1, function(r) {
       r <- seq_along(r)[r >= indexThreshold]
       r <- r[!is.na(r)]
-      if (!length(r)) NA_integer_ else r
+      if (length(r)) r else NA_integer_
     }, simplify = FALSE)
 
   } # indexSimilarX
