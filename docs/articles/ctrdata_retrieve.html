@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Retrieve clinical trial information • ctrdata</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Retrieve clinical trial information">
 </head>
@@ -82,11 +82,13 @@ Herold</h4>
 <p>Remember to respect the registers’ terms and conditions (see
 <code>ctrOpenSearchPagesInBrowser(copyright = TRUE)</code>).</p>
 <p>In any publication, please cite this package as follows:</p>
+<pre><code><span><span class="co">## Warning in citation(auto = meta): could not determine year for 'ctrdata' from</span></span>
+<span><span class="co">## package DESCRIPTION file</span></span></code></pre>
 <p>Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” <em>Research
 Synthesis Methods</em>, <em>17</em>(3), 624-656. ISSN 1759-2879,
-1759-2887, <a href="doi:10.1017/rsm.2025.10061" class="uri">doi:10.1017/rsm.2025.10061</a> <a href="https://doi.org/10.1017/rsm.2025.10061" class="external-link uri">https://doi.org/10.1017/rsm.2025.10061</a>. or <br>Herold R
-(2026). <em>ctrdata: Retrieve and Analyze Clinical Trials Data from
+1759-2887. <a href="doi:10.1017/rsm.2025.10061" class="uri">doi:10.1017/rsm.2025.10061</a> <a href="https://doi.org/10.1017/rsm.2025.10061" class="external-link uri">https://doi.org/10.1017/rsm.2025.10061</a>. or <br>Herold R
+(????). <em>ctrdata: Retrieve and Analyze Clinical Trials Data from
 Public Registers</em>. R package version 1.26.1.9000, <a href="https://cran.r-project.org/package=ctrdata" class="external-link uri">https://cran.r-project.org/package=ctrdata</a>.</p>
 </div>
 <div class="section level3">
@@ -94,7 +96,7 @@ Public Registers</em>. R package version 1.26.1.9000, <a href="https://cran.r-pr
 </h3>
 <p>These functions open the browser, where the user can start searching
 for trials of interest.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Please review and respect register copyrights:</span></span>
 <span><span class="fu"><a href="../reference/ctrOpenSearchPagesInBrowser.html">ctrOpenSearchPagesInBrowser</a></span><span class="op">(</span></span>
 <span>  copyright <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -127,7 +129,7 @@ supported clinical trial registers.</p>
 <h3 id="get-address-from-clipboard">Get address from clipboard<a class="anchor" aria-label="anchor" href="#get-address-from-clipboard"></a>
 </h3>
 <p>The next steps are executed in the R environment:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGetQueryUrl.html">ctrGetQueryUrl</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/</span></span>
 <span><span class="co"># ctr-search/search?query=cancer&amp;age=under-18&amp;resultsstatus=trials-with-results</span></span>
@@ -149,7 +151,7 @@ including any protocols, consent forms and results reports, can be
 downloaded by <code>ctrdata</code>, by specifying parameter
 <code>documents.path</code>, see
 <code><a href="../reference/ctrLoadQueryIntoDb.html">help(ctrLoadQueryIntoDb)</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count number of trial records</span></span>
 <span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>,</span>
@@ -207,7 +209,7 @@ increases the time needed for loading. In contrast to protocol-related
 data which relate to countries, results-data in EUCTR relate to the
 trial and only a single version of results is available and loaded per
 trial.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve records, load into database</span></span>
 <span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">q</span>, </span>
@@ -236,7 +238,7 @@ number corresponds to the row number of the query shown with
 checks for new records in the register. Depending on the register and
 time since running the query last, an update (differential update) is
 possible or the original query is executed fully again.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show all queries</span></span>
 <span><span class="fu"><a href="../reference/dbQueryHistory.html">dbQueryHistory</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span>
 <span></span>
@@ -267,7 +269,7 @@ presence of results is not recorded in <code><a href="../reference/dbQueryHistor
 because the availability of results increases over time. The following
 is fast since it re-uses previously downloads of trials, if run in the
 same R session in which the above commands were run.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  querytoupdate <span class="op">=</span> <span class="st">"last"</span>,</span>
 <span>  euctrprotocolsall <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -315,7 +317,7 @@ complementary sets of trials. The registers currently supported include
 CTIS, EUCTR, CTGOV, CTGOV2 and ISRCTN. This can be achieved by loading
 queries that the user defines specifically or that function
 <code><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries()</a></code> provides, as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Loading specific query into same collection</span></span>
 <span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="st">"cond=neuroblastoma&amp;aggFilters=phase:2,ages:child,status:com"</span>,</span>
@@ -386,7 +388,7 @@ appended to any existing annotation of the trial record; alternatively,
 annotations can be replaced. Annotations are useful for analyses, for
 example to specially identify subsets of records and trials of interest
 in the collection</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Annotate a query in CTGOV2 defined above</span></span>
 <span><span class="fu"><a href="../reference/ctrLoadQueryIntoDb.html">ctrLoadQueryIntoDb</a></span><span class="op">(</span></span>
 <span>  queryterm <span class="op">=</span> <span class="va">queries</span><span class="op">[</span><span class="st">"CTGOV2"</span><span class="op">]</span>,</span>
@@ -414,7 +416,7 @@ alternative terms, such as codes and other names of active substances.
 The synonymous names can be used in queries in a register that does not
 offer search expansion. To obtain a character vector of synonyms for an
 active substance name:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search for synonyms</span></span>
 <span><span class="fu"><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms</a></span><span class="op">(</span></span>
 <span>  activesubstance <span class="op">=</span> <span class="st">"imatinib"</span></span>
@@ -437,7 +439,7 @@ Additional concepts and terms used include basket and umbrella trials,
 and in particular complex trials. Please see the references below for
 further information. <code>ctrdata</code> can help finding such research
 and analysing the study information, as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate queries to identify trials</span></span>
 <span><span class="va">queries</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ctrGenerateQueries.html">ctrGenerateQueries</a></span><span class="op">(</span></span>
 <span>  searchPhrase <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
@@ -501,7 +503,7 @@ information into a database collection. This involves constructing a
 query that combines the identifiers and then iterating over the sets of
 identifiers. Note to combine identifiers into the <code>queryterm</code>
 depends on the specific register.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use a trial concept to calculate related identifiers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"ctrdata-trial-concepts"</span><span class="op">)</span></span>
 <span></span>
@@ -568,7 +570,7 @@ depends on the specific register.</p>
 <code>_id</code> of the trial, from which <code>ctrdata</code> infers
 the concerned register. Alternatively, batches of <code>_id</code>s can
 be loaded from some registers (not CTIS), as follows.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ids of trials of interest</span></span>
 <span><span class="va">ctIds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"NCT00001209"</span>, <span class="st">"NCT00001436"</span>, <span class="st">"NCT00187109"</span>, <span class="st">"NCT01516567"</span>, <span class="st">"NCT01471782"</span>, </span>

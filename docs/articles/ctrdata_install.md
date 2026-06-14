@@ -5,7 +5,7 @@
 The R Project website (<https://www.r-project.org/>) provides installers
 for the R system. It can be used with software products and graphical
 user interfaces such as [R
-Studio](https://posit.co/products/open-source/rstudio/), or from [Visual
+Studio](https://posit.co/products/open-source/rstudio) or from [Visual
 Studio Code](https://github.com/REditorSupport/vscode-R).
 
 General information on the `ctrdata` package is available here:
@@ -42,7 +42,7 @@ instructions for PostgreSQL are
 server are
 [here](https://www.mongodb.com/docs/manual/administration/install-community/);
 a remote MongoDB database server is accessible
-[here](https://www.mongodb.com/cloud/atlas). See
+[here](https://www.mongodb.com/products/platform). See
 [here](https://github.com/ropensci/nodbi#benchmark) for a speed
 comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB
 local server.
@@ -74,11 +74,14 @@ Remember to respect the registers’ terms and conditions (see
 
 In any publication, please cite this package as follows:
 
+    ## Warning in citation(auto = meta): could not determine year for 'ctrdata' from
+    ## package DESCRIPTION file
+
 Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887,
+Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or\
-Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
+Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
 from Public Registers*. R package version 1.26.1.9000,
 <https://cran.r-project.org/package=ctrdata>.

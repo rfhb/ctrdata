@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-04-18 for version 1.26.1.9000.
+package. This README was reviewed on 2026-06-14 for version 1.26.1.9000.
 
 ## Main features
 
@@ -65,12 +65,17 @@ Respect the registers’ terms and conditions, see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package
 in any publication or work as follows:
 
+> ``` R
+> #> Warning in citation(auto = meta): could not determine year for 'ctrdata' from
+> #> package DESCRIPTION file
+> ```
+>
 > Herold R (2026). “Aggregating and analysing clinical trials data from
 > multiple public registers using R package ctrdata.” *Research
-> Synthesis Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887,
+> Synthesis Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (2026). *ctrdata: Retrieve and Analyze Clinical Trials Data
+> Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
 > from Public Registers*. R package version 1.26.1.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
@@ -114,7 +119,7 @@ publications:
   <https://paediatricdata.eu/innovation-coming-to-paediatric-research/>
 - Cancer Research UK (2017) The impact of collaboration: The value of UK
   medical research to EU science and health.
-  [link](https://www.ukri.org/wp-content/uploads/2023/02/MRC-150223-Theimpactofcollaboraton-ThevalueofUK-medicalresearchtoEUscienceandhealth.pdf)
+  [link](https://acmedsci.ac.uk/file-download/72060732)
 - EMA (2017) Results of juvenile animal studies (JAS) and impact on
   anti-cancer medicine development and use in children [PDF file, p
   34](https://www.ema.europa.eu/en/documents/scientific-guideline/results-juvenile-animal-studies-jas-and-impact-anti-cancer-medicine-development-and-use-children_en.pdf#page=34)
@@ -873,6 +878,29 @@ ctrLoadQueryIntoDb(
 # Updated history ("meta-info" in "collection_name")
 # $n
 # [1] 440
+#
+# explore types of documents
+ctrLoadQueryIntoDb(
+  queryterm = paste0(
+    "https://euclinicaltrials.eu/ctis-public/search#",
+    'searchCriteria={"containAny":"cancer","status":[8]}'),
+  documents.path = "./files-ctis/",
+  documents.regexp = NULL,
+  con = db
+)
+#
+# get names of document files
+docNames <- dir(
+  path = "./files-ctis/", 
+  recursive = TRUE)
+# get type of document
+docNames <- sub(".+/(.+?) - .+", "\\1", docNames)
+# 
+table(docNames)
+# ClnclStdyRpr LyprsnsSmmoR     Protocol Prtcl-Extrct RcrtmntArrng 
+#           48          538         1800            2         1634 
+# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr 
+#            2         5595          495          176         1516 
 ```
 
 ## Tests and coverage

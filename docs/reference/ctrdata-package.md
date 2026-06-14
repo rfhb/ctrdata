@@ -5,7 +5,7 @@ results-related information on clinical trials from four public
 registers, the 'European Union Clinical Trials Register' ('EUCTR',
 <https://www.clinicaltrialsregister.eu/>), 'ClinicalTrials.gov'
 (<https://clinicaltrials.gov/> and also translating queries the retired
-classic interface), the 'ISRCTN' (<http://www.isrctn.com/>) and the
+classic interface), the 'ISRCTN' (<https://www.isrctn.com/>) and the
 'European Union Clinical Trials Information System' ('CTIS',
 <https://euclinicaltrials.eu/>). Trial information is downloaded,
 converted and stored in a database ('PostgreSQL', 'SQLite', 'DuckDB' or

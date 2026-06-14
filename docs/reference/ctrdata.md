@@ -9,9 +9,7 @@ Package `ctrdata` retrieves trial data and stores it in a database
 collection. The connection is specified using `nodbi`, which allows to
 use different database backends in an identical way. A database
 connection object is specified once and then can be used as parameter
-`con` in subsequent calls of `ctrdata` functions. Specifying
-`collection = "<my trial data collection's name>"` indicates the table
-in the database that package `ctrdata` should use.
+`con` in subsequent calls of `ctrdata` functions.
 
 |  |  |
 |----|----|
@@ -52,12 +50,12 @@ data frame).
 
 ## 4 - Operate on a trial data frame from dbGetFieldsIntoDf
 
+[ctrdata-trial-concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.md)
+(calculate pre-defined trial concepts across registers),
 [dfTrials2Long](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
 (convert fields with nested elements into long format),
 [dfName2Value](https://rfhb.github.io/ctrdata/reference/dfName2Value.md)
-(get values for variable(s) of interest),
-[ctrdata-trial-concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.md)
-(calculate pre-defined trial concepts for every register).
+(get values for variable(s) of interest).
 
 ## See also
 

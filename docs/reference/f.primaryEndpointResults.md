@@ -73,19 +73,18 @@ trialsDf <- dbGetFieldsIntoDf(
 
 trialsDf
 #> # A tibble: 11 × 4
-#>    `_id`    .primaryEndpointFirs…¹ .primaryEndpointFirs…² .primaryEndpointFirs…³
-#>    <chr>                     <dbl> <chr>                                   <dbl>
-#>  1 2016-00…                 0.001  cochranmantelhaenszel                     178
-#>  2 2019-00…                 0.0001 ancova                                     70
-#>  3 2022-00…                 0.0001 exactusingbinomialdis…                   8057
-#>  4 NCT0056…                 0.0082 logrank                                   355
-#>  5 NCT0071…                NA      NA                                         NA
-#>  6 NCT0130…                NA      NA                                         NA
-#>  7 NCT0198…                NA      NA                                         NA
-#>  8 NCT0327…                NA      NA                                         NA
-#>  9 NCT0332…                NA      NA                                         NA
-#> 10 NCT0344…                NA      NA                                         NA
-#> 11 NCT0354…                NA      NA                                         NA
-#> # ℹ abbreviated names: ¹​.primaryEndpointFirstPvalue,
-#> #   ²​.primaryEndpointFirstPmethod, ³​.primaryEndpointFirstPsize
+#>    `_id`             .primaryEndpointFirstPvalue .primaryEndpointFirstPmethod  
+#>    <chr>                                   <dbl> <chr>                         
+#>  1 2016-004489-24-DE                      0.001  cochranmantelhaenszel         
+#>  2 2019-002663-10-ES                      0.0001 ancova                        
+#>  3 2022-000099-20-DE                      0.0001 exactusingbinomialdistribution
+#>  4 NCT00567567                            0.0082 logrank                       
+#>  5 NCT00716976                           NA      NA                            
+#>  6 NCT01305200                           NA      NA                            
+#>  7 NCT01987596                           NA      NA                            
+#>  8 NCT03275402                           NA      NA                            
+#>  9 NCT03325556                           NA      NA                            
+#> 10 NCT03443973                           NA      NA                            
+#> 11 NCT03548584                           NA      NA                            
+#> # ℹ 1 more variable: .primaryEndpointFirstPsize <dbl>
 ```
