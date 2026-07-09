@@ -80,12 +80,13 @@ registers from which to generate unique _id's, default
 
 
 <dt id="arg-prefermemberstate">prefermemberstate<a class="anchor" aria-label="anchor" href="#arg-prefermemberstate"></a></dt>
-<dd><p>Code of single EU Member State for which records
-should returned. If not available, a record for BE or lacking this, any
-random Member State's record for the trial will be returned.
-For a list of codes of EU  Member States, please see vector
-<code>countriesEUCTR</code>. Specifying "3RD" will return the Third Country
-record of trials, where available.</p></dd>
+<dd><p>Only relevant for "EUCTR"; a two-letter ISO 3166-1
+alpha-2 country code string for a single EU Member State for which records
+should be returned. If not available, records for BE, if neither available,
+any random Member States' records will be returned.
+For a list of codes of EU  Member States, see
+<code>ctrdata:::countriesEUCTR</code>. Specifying "3RD" will return the Third
+Country record of trials, where available in EUCTR.</p></dd>
 
 
 <dt id="arg-include-rdcountrytrials">include3rdcountrytrials<a class="anchor" aria-label="anchor" href="#arg-include-rdcountrytrials"></a></dt>
@@ -117,7 +118,9 @@ names correspond to the register of the record.</p>
 (and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.</p>
 <p>Note that for "CTIS", the trial with the latest (highest) resubmission
-number (last two digits of `id`, clinical trial number) is identified.</p>
+number (last two digits of `id`, clinical trial number) is identified.
+Trials transitioned from "EUCTR" into "CTIS" will be identified from
+"CTIS" unless "EUCTR" occurs before "CTIS" in parameter `preferregister`.</p>
 <p>Note that the trial concept <a href="f.isUniqueTrial.html">f.isUniqueTrial</a> (which uses this
 function) can be calculated at the time of creating a data frame with
 <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>, which often may be the preferred approach.</p>
@@ -154,7 +157,7 @@ function) can be calculated at the time of creating a data frame with
 <span class="r-in"><span>  con <span class="op">=</span> <span class="va">dbc</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To review trial concepts details, call 'help("ctrdata-trial-concepts")'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying database (2 fields)...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> , typing fields...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Typing fields...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating f.isUniqueTrial...                            
 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for duplicate trials... </span>
@@ -198,7 +201,7 @@ function) can be calculated at the time of creating a data frame with
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

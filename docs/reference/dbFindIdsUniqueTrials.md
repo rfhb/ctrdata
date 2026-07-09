@@ -29,11 +29,13 @@ dbFindIdsUniqueTrials(
 
 - prefermemberstate:
 
-  Code of single EU Member State for which records should returned. If
-  not available, a record for BE or lacking this, any random Member
-  State's record for the trial will be returned. For a list of codes of
-  EU Member States, please see vector `countriesEUCTR`. Specifying "3RD"
-  will return the Third Country record of trials, where available.
+  Only relevant for "EUCTR"; a two-letter ISO 3166-1 alpha-2 country
+  code string for a single EU Member State for which records should be
+  returned. If not available, records for BE, if neither available, any
+  random Member States' records will be returned. For a list of codes of
+  EU Member States, see `ctrdata:::countriesEUCTR`. Specifying "3RD"
+  will return the Third Country record of trials, where available in
+  EUCTR.
 
 - include3rdcountrytrials:
 
@@ -66,6 +68,9 @@ are not considered by this function.
 
 Note that for "CTIS", the trial with the latest (highest) resubmission
 number (last two digits of \`id\`, clinical trial number) is identified.
+Trials transitioned from "EUCTR" into "CTIS" will be identified from
+"CTIS" unless "EUCTR" occurs before "CTIS" in parameter
+\`preferregister\`.
 
 Note that the trial concept
 [f.isUniqueTrial](https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.md)
@@ -106,7 +111,7 @@ df <- dbGetFieldsIntoDf(
   con = dbc)
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
 #> Querying database (2 fields)...
-#> , typing fields...
+#> Typing fields...
 #> Calculating f.isUniqueTrial...                            
 
 #> Searching for duplicate trials... 

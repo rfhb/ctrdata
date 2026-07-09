@@ -5,8 +5,7 @@ results-related (achieved recruitment) over protocol-related information
 (planned sample size). Thus, the calculated number depends on the status
 of the recruitment (see
 [f.statusRecruitment](https://rfhb.github.io/ctrdata/reference/f.statusRecruitment.md))
-and on the availability of results data; *for "CTIS", the number always
-corresponds to the planned sample size*.
+and on the availability of results data.
 
 ## Usage
 
@@ -55,10 +54,11 @@ f.sampleSize()
 #> [1] "participants.targetEnrolment"     "participants.totalFinalEnrolment"
 #> 
 #> $ctis
-#> [1] "authorizedPartsII.recruitmentSubjectCount"                      
-#> [2] "authorizedPartI.rowSubjectCount"                                
-#> [3] "authorizedApplication.authorizedPartsII.recruitmentSubjectCount"
-#> [4] "authorizedApplication.authorizedPartI.rowSubjectCount"          
+#> [1] "totalNumberEnrolled"                                            
+#> [2] "authorizedPartsII.recruitmentSubjectCount"                      
+#> [3] "authorizedPartI.rowSubjectCount"                                
+#> [4] "authorizedApplication.authorizedPartsII.recruitmentSubjectCount"
+#> [5] "authorizedApplication.authorizedPartI.rowSubjectCount"          
 #> 
 
 # apply trial concept when creating data frame
@@ -69,8 +69,8 @@ trialsDf <- dbGetFieldsIntoDf(
   calculate = "f.sampleSize",
   con = dbc)
 #> To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-#> Querying database (18 fields)...
-#> , typing fields...
+#> Querying database (19 fields)...
+#> Typing fields...
 #> Calculating f.sampleSize...                            
 
 trialsDf
@@ -83,8 +83,8 @@ trialsDf
 #>  4 2016-004489-24-DE         186
 #>  5 2019-002663-10-ES         145
 #>  6 2022-000099-20-DE        8057
-#>  7 2022-500244-37-00         440
-#>  8 2023-505613-24-00          32
+#>  7 2022-500244-37-00         150
+#>  8 2023-505613-24-00          13
 #>  9 2023-508143-51-01          11
 #> 10 2024-510663-34-00          11
 #> # ℹ 14 more rows
