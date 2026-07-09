@@ -378,7 +378,7 @@ dbGetFieldsIntoDf <- function(
   Sys.setlocale("LC_TIME", "C")
 
   # iterates over columns for typing
-  message("\b\b\b\b, typing fields...")
+  message("Typing fields...")
   nm <- names(dfi)
   for (i in seq_len(ncol(dfi))) {
 

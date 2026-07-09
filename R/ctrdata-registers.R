@@ -2,28 +2,27 @@
 #'
 #' Registers of the four clinical trial registers from which package
 #' \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-#' result-related information as well as documents, last updated 2026-06-04
+#' result-related information as well as documents, last updated 2026-07-08
 #'
 #' @section 1 - Overview:
 #'
-#' - **EUCTR**: The EU Clinical Trials Register is complete with 44,396
+#' - **EUCTR**: The EU Clinical Trials Register is complete with more than 44,400
 #' clinical trials (at least one investigational medicinal product, IMP; in
-#' the European Union and beyond), including more than 26,100 trials with
+#' the European Union and beyond), including more than 26,165 trials with
 #' results, which continue to be added.
 #'
 #' - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-#' holds more than 11,750 publicly accessible clinical trials, including
-#' more than 1020 with results or a report.
+#' holds almost 12,000 publicly accessible clinical trials, including
+#' more than 1,160 with results or a report.
 #' (To automatically get CTIS search query URLs, see
 #' \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
 #'
-#' - **CTGOV2**: ClinicalTrials.gov holds more than 588,000 interventional and
-#' observational studies, including almost 74,000 interventional studies
-#' with results.
+#' - **CTGOV2**: ClinicalTrials.gov holds more than 593,000 interventional and
+#' observational studies, including more than 7,800 interventional studies
+#' with an Investigational Drug.
 #'
-#' - **ISRCTN**: The ISRCTN Registry holds more than 28,200 interventional and
-#' observational health studies, including more than 15,300 studies with
-#' results.
+#' - **ISRCTN**: The ISRCTN Registry holds more than 28,400 interventional and
+#' observational health studies.
 #'
 #' | | **CTGOV2**| **CTIS** | **EUCTR** | **ISRCTN** |
 #' | -- | :--: | :--: | :--: | :--: |

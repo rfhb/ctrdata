@@ -19,10 +19,10 @@ tf <- function() {
     simplify = FALSE)
 
   # test
-  expect_true(length(fcts) >= 20L)
+  expect_true(length(fcts) == 20L)
 
   # test
-  expect_true(length(unique(unlist(fctFields))) >= 207L)
+  expect_true(length(unique(unlist(fctFields))) == 208L)
 
   # get data
   if (!checkSqlite()) exit_file("Reason: no SQLite")
@@ -44,7 +44,7 @@ tf <- function() {
       "Querying ", "iterating over fields")
   )
 
-  # helper
+  # "between" helper
   btw <- function(x, l, u = l) isTRUE(((0.9 * l) <= x) && (x <= (u * 1.1)))
 
   # test
@@ -69,7 +69,7 @@ tf <- function() {
   # integers
   expect_true(sum(dF$.numSites, na.rm = TRUE) == 1017L)
   expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 26L)
-  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 18226L)
+  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 17917L)
   expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 8660L)
 
   # double

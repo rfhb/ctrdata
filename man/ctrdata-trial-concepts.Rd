@@ -27,7 +27,7 @@ to ask about or improve a trial concept.
 The following trial concepts can be used by referencing their name when
 calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
-last updated 2026-01-11.
+last updated 2026-07-09.
 \itemize{
 \item \link{f.assignmentType} (factor) was the assignment to treatment based on
 randomisation or not? ("R" or "NR")
@@ -65,7 +65,7 @@ first primary endpoint only
 of start of recruitment
 \item \link{f.sampleSize} (integer) the planned or achieved number of subjects
 or participants recruited (depending on status of recruitment and
-availability of results; for "CTIS" always planned number)
+availability of results)
 \item \link{f.sponsorType} (factor) a type or class of sponsor(s) that
 is simplified to "not for profit", "for profit", "mixed" or "other"
 \item \link{f.statusRecruitment} (factor) a status that is simplified to
