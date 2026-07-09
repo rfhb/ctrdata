@@ -1,7 +1,8 @@
 # ctrdata 1.26.1.9000
 
-- Enable international characters in `queryterm`
-- Updated user and editorial info
+- Made `f.sampleSize()` return the number of enrolled participants also for CTIS, where available
+- Enabled international characters in `queryterm`
+- Updated user and editorial info, including how `dbFindIdsUniqueTrials()` handles so-called transitioned trials
 - Minor typing function speed up
 
 # ctrdata 1.26.1

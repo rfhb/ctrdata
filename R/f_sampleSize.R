@@ -1,5 +1,6 @@
 #### history ####
 # 2025-02-08 first version
+# 2026-07-08 modified CTIS
 
 #' Calculate sample size of a study
 #'
@@ -7,8 +8,7 @@
 #' results-related (achieved recruitment) over protocol-related information
 #' (planned sample size). Thus, the calculated number depends on the status of
 #' the recruitment (see \link{f.statusRecruitment}) and on the availability of
-#' results data; \emph{for "CTIS", the number always corresponds to the
-#' planned sample size}.
+#' results data.
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
@@ -67,6 +67,9 @@ f.sampleSize <- function(df = NULL) {
       "participants.totalFinalEnrolment"
     ),
     "ctis" = c(
+      #
+      "totalNumberEnrolled",
+      #
       # CTIS1
       "authorizedPartsII.recruitmentSubjectCount", # in EEA
       "authorizedPartI.rowSubjectCount", # ROW, outside EEA
@@ -147,11 +150,11 @@ f.sampleSize <- function(df = NULL) {
     mutate(
       helper_ctis1 = sapply(
         .data$authorizedPartsII.recruitmentSubjectCount,
-        function(i) sum(i, na.rm = TRUE),
+        function(i) if (all(is.na(i))) NA else sum(i, na.rm = TRUE),
         USE.NAMES = FALSE, simplify = TRUE),
       helper_ctis2 = sapply(
         .data$authorizedApplication.authorizedPartsII.recruitmentSubjectCount,
-        function(i) sum(i, na.rm = TRUE),
+        function(i) if (all(is.na(i))) NA else sum(i, na.rm = TRUE),
         USE.NAMES = FALSE, simplify = TRUE)
     ) -> df
   dplyr::mutate(
@@ -161,7 +164,12 @@ f.sampleSize <- function(df = NULL) {
         df, c(
           "helper_ctis1", "authorizedPartI.rowSubjectCount",
           "helper_ctis2", "authorizedApplication.authorizedPartI.rowSubjectCount"
-        )), na.rm = TRUE)) %>%
+        )), na.rm = TRUE),
+    out = dplyr::if_else(
+      !is.na(.data$totalNumberEnrolled),
+      .data$totalNumberEnrolled,
+      out
+    )) %>%
     dplyr::pull("out") -> df$ctis
 
   # merge all
