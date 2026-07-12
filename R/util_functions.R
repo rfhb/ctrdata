@@ -948,13 +948,13 @@ ctrMultiDownload <- function(
         # add user agent
         httr2::req_user_agent(ctrdataUseragent) |>
         # keep important option 2L for euctr
-        httr2::req_options(http_version = 2) |>
+        httr2::req_options(http_version = 2L) |>
         # hard-coded throttling
         httr2::req_throttle(
           # ensures that function never makes more
           # than capacity requests in fill_time_s
           capacity = 100L,
-          fill_time_s = 15L
+          fill_time_s = 20L
         ) |>
         # include retries in request
         httr2::req_retry(
@@ -1418,9 +1418,22 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
         "                               \r",
         appendLF = FALSE)
 
-      # get all ids using jq, safet than regex
-      ids <- gsub("\"", "", as.vector(
-        jqr::jq(file(tempFiles[tempFile]), " ._id ")))
+      # get all ids using jq, safer than regex
+      idsAll <- try(gsub("\"", "", as.vector(
+        jqr::jq(file(tempFiles[tempFile]), " ._id "))),
+        silent = TRUE)
+      if (inherits(idsAll, "try-error")) idsAll <- sub(
+        '"_id":.*"(.+)",', "\\1",
+        stringi::stri_extract_all_regex(
+          str = readLines(file(tempFiles[tempFile])),
+          pattern = '"_id":([^,]+)",'
+        ))
+      ids <- unique(idsAll)
+      if (!identical(ids, idsAll)) warning(
+        "Multiple trial records in JSON file ",
+        tempFiles[tempFile], " for _id's ",
+        paste0(unique(idsAll[duplicated(idsAll)]), collapse = ", "),
+        call. = FALSE, immediate. = TRUE)
 
       ## existing data -------------------------------------------------
 
@@ -1532,26 +1545,70 @@ dbCTRLoadJSONFiles <- function(dir, con, verbose) {
           res == 0L ||
           res != nrow(annoDf)) {
 
-        # if res failed, step into line by line mode
-        fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
+        # inform user
+        message(
+          "Iterating over lines in ", tempFiles[tempFile],
+          " because batch import failed with ", trimws(res[[1]]))
 
+        # if batch import failed, step into line by line mode
+        fdLines <- file(tempFiles[tempFile], open = "rt", blocking = TRUE)
+        on.exit(try(close(fdLines), silent = TRUE), add = TRUE)
+
+        # get id to act on
+        dbAll <- try({
+          nodbi::docdb_query(
+            src = con,
+            key = con$collection,
+            query = "{}",
+            fields = '{"_id": 1, "record_last_import": 1}')
+        }, silent = TRUE)
+        dbIdsOk <- intersect(ids, dbAll[["_id"]])
+
+        # reset dbIds
+        if (inherits(dbIds, "try-error")) dbIds <- NULL
+
+        # iterate over remaining trials
         while (TRUE) {
 
           tmpOneLine <- readLines(con = fdLines, n = 1L, warn = FALSE)
           if (length(tmpOneLine) == 0L || !nchar(tmpOneLine)) break
-          id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
-          res <- suppressWarnings(suppressMessages(nodbi::docdb_create(
-            src = con, key = con$collection, value = paste0("[", tmpOneLine, "]"))))
+          # message("_id: ", id, ", JSON valid: ", jsonlite::validate(tmpOneLine))
 
-          nImported <- nImported + res
-          if (res) idSuccess <- c(idSuccess, id)
-          if (!res) idFailed <- c(idFailed, id)
-          if (!res) warning("Failed to load: ", id, call. = FALSE)
-          if (res) idAnnotation <- c(idAnnotation, annoDf[
-            annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
+          id <- sub(".*\"_id\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
+          li <- sub(".*\"record_last_import\":[ ]*\"(.*?)\".*", "\\1", tmpOneLine)
+          dbLast <- try(dbAll[dbAll[["_id"]] == id, "record_last_import"], silent = TRUE)
+          if (inherits(dbLast, "try-error")) dbLast <- li
+
+          # compare to any successfully imported _id's
+          if (!any(id == dbIdsOk) || li != dbLast) {
+
+            suppressWarnings(suppressMessages(nodbi::docdb_delete(
+              src = con, key = con$collection,
+              query = paste0('{"_id": "', id, '"}'))))
+            res <- try(suppressWarnings(suppressMessages(nodbi::docdb_create(
+              src = con, key = con$collection,
+              value = paste0("[", tmpOneLine, "]")))), silent = TRUE)
+
+            if (inherits(res, "try-error")) res <- 0L
+            nImported <- nImported + res
+            if (res) idSuccess <- c(idSuccess, id)
+            if (!res) idFailed <- c(idFailed, id)
+            if (!res) warning("Failed to load: ", id, call. = FALSE, immediate. = TRUE)
+            if (res) idAnnotation <- c(idAnnotation, annoDf[
+              annoDf[["_id"]] == id, "annotation", drop = TRUE][1])
+
+          } else {
+
+            # record was previously imported
+            nImported <- nImported + 1L
+            idSuccess <- c(idSuccess, id)
+            idAnnotation <- annoDf[
+              annoDf[["_id"]] == id, "annotation", drop = TRUE]
+
+          } # !any(id == dbIdsOk) || li != dbLast
 
         }
-        close(fdLines)
+        try(close(fdLines), silent = TRUE)
 
       } else {
 

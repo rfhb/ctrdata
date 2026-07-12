@@ -10,7 +10,7 @@ tf <- function() {
   tmpDir <- tempdir()
 
   fileFrom <- dir(
-    # path = "./inst/tinytest",
+    # path = "./inst/tinytest", # only for direct debugging
     pattern = "test_error_trials_euctr.txt",
     full.names = TRUE)
 
@@ -40,6 +40,26 @@ tf <- function() {
 
   # end copy from ctrLoadQueryIntoEuctr.R
 
+  # introduce error at JSON_ERROR_HERE in the NDJSON file
+  i <- fileTo
+  o <- sub("[.]txt$", ".ndjson_error", i)
+  i <- sub("[.]txt$", ".ndjson", i)
+  i <- file(i, open = "rt", blocking = TRUE)
+  unlink(o)
+  o <- file(o, open = "at")
+  while (TRUE) {
+    l <- readLines(con = i, n = 1L, warn = FALSE)
+    if (length(l) == 0L || !nchar(l)) break
+    l <- sub("JSON_ERROR_HERE", ' ERROR_TRIGGER-->" ', l)
+    writeLines(l, con = o)
+  }
+  close(i)
+  close(o)
+  i <- fileTo
+  o <- sub("[.]txt$", ".ndjson_error", i)
+  i <- sub("[.]txt$", ".ndjson", i)
+  file.copy(from = o, to = i, overwrite = TRUE)
+
   # setup
   if (!checkSqlite()) exit_file("Reason: no SQLite")
 
@@ -61,12 +81,20 @@ tf <- function() {
   # test
   expect_warning(
     res <- ctrdata:::dbCTRLoadJSONFiles(
-      dir = tmpDir, con = dbc, verbose = FALSE), "Failed to load: ")
+      dir = tmpDir, con = dbc, verbose = FALSE),
+    "Failed to load")
 
   # test
-  expect_equivalent(sort(res$failed), sort(c("2022-002568-62-SE", "2021-002179-21-PL")))
+  expect_equivalent(sort(res$failed), sort(c("2022-002568-62-ES", "2021-002179-21-FR")))
   expect_true(res$n == length(res$success))
   expect_true(res$n == length(res$annotations))
+  expect_true(res$n == 8L)
+
+  # test
+  expect_warning(
+    res <- ctrdata:::dbCTRLoadJSONFiles(
+      dir = tmpDir, con = dbc, verbose = FALSE),
+    "Multiple trial records.*2022-002568-62-SE.*2021-002179-21-PL")
 
   # test
   suppressWarnings(
@@ -92,8 +120,9 @@ tf <- function() {
 
   # test
   expect_true(all(res$annotation == "my_anno"))
-  expect_true(length(res$annotation) == 8L)
-  expect_true(nrow(res) == 8L)
+  # since two trials are twice each (duplicates)
+  expect_true(length(res$annotation) == 8L - 2L)
+  expect_true(nrow(res) == 8L - 2L)
 
   # end tests
 }
