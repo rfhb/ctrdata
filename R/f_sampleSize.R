@@ -1,6 +1,8 @@
 #### history ####
 # 2025-02-08 first version
 # 2026-07-08 modified CTIS
+# CTGOV2 appears to not present in any single
+# trial record both ACTUAL and ESTIMATED types
 
 #' Calculate sample size of a study
 #'

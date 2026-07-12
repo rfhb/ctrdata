@@ -2,7 +2,8 @@
 
 - Made `f.sampleSize()` return the number of enrolled participants also for CTIS, where available
 - Enabled international characters in `queryterm`
-- Updated user and editorial info, including how `dbFindIdsUniqueTrials()` handles so-called transitioned trials
+- Revised how failed batch imports are handled through iterating over individual trial records
+- Updated user and editorial information, including how `dbFindIdsUniqueTrials()` handles so-called transitioned trials
 - Minor typing function speed up
 
 # ctrdata 1.26.1
