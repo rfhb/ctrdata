@@ -56,6 +56,17 @@ jobs:
         run: remotes::install_github("ropensci/nodbi", dependencies = c("Depends", "Imports"))
         shell: Rscript {0}
 
+      - name: Try installing duckdb extension library
+        run: |
+          options(duckdb.extension_directory = "~/.duckdb_extensions")
+          library(duckdb)
+          drv <- duckdb()
+          con <- dbConnect(drv)
+          try(dbExecute(con, 'INSTALL json;'), silent = TRUE)
+          dbDisconnect(con)
+          duckdb_shutdown(drv)
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: ankane/setup-mongodb@v1

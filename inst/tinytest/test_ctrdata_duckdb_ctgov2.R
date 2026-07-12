@@ -10,6 +10,9 @@ if (!checkInternet()) exit_file("Reason: no internet connectivity")
 #### CTGOV ####
 tf <- function() {
 
+  # 2026-07-11 added to accomodate duckdb change
+  options(duckdb.extension_directory = "~/.duckdb_extensions")
+
   # test
   expect_error(
     dbQueryHistory(

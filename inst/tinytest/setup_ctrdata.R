@@ -70,6 +70,10 @@ checkSqlite <- function() {
 }
 
 checkDuckdb <- function() {
+
+  # 2026-07-11 added to accomodate duckdb change
+  options(duckdb.extension_directory = "~/.duckdb_extensions")
+
   !inherits(try(
     duckdb::dbDisconnect(nodbi::src_duckdb()$con, shutdown = TRUE),
     silent = TRUE), "try-error")
