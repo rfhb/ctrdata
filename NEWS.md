@@ -1,3 +1,7 @@
+# ctrdata 1.26.2.9000
+
+- New development version
+
 # ctrdata 1.26.2
 
 - Made `f.sampleSize()` return the number of enrolled participants also for CTIS, where available
