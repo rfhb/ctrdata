@@ -1,13 +1,17 @@
 # Changelog
 
-## ctrdata 1.26.1.9000
+## ctrdata 1.26.2
+
+CRAN release: 2026-07-12
 
 - Made
   [`f.sampleSize()`](https://rfhb.github.io/ctrdata/reference/f.sampleSize.md)
   return the number of enrolled participants also for CTIS, where
   available
 - Enabled international characters in `queryterm`
-- Updated user and editorial info, including how
+- Revised how failed batch imports are handled through iterating over
+  individual trial records
+- Updated user and editorial information, including how
   [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
   handles so-called transitioned trials
 - Minor typing function speed up

@@ -9,7 +9,7 @@ studies, and for obtaining documents, from public trial registers"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,12 @@ studies, and for obtaining documents, from public trial registers</p>
 collection. The connection is specified using <code>nodbi</code>, which allows to
 use different database backends in an identical way.
 A database connection object is specified once and then can be used as
-parameter <code>con</code> in subsequent calls of <code>ctrdata</code> functions.</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table></div>
+parameter <code>con</code> in subsequent calls of <code>ctrdata</code> functions.</p><table class="table table"><tr><td><em>Database</em></td><td><em>Connection object</em></td></tr><tr><td>SQLite</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_sqlite.html" class="external-link">nodbi::src_sqlite</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>DuckDB*</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_duckdb.html" class="external-link">nodbi::src_duckdb</a>(dbname = "my_db", collection = "my_coll")</code></td></tr><tr><td>MongoDB</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_mongo.html" class="external-link">nodbi::src_mongo</a>(db = "my_db", collection = "my_coll")</code></td></tr><tr><td>PostgreSQL</td><td><code>dbc &lt;- <a href="https://docs.ropensci.org/nodbi/reference/src_postgres.html" class="external-link">nodbi::src_postgres</a>(dbname = "my_db"); dbc[["collection"]] &lt;- "my_coll"</code></td></tr></table><p>*For DuckDB, the JSON extension is needed which can be permanently downloaded as follows.
+User sets a directory of choice for each new R session:
+<code>options(duckdb.extension_directory = "~/.duckdb_extensions")</code>
+Load and store in this directory; needs to be executed only once after a DuckDB install:
+<code>DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')</code></p>
+    </div>
     <div class="section level2">
     <h2 id="-load-information-from-clinical-trial-registers">2 - Load information from clinical trial registers<a class="anchor" aria-label="anchor" href="#-load-information-from-clinical-trial-registers"></a></h2>
 

@@ -1,4 +1,4 @@
-# ctrdata 1.26.1.9000
+# ctrdata 1.26.2
 
 - Made `f.sampleSize()` return the number of enrolled participants also for CTIS, where available
 - Enabled international characters in `queryterm`

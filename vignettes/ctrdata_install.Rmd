@@ -46,10 +46,23 @@ At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or remote) dat
 Purpose | Function call
 -------------------- | --------------------
 Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`
-Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")`
+Create **DuckDB** database connection* | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")`
 Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`
 Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
 Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
+
+* For DuckDB, the JSON extension is needed which can be permanently downloaded as follows:
+
+```{r }
+# user to specify their directory of choice;
+# remember to set option for each new R session
+options(duckdb.extension_directory = "~/.duckdb_extensions")
+
+# load and store in above-mentioned 
+# directory; only once to be executed
+DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
+```
+
 
 ## Attach package `ctrdata`
 

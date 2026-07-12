@@ -17,13 +17,13 @@ Source:
 [`inst/CITATION`](https://github.com/rfhb/ctrdata/blob/HEAD/inst/CITATION)
 
 Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.26.1.9000,
+from Public Registers*. R package version 1.26.2,
 <https://cran.r-project.org/package=ctrdata>.
 
     @Manual{,
       title = {ctrdata: Retrieve and Analyze Clinical Trials Data from Public Registers},
       author = {Ralf Herold},
-      note = {R package version 1.26.1.9000},
+      note = {R package version 1.26.2},
       url = {https://cran.r-project.org/package=ctrdata},
     }
 

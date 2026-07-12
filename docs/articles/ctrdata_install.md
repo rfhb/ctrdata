@@ -50,10 +50,24 @@ local server.
 | Purpose | Function call |
 |----|----|
 | Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
-| Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
+| Create **DuckDB** database connection\* | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
 | Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
+
+- For DuckDB, the JSON extension is needed which can be permanently
+  downloaded as follows:
+
+``` r
+
+# user to specify their directory of choice;
+# remember to set option for each new R session
+options(duckdb.extension_directory = "~/.duckdb_extensions")
+
+# load and store in above-mentioned 
+# directory; only once to be executed
+DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
+```
 
 ## Attach package `ctrdata`
 
@@ -79,9 +93,9 @@ In any publication, please cite this package as follows:
 
 Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887.
+Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or\
 Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.26.1.9000,
+from Public Registers*. R package version 1.26.2,
 <https://cran.r-project.org/package=ctrdata>.

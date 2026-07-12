@@ -15,9 +15,16 @@ connection object is specified once and then can be used as parameter
 |----|----|
 | *Database* | *Connection object* |
 | SQLite | `dbc <- `[`nodbi::src_sqlite`](https://docs.ropensci.org/nodbi/reference/src_sqlite.html)`(dbname = "my_db", collection = "my_coll")` |
-| DuckDB | `dbc <- `[`nodbi::src_duckdb`](https://docs.ropensci.org/nodbi/reference/src_duckdb.html)`(dbname = "my_db", collection = "my_coll")` |
+| DuckDB\* | `dbc <- `[`nodbi::src_duckdb`](https://docs.ropensci.org/nodbi/reference/src_duckdb.html)`(dbname = "my_db", collection = "my_coll")` |
 | MongoDB | `dbc <- `[`nodbi::src_mongo`](https://docs.ropensci.org/nodbi/reference/src_mongo.html)`(db = "my_db", collection = "my_coll")` |
 | PostgreSQL | `dbc <- `[`nodbi::src_postgres`](https://docs.ropensci.org/nodbi/reference/src_postgres.html)`(dbname = "my_db"); dbc[["collection"]] <- "my_coll"` |
+
+\*For DuckDB, the JSON extension is needed which can be permanently
+downloaded as follows. User sets a directory of choice for each new R
+session: `options(duckdb.extension_directory = "~/.duckdb_extensions")`
+Load and store in this directory; needs to be executed only once after a
+DuckDB install:
+`DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')`
 
 ## 2 - Load information from clinical trial registers
 

@@ -1,14 +1,14 @@
-## ----setup, include=FALSE-----------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(eval = FALSE)
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # library(ctrdata)
 # citation("ctrdata")
 
-## ----cite_ctrdata, eval=TRUE, results='asis', echo=c(-1)----------------------
+## ----cite_ctrdata, eval=TRUE, results='asis', echo=c(-1)----------------------------------------------------------------
 cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Please review and respect register copyrights:
 # ctrOpenSearchPagesInBrowser(
 #   copyright = TRUE
@@ -20,11 +20,11 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 #   register = "EUCTR"
 # )
 
-## ----include=FALSE------------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------------------------------------------------
 # q <- "https://www.clinicaltrialsregister.eu/ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results"
 # clipr::write_clip(q)
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # q <- ctrGetQueryUrl()
 # # * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/
 # # ctr-search/search?query=cancer&age=under-18&resultsstatus=trials-with-results
@@ -37,7 +37,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # To check, this opens a browser with the query
 # ctrOpenSearchPagesInBrowser(url = q)
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Count number of trial records
 # ctrLoadQueryIntoDb(
 #   queryterm = q,
@@ -75,7 +75,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # #                                                    query-term
 # # 1 query=cancer&age=under-18&resultsstatus=trials-with-results
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Retrieve records, load into database
 # ctrLoadQueryIntoDb(
 #   queryterm = q,
@@ -92,7 +92,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # $n
 # # [1] 409
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Show all queries
 # dbQueryHistory(con = db)
 # 
@@ -110,7 +110,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # $n
 # # [1] 0
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # ctrLoadQueryIntoDb(
 #   querytoupdate = "last",
 #   euctrprotocolsall = FALSE,
@@ -149,7 +149,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # $n
 # # [1] 409
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Loading specific query into same collection
 # ctrLoadQueryIntoDb(
 #   queryterm = "cond=neuroblastoma&aggFilters=phase:2,ages:child,status:com",
@@ -210,7 +210,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # 8 term=AREA[ConditionSearch]"neuroblastoma" AND (AREA[Phase]"PHASE2") AND (AREA[StdAge]"CHILD") AND (AREA[OverallStatus]"COMPLETED") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))
 # # 9 searchCriteria={"medicalCondition":"neuroblastoma","trialPhaseCode":[4],"ageGroupCode":[2],"status":[5,8]}
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Annotate a query in CTGOV2 defined above
 # ctrLoadQueryIntoDb(
 #   queryterm = queries["CTGOV2"],
@@ -230,7 +230,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # $n
 # # [1] 105
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Search for synonyms
 # ctrFindActiveSubstanceSynonyms(
 #   activesubstance = "imatinib"
@@ -243,11 +243,11 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # [21] "QTI571"            "Sprycel"           "STI 571"           "STI571"
 # # [25] "Tasigna"
 
-## ----include=FALSE------------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------------------------------------------------
 # # cleanup
 # unlink("database_name.sql")
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Generate queries to identify trials
 # queries <- ctrGenerateQueries(
 #   searchPhrase = paste0(
@@ -286,7 +286,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # 
 # # See next section for adding related trials
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # Use a trial concept to calculate related identifiers
 # help("ctrdata-trial-concepts")
 # 
@@ -350,7 +350,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # which are not publicly accessible in the in EUCTR register
 # missingIds[which(sapply(res, "[[", "n") == 0L)]
 
-## -----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # # ids of trials of interest
 # ctIds <- c(
 #   "NCT00001209", "NCT00001436", "NCT00187109", "NCT01516567", "NCT01471782",
@@ -399,7 +399,7 @@ cat(rev(format(citation("ctrdata"), style = "text")), sep = " or <br/>")
 # # https://www.clinicaltrialsregister.eu/ctr-search/search?
 # # query=2008-001606-16+OR+2008-001721-34+OR+2008-002260-33
 
-## ----include=FALSE------------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------------------------------------------------
 # # cleanup
 # unlink("database_name.sql")
 

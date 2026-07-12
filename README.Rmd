@@ -47,7 +47,7 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-07-12 for version 1.26.1.9000.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-07-12 for version 1.26.2.
 
 
 ## Main features
@@ -178,11 +178,23 @@ Besides `ctrdata` functions below, such a connection object can be used with fun
 Purpose | Function call
 -------------------- | --------------------
 Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name_of_my_database", collection = "name_of_my_collection")`
-Create **DuckDB** database connection | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")`
+Create **DuckDB** database connection* | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")`
 Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`
 Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
 Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
 Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)`
+
+* For DuckDB, the JSON extension is needed which can be permanently downloaded as follows:
+
+```{r }
+# user to specify their directory of choice;
+# remember to set option for each new R session
+options(duckdb.extension_directory = "~/.duckdb_extensions")
+
+# load and store in above-mentioned 
+# directory; only once to be executed
+DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
+```
 
 
 ## Vignettes
