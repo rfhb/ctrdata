@@ -170,7 +170,7 @@ f.sampleSize <- function(df = NULL) {
     out = dplyr::if_else(
       !is.na(.data$totalNumberEnrolled),
       .data$totalNumberEnrolled,
-      out
+      .data$out
     )) %>%
     dplyr::pull("out") -> df$ctis
 
