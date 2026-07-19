@@ -40,9 +40,9 @@ delCtrdataTempDirHelper <- function() {
 
   # same as in function ctrTempDir()
   tempDir <- options()[["ctrdata.tempdir"]]
-  if (is.null(tempDir)) return(invisible())
+  if (is.null(tempDir)) return(invisible(NULL))
   keepDir <- file.path(tempDir, ".keepDir")
-  if (!length(keepDir)) return(invisible())
+  if (!length(keepDir)) return(invisible(NULL))
 
   if (file.exists(keepDir)) {
     message('ctrdata: "verbose = TRUE", not deleting ',
@@ -51,8 +51,10 @@ delCtrdataTempDirHelper <- function() {
             tempDir, '")')
   } else {
     unlink(tempDir, recursive = TRUE)
-    message("ctrdata: deleted temporary directory.\r")
+    message("ctrdata: deleted temporary directory.")
   }
+
+  return(invisible(tempDir))
 
 }
 
