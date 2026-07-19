@@ -118,8 +118,9 @@ dbFindIdsUniqueTrials <- function(
     subDf <- listofIds[listofIds[["ctrname"]] == preferregister[i], , drop = FALSE]
     row.names(subDf) <- NULL
 
-    # check if second etc. set has identifiers
-    # in the previously rbind'ed sets
+    # use id's from first register but
+    # check id's for all other registers
+    # in the ourSet rbind'ed so far
     if (i > 1L && nrow(subDf)) {
 
       # check for duplicates against
@@ -270,6 +271,7 @@ dbFindIdsUniqueTrials <- function(
     "id_info",
     # isrctn
     "externalRefs",
+    "externalRefs.secondaryNumbers.secondaryNumber",
     "isrctn",
     # ctis
     "ctNumber",
@@ -376,6 +378,7 @@ dbFindIdsUniqueTrials <- function(
     "externalRefs.clinicalTrialsGovNumber",
     "isrctn",
     "externalRefs.protocolSerialNumber",
+    "externalRefs.secondaryNumbers.secondaryNumber",
     # ctis 4
     "ctNumber",
     "eudraCtInfo.eudraCtCode", # ctis1
@@ -424,7 +427,7 @@ dbFindIdsUniqueTrials <- function(
     "euctr.2a", "euctr.2b", "ctgov.2a", "ctgov2.2", "ctgov.2b", "isrctn.2",
     "sponsor.2a", "sponsor.2b",
     # 3 - isrctn
-    "euctr.3", "ctgov.3", "ctgov2.3", "isrctn.3", "sponsor.3",
+    "euctr.3", "ctgov.3", "ctgov2.3", "isrctn.3a", "sponsor.3", "isrctn.3b",
     # 4 - ctis
     "ctis.1", "euctr.4a", "euctr.4b", "ctgov.4a", "ctgov2.4a", "ctgov.4b", "ctgov2.4b",
     # 5 - ctgov2
@@ -455,7 +458,7 @@ dbFindIdsUniqueTrials <- function(
     c("isrctn.1a", regIsrctn),
     c("isrctn.1b", regIsrctn),
     c("isrctn.2", regIsrctn),
-    c("isrctn.3", regIsrctn),
+    c("isrctn.3a", regIsrctn),
     #
     c("euctr.1", regEuctr),
     c("euctr.2a", regEuctr),
