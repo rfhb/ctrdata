@@ -695,39 +695,40 @@ ctrLoadQueryIntoDbEuctr <- function(
       # this does not include the retrieval of information
       # about amendment to the study, as presented at the bottom
       # of the webpage for the respective trial results
-      message("- Retrieving results history:                           ")
+      message("- Retrieving results history...                     ")
 
-      res <- suppressWarnings(
-        httr2::req_perform_parallel(
-          reqs = lapply(
-            paste0(
-              "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
-              eudractnumbersimportedresults, "/results"),
-            FUN = function(u) {
-              # start with basic request
-              r <- httr2::request(u)
-              r <- httr2::req_user_agent(r, ctrdataUseragent)
+      res <- httr2::req_perform_parallel(
+        reqs = lapply(
+          paste0(
+            "https://www.clinicaltrialsregister.eu/ctr-search/trial/",
+            eudractnumbersimported, "/results"),
+          FUN = function(u) {
+            # start with basic request
+            r <- httr2::request(u)
+            r <- httr2::req_user_agent(r, ctrdataUseragent)
 
-              # curl::curl_options("vers")
-              r <- httr2::req_options(r, http_version = 2)
-              r <- httr2::req_options(r, range = "0-30000")
+            # curl::curl_options("vers")
+            r <- httr2::req_options(r, http_version = 2)
+            r <- httr2::req_options(r, range = "0-30000")
 
-              r <- httr2::req_throttle(
-                req = r,
-                # ensures that you never make more
-                # than capacity requests in fill_time_s
-                capacity = 20L * 10L,
-                fill_time_s = 10L
-              )
-              return(r)
-            }
-          ),
-          on_error = "continue",
-          max_active = 10L
-        ))
+            r <- httr2::req_throttle(
+              req = r,
+              # as per ctrMultiDownload in util_function.R
+              # ensures that function never makes more
+              # than capacity requests in fill_time_s
+              capacity = 100L,
+              fill_time_s = 20L
+            )
+            return(r)
+          }
+        ),
+        on_error = "continue",
+        max_active = 10L,
+        progress = TRUE
+      )
 
       # mangle results info
-      message("- processing...", appendLF = FALSE)
+      message("- Processing...", appendLF = FALSE)
       retdat <- lapply(res, extractResultsInformation)
 
       # combine results
