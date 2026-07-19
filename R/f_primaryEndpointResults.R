@@ -1,6 +1,7 @@
 #### history ####
 # 2025-01-26 first version
-# 2026-02-28 ensure primary EP even if not first in json, add euctr other method
+# 2026-02-28 ensure primary EP even if not first, add EUCTR other method
+# 2026-07-19 revise CTGOV calculations
 
 #' Calculate details of a study's primary endpoint statistical testing
 #'
@@ -252,8 +253,8 @@ f.primaryEndpointResults <- function(df = NULL) {
         .data$primStatsCtgov,
         function(x) {
           if (!is.data.frame(x)) return(NA_real_)
-          if (is.null(x)) return(NA_real_) else x <- x[[1]]
-          if (is.null(x)) return(NA_real_) else x <- x[[1]]
+          if (is.null(x)) return(NA_real_) else x <- x[["analysis_list"]]
+          if (is.null(x)) return(NA_real_) else x <- x[["analysis"]]
           if (!is.data.frame(x)) return(NA_real_)
           x <- x[1, "p_value"] # first analysis
           if (is.null(x)) return(NA_real_)
@@ -264,9 +265,8 @@ f.primaryEndpointResults <- function(df = NULL) {
         .data$primStatsCtgov,
         function(x) {
           if (!is.data.frame(x)) return(NA_character_)
-          x <- x$analysis
-          if (is.null(x)) return(NA_character_) else x <- x[[1]]
-          if (is.null(x)) return(NA_character_) else x <- x[[1]]
+          if (is.null(x)) return(NA_character_) else x <- x[["analysis_list"]]
+          if (is.null(x)) return(NA_character_) else x <- x[["analysis"]]
           if (!is.data.frame(x)) return(NA_character_)
           x <- x[1, "method"] # first analysis
           if (is.null(x)) return(NA_character_)
@@ -277,10 +277,9 @@ f.primaryEndpointResults <- function(df = NULL) {
         .data$primStatsCtgov,
         function(x) {
           if (!is.data.frame(x)) return(NA_character_)
-          x <- x$analysis
-          if (is.null(x)) return(NA_character_) else x <- x[[1]]
-          if (is.null(x)) return(NA_character_) else x <- x[[1]]
-          x <- x$group_id_list
+          if (is.null(x)) return(NA_character_) else x <- x[["analysis_list"]]
+          if (is.null(x)) return(NA_character_) else x <- x[["analysis"]]
+          if (is.null(x)) return(NA_character_) else x <- x[["group_id_list"]]
           if (!is.data.frame(x)) return(NA_character_)
           x[1, "group_id", drop = TRUE] # first analysis
         }),
@@ -295,8 +294,9 @@ f.primaryEndpointResults <- function(df = NULL) {
           x <- x$count_list; if (is.null(x)) return(NA_integer_)
           x <- x$count; if (is.null(x)) return(NA_integer_)
           if (!is.data.frame(x)) x <- x[[1]]
-          x <- x[x$group_id %in% unlist(y), ] # matched
-          return(sum(as.integer(x$value), na.rm = TRUE))
+          x <- x$`@attributes`; if (is.null(x)) return(NA_integer_)
+          x <- x[x$group_id %in% unlist(y), "value"] # matched
+          return(sum(as.integer(x), na.rm = TRUE))
         },
         x = .data$primStatsCtgov,
         y = .data$firstPgroupsCtgov,

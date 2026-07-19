@@ -70,10 +70,10 @@ tf <- function() {
   expect_true(sum(dF$.numSites, na.rm = TRUE) == 1017L)
   expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 26L)
   expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 17917L)
-  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 8660L)
+  expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 8854)
 
   # double
-  expect_true(btw(mean(dF$.primaryEndpointFirstPvalue, na.rm = TRUE), 0.0024, 0.0025))
+  expect_true(btw(mean(dF$.primaryEndpointFirstPvalue, na.rm = TRUE), 0.0023, 0.0025))
 
   # dates
   expect_true(all(dF$.resultsDate >= as.Date("2017-05-09"), na.rm = TRUE))
@@ -81,7 +81,7 @@ tf <- function() {
 
   # strings
   expect_true(btw(sum(nchar(dF$.externalLinks), na.rm = TRUE), 4818L))
-  expect_true(btw(sum(nchar(dF$.primaryEndpointFirstPmethod), na.rm = TRUE), 64L))
+  expect_true(btw(sum(nchar(dF$.primaryEndpointFirstPmethod), na.rm = TRUE), 77L))
   expect_true(btw(sum(nchar(unlist(dF$.primaryEndpointDescription))), 13994L))
   expect_true(btw(sum(nchar(dF$.trialPopulationInclusion)), 24730L))
   expect_true(btw(sum(nchar(dF$.trialPopulationExclusion)), 26312L))
