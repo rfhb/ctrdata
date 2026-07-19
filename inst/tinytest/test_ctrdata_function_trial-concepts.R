@@ -91,8 +91,8 @@ tf <- function() {
   expect_true(btw(sum(nchar(dF$.trialTitle)), 4299L))
 
   # lists
-  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 19L)
-  expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L) # since no platform trial or similar
+  expect_length(na.omit(unique(unlist(dF$.likelyRelatedTrials))), 28L)
+  expect_length(na.omit(unique(unlist(dF$.maybeRelatedTrials))), 0L) # since no platform trial
 
   # test robustness against NAs
 
