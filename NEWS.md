@@ -1,6 +1,9 @@
 # ctrdata 1.26.2.9000
 
-- New development version
+- Added tests to increase coverage
+- Added using all secondary identifiers for `dbFindIdsUniqueTrials()` for ISRCTN
+- Corrected `f.primaryEndpointResults()` for CTGOV (did not affect CTGOV2)
+- Corrected import of history of results for EUCTR (`euctrresultshistory = TRUE`)
 
 # ctrdata 1.26.2
 
