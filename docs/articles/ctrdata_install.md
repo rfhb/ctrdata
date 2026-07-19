@@ -97,5 +97,5 @@ Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or\
 Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.26.2,
+from Public Registers*. R package version 1.26.2.9000,
 <https://cran.r-project.org/package=ctrdata>.

@@ -3,24 +3,25 @@
 Registers of the four clinical trial registers from which package
 [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md) can
 retrieve, aggregate and analyse protocol- and result-related information
-as well as documents, last updated 2026-07-08
+as well as documents, last updated 2026-07-19
 
 ## 1 - Overview
 
 - **EUCTR**: The EU Clinical Trials Register is complete with more than
   44,400 clinical trials (at least one investigational medicinal
   product, IMP; in the European Union and beyond), including more than
-  26,165 trials with results, which continue to be added.
+  26,175 trials with results, which continue to be added.
 
 - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-  holds almost 12,000 publicly accessible clinical trials, including
-  more than 1,160 with results or a report. (To automatically get CTIS
+  holds more than 12,000 publicly accessible clinical trials, including
+  more than 1,200 with results or a report. (To automatically get CTIS
   search query URLs, see
   [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser))
 
-- **CTGOV2**: ClinicalTrials.gov holds more than 593,000 interventional
+- **CTGOV2**: ClinicalTrials.gov holds more than 594,000 interventional
   and observational studies, including more than 7,800 interventional
-  studies with an Investigational Drug.
+  studies with an Investigational Drug, of which more than 1,300 with
+  results.
 
 - **ISRCTN**: The ISRCTN Registry holds more than 28,400 interventional
   and observational health studies.

@@ -83,7 +83,7 @@ trialsDf
 #>  6 NCT01305200                           NA      NA                            
 #>  7 NCT01987596                           NA      NA                            
 #>  8 NCT03275402                           NA      NA                            
-#>  9 NCT03325556                           NA      NA                            
+#>  9 NCT03325556                            0.0023 regressioncox                 
 #> 10 NCT03443973                           NA      NA                            
 #> 11 NCT03548584                           NA      NA                            
 #> # ℹ 1 more variable: .primaryEndpointFirstPsize <dbl>

@@ -117,9 +117,9 @@ trialsDf
 #> # A tibble: 24 × 4
 #>    `_id`             .likelyPlatformTrial .likelyRelatedTrials
 #>    <chr>             <lgl>                <list>              
-#>  1 12949496          FALSE                <chr [1]>           
-#>  2 13281214          FALSE                <chr [1]>           
-#>  3 17473621          FALSE                <lgl [1]>           
+#>  1 12949496          FALSE                <chr [2]>           
+#>  2 13281214          FALSE                <chr [2]>           
+#>  3 17473621          FALSE                <chr [1]>           
 #>  4 2016-004489-24-DE FALSE                <chr [2]>           
 #>  5 2019-002663-10-ES FALSE                <chr [2]>           
 #>  6 2022-000099-20-DE FALSE                <chr [2]>           

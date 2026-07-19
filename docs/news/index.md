@@ -1,5 +1,17 @@
 # Changelog
 
+## ctrdata 1.26.2.9000
+
+- Added tests to increase coverage
+- Added using all secondary identifiers for
+  [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
+  for ISRCTN
+- Corrected
+  [`f.primaryEndpointResults()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointResults.md)
+  for CTGOV (did not affect CTGOV2)
+- Corrected import of history of results for EUCTR
+  (`euctrresultshistory = TRUE`)
+
 ## ctrdata 1.26.2
 
 CRAN release: 2026-07-12

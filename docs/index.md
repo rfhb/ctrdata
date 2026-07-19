@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-07-12 for version 1.26.2.
+package. This README was reviewed on 2026-07-19 for version 1.26.2.9000.
 
 ## Main features
 
@@ -65,18 +65,13 @@ Respect the registers’ terms and conditions, see
 `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package
 in any publication or work as follows:
 
-> ``` R
-> #> Warning in citation(auto = meta): could not determine year for 'ctrdata' from
-> #> package DESCRIPTION file
-> ```
->
 > Herold R (2026). “Aggregating and analysing clinical trials data from
 > multiple public registers using R package ctrdata.” *Research
 > Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
-> from Public Registers*. R package version 1.26.2,
+> Herold R (2026-07-19). *ctrdata: Retrieve and Analyze Clinical Trials
+> Data from Public Registers*. R package version 1.26.2.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
 ## References
@@ -92,6 +87,10 @@ technical explanations is in:
 Package `ctrdata` has been used for unpublished works and these
 publications:
 
+- Machado et al. (2026) The road for developing new pharmacological
+  therapies for Parkinson’s disease: Current trends and targets in
+  clinical trials. Journal of Parkinson’s disease
+  <https://doi.org/10.1177/1877718X251412671>
 - Jong et al. (2025) Experiences with Low-Intervention Clinical Trials –
   the New Category under the European Union Clinical Trials Regulation.
   Clinical Trials <https://doi.org/10.1177/17407745241309293>
@@ -923,50 +922,56 @@ See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
 ``` r
 
-# 2026-03-07
-tinytest::test_all()
-# test_ctrdata_duckdb_ctgov2.R..   79 tests OK 55.3s
-# test_ctrdata_function_activesubstance.R    4 tests OK 0.8s
-# test_ctrdata_function_ctrgeneratequeries.R   10 tests OK 0.2s
-# test_ctrdata_function_params.R   25 tests OK 1.5s
-# test_ctrdata_function_trial-concepts.R   93 tests OK 1.7s
-# test_ctrdata_function_various.R   79 tests OK 13.4s
-# test_ctrdata_mongo_local_euctr.R  117 tests OK 44.9s
-# test_ctrdata_mongo_remote_ro.R    4 tests OK 6.0s
-# test_ctrdata_sqlite_ctgov.R...   48 tests OK 30.8s
-# test_ctrdata_sqlite_ctis.R....   95 tests OK 7.4s
-# test_ctrdata_sqlite_isrctn.R..   47 tests OK 13.3s
-# test_euctr_error_sample.R.....    8 tests OK 0.1s
-# All ok, 609 results (10m 9.4s)
+# 2026-07-19
+tt <- tinytest::test_all()
+tt; summary(tt)
+# 
+# All ok, 618 results (13m 9.1s)
+#
+# File                                         Results fails passes
+#   test_ctrdata_duckdb_ctgov2.R                    80     0     80
+#   test_ctrdata_function_activesubstance.R          4     0      4
+#   test_ctrdata_function_ctrgeneratequeries.R      10     0     10
+#   test_ctrdata_function_params.R                  25     0     25
+#   test_ctrdata_function_trial-concepts.R          94     0     94
+#   test_ctrdata_function_various.R                 89     0     89
+#   test_ctrdata_mongo_local_euctr.R               116     0    116
+#   test_ctrdata_mongo_remote_ro.R                   4     0      4
+#   test_ctrdata_sqlite_ctgov.R                     46     0     46
+#   test_ctrdata_sqlite_ctis.R                      95     0     95
+#   test_ctrdata_sqlite_isrctn.R                    45     0     45
+#   test_euctr_error_sample.R                       10     0     10
+#   Total                                          618     0    618
 ```
 
 ``` r
 
-# 2026-03-07
-covr::package_coverage(path = ".", type = "tests")
-# ctrdata Coverage: 94.26%
-# R/zzz.R: 55.56%
+# 2026-07-19
+cp <- covr::package_coverage(path = ".", type = "tests")
+covr::report(cp); cp
+# ctrdata Coverage: 94.35%
 # R/ctrShowOneTrial.R: 84.21%
-# R/ctrLoadQueryIntoDbEuctr.R: 87.97%
+# R/ctrLoadQueryIntoDbEuctr.R: 85.97%
+# R/ctrGetQueryUrl.R: 88.19%
 # R/ctrFindActiveSubstanceSynonyms.R: 88.89%
-# R/ctrGetQueryUrl.R: 89.18%
-# R/f_primaryEndpointResults.R: 89.24%
-# R/dbGetFieldsIntoDf.R: 89.47%
-# R/util_functions.R: 89.83%
+# R/dbGetFieldsIntoDf.R: 89.54%
 # R/ctrLoadQueryIntoDbCtis.R: 90.00%
-# R/f_sponsorType.R: 90.00%
+# R/f_primaryEndpointResults.R: 90.08%
+# R/util_functions.R: 90.08%
+# R/f_sponsorType.R: 91.00%
 # R/ctrRerunQuery.R: 92.22%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.48%
-# R/ctrLoadQueryIntoDbIsrctn.R: 95.68%
+# R/ctrLoadQueryIntoDbCtgov2.R: 92.70%
+# R/zzz.R: 92.86%
+# R/ctrLoadQueryIntoDbIsrctn.R: 93.72%
 # R/dbFindFields.R: 95.88%
-# R/ctrLoadQueryIntoDb.R: 96.40%
 # R/dfMergeVariablesRelevel.R: 96.55%
 # R/ctrGenerateQueries.R: 97.16%
-# R/f_externalLinks.R: 97.30%
 # R/ctrOpenSearchPagesInBrowser.R: 97.50%
 # R/f_likelyPlatformTrial.R: 98.78%
-# R/dbFindIdsUniqueTrials.R: 98.81%
+# R/dbFindIdsUniqueTrials.R: 98.82%
 # R/f_numTestArmsSubstances.R: 98.95%
+# R/f_externalLinks.R: 99.10%
+# R/ctrLoadQueryIntoDb.R: 100.00%
 # R/dbQueryHistory.R: 100.00%
 # R/dfName2Value.R: 100.00%
 # R/dfTrials2Long.R: 100.00%
@@ -1003,6 +1008,12 @@ covr::package_coverage(path = ".", type = "tests")
 - Data providers and curators of the clinical trial registers. Please
   review and respect their copyrights and terms and conditions, see
   `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
+
+- Please cite the package in any publication or work as follows as:
+  Herold R (2026). “Aggregating and analysing clinical trials data from
+  multiple public registers using R package ctrdata.” *Research
+  Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
+  <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 
 - Package `ctrdata` has been made possible building on the work done for
   [R](https://www.r-project.org/),
