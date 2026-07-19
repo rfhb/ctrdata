@@ -569,6 +569,37 @@ expect_true(
 rm(dF, dL)
 
 
+#### tempdir verbose ####
+
+tD <- "justforthistest"
+
+withr::with_options(
+
+  list(ctrdata.tempdir = tD),
+
+  {
+
+    on.exit(unlink(tD, recursive = TRUE, force = TRUE))
+
+    expect_length(ctrdata:::ctrTempDir(), 1L)
+    expect_message(ctrdata:::delCtrdataTempDir(), "deleted temporary")
+
+    expect_true(grepl(tD, ctrdata:::ctrTempDir()))
+    expect_message(ctrdata:::delCtrdataTempDir(), "deleted temporary")
+    expect_true(grepl(tD, ctrdata:::delCtrdataTempDir()))
+
+    expect_true(grepl(tD, ctrdata:::ctrTempDir(verbose = TRUE)))
+    expect_message(ctrdata:::ctrTempDir(verbose = TRUE), "files existing")
+    expect_message(ctrdata:::delCtrdataTempDir(), "not deleting")
+
+    expect_true(grepl(tD, options()[["ctrdata.tempdir"]]))
+    unlink(tD, recursive = TRUE, force = TRUE)
+
+  })
+
+print("--->> ")
+print(options()[["ctrdata.tempdir"]])
+
 #### ctrShowOneTrial ####
 
 expect_true(is.list(ctrdata:::ctrShowOneTrialOutput("x")))

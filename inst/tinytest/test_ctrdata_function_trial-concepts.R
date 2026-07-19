@@ -48,6 +48,9 @@ tf <- function() {
   btw <- function(x, l, u = l) isTRUE(((0.9 * l) <= x) && (x <= (u * 1.1)))
 
   # test
+  expect_error(f.primaryEndpointResults(dF), "Fields missing in ")
+
+  # test
   expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
   expect_true(ncol(dF) == 28L)
   expect_true(nrow(dF) == 24L)

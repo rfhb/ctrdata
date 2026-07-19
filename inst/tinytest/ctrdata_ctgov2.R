@@ -197,14 +197,17 @@ expect_true(length(tmpFields) > 340L)
 
 #### dbGetFieldsIntoDf ####
 
+expect_message(
+  {tmp <- dbGetFieldsIntoDf(fields = tmpFields[1:50], con = dbc)},
+  "specify fewer than 50")
+
+expect_error(
+  {tmp <- dbGetFieldsIntoDf(fields = "idonitexist", con = dbc)},
+  "o records with values")
+
 groupsNo <- (length(tmpFields) %/% 49L) + 1L
 groupsNo <- rep(seq_len(groupsNo), 49L)
 groupsNo <- groupsNo[seq_along(tmpFields)]
-
-expect_message(
-  dbGetFieldsIntoDf(fields = tmpFields[1:50], con = dbc),
-  "specify fewer than 50"
-)
 
 for (i in unique(groupsNo)) {
   message(i, " ", appendLF = FALSE)
