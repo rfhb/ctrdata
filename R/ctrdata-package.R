@@ -16,6 +16,7 @@
 #' DuckDB* | \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")}
 #' MongoDB | \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")}
 #' PostgreSQL | \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"}
+#' MariaDB | \code{dbc <- \link[nodbi:src_mariadb]{nodbi::src_mariadb}(db = "my_db", collection = "my_coll")}
 #'
 #' *For DuckDB, the JSON extension is needed which can be permanently downloaded as follows.
 #' User sets a directory of choice for each new R session:

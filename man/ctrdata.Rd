@@ -20,6 +20,7 @@ parameter \code{con} in subsequent calls of \code{ctrdata} functions.\tabular{ll
    DuckDB* \tab \code{dbc <- \link[nodbi:src_duckdb]{nodbi::src_duckdb}(dbname = "my_db", collection = "my_coll")} \cr
    MongoDB \tab \code{dbc <- \link[nodbi:src_mongo]{nodbi::src_mongo}(db = "my_db", collection = "my_coll")} \cr
    PostgreSQL \tab \code{dbc <- \link[nodbi:src_postgres]{nodbi::src_postgres}(dbname = "my_db"); dbc[["collection"]] <- "my_coll"} \cr
+   MariaDB \tab \code{dbc <- \link[nodbi:src_mariadb]{nodbi::src_mariadb}(db = "my_db", collection = "my_coll")} \cr
 }
 
 

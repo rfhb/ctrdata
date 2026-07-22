@@ -49,11 +49,11 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
-          extra-packages: remotes, nodbi, RSQLite, RPostgres, mongolite, duckdb, rcmdcheck, covr, tibble, tinytest, httr, shiny, clipr, chromote
+          extra-packages: remotes, nodbi, RSQLite, RPostgres, mongolite, duckdb, rcmdcheck, covr, tibble, tinytest, httr, shiny, clipr, chromote, RMariaDB
 
       - name: Install dev nodbi
         if: ${{ (matrix.config.os == 'ubuntu-latest') }}
-        run: remotes::install_github("ropensci/nodbi", dependencies = c("Depends", "Imports"))
+        run: remotes::install_github("https://github.com/ropensci/nodbi/tree/mariadb_add", dependencies = c("Depends", "Imports"))
         shell: Rscript {0}
 
       - name: Try installing duckdb extension library
@@ -72,6 +72,10 @@ jobs:
       - uses: ankane/setup-mongodb@v1
 
       - uses: ankane/setup-postgres@v1
+        with:
+          database: test
+
+      - uses: ankane/setup-mariadb@v1
         with:
           database: test
 

@@ -12,8 +12,7 @@ ctrDb(con)
 \link{ctrdata}.}
 }
 \value{
-Connection object as list, with collection
- element under root
+Connection object as list, with collection element under root
 }
 \description{
 Check and prepare nodbi connection object for ctrdata

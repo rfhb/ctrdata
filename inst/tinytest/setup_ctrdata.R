@@ -138,6 +138,13 @@ checkMongoRemoteRw <- function() {
   out
 }
 
+checkMariadb <- function() {
+  tmp <- try(nodbi::src_mariadb(), silent = TRUE)
+  out <- inherits(tmp, c("src_mariadb", "docdb_src"))
+  if (out) RMariaDB::dbDisconnect(conn = tmp$con)
+  out
+}
+
 newTempDir <- function() {
 
   d <- tempfile()

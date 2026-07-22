@@ -4,6 +4,7 @@
 - Added using all secondary identifiers for `dbFindIdsUniqueTrials()` for ISRCTN
 - Corrected `f.primaryEndpointResults()` for CTGOV (did not affect CTGOV2)
 - Corrected import of history of results for EUCTR (`euctrresultshistory = TRUE`)
+- Added support for MariaDB (available in https://github.com/ropensci/nodbi/tree/mariadb_add)
 
 # ctrdata 1.26.2
 
