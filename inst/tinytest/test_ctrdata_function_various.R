@@ -123,10 +123,14 @@ expect_equal(
 df3 <- data.frame(
   var1 = rep(Sys.Date(), 4),
   var2 = rep(Sys.time(), 4),
-  var3 = rep(NA, 4),
+  var3a = rep(NA_character_, 4),
+  var3b = rep(lubridate::NA_Date_, 4),
+  var3c = rep(NA_integer_, 4),
+  var3d = sample(letters, 4),
   var4 = as.Date(rep(NA, 4)),
   var5 = sample(c(FALSE, TRUE), size = 4, replace = TRUE),
-  var6 = sample(c(FALSE, NA), size = 4, replace = TRUE)
+  var6 = sample(c(FALSE, NA), size = 4, replace = TRUE),
+  var6a = rep(NA, 4)
 )
 # str(df3)
 
@@ -136,20 +140,15 @@ expect_message(
       df = df3,
       colnames = names(df3)[c(1,2)])
   ), "More than one column had values, returning")
+# e.g. '2026-07-24 / 2026-07-24 18:05:42.637806'
 expect_equal(tmp, "character")
 
 expect_equal(
   class(
     dfMergeVariablesRelevel(
       df = df3,
-      colnames = names(df3)[c(1,3)])
-  ), "Date")
-
-expect_equal(
-  class(
-    dfMergeVariablesRelevel(
-      df = df3,
       colnames = names(df3)[c(1,4)])
+    # "2026-07-24" "2026-07-24" "2026-07-24" "2026-07-24"
   ), "Date")
 
 expect_equal(
@@ -157,36 +156,45 @@ expect_equal(
     dfMergeVariablesRelevel(
       df = df3,
       colnames = names(df3)[c(2,4)])
+    # "2026-07-24 18:05:42 CEST" "2026-07-24 18:05:42 CEST"
   )[1], "POSIXct")
 
 expect_equal(
   class(
     dfMergeVariablesRelevel(
       df = df3,
-      colnames = names(df3)[c(3,4)])
+      colnames = names(df3)[c(4,7)])
+    # [1] NA NA NA NA
   ), "Date")
 
 expect_equal(
   class(
     dfMergeVariablesRelevel(
       df = df3,
-      colnames = names(df3)[c(5,6)])
+      colnames = names(df3)[c(8,9)])
+    # "FALSE / FALSE" "TRUE / FALSE" "TRUE" "TRUE"
   ), "character")
 
 expect_equal(
   class(
     dfMergeVariablesRelevel(
       df = df3,
-      colnames = names(df3)[c(3,5)])
+      colnames = names(df3)[c(3,6)])
+  ), "character")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(5,8)])
+  ), "integer")
+
+expect_equal(
+  class(
+    dfMergeVariablesRelevel(
+      df = df3,
+      colnames = names(df3)[c(9,10)])
   ), "logical")
-
-expect_equal(
-  class(
-    dfMergeVariablesRelevel(
-      df = df3,
-      colnames = names(df3)[c(1,5)])
-  ), "character")
-
 
 
 #### ctrGetQueryUrl ####
