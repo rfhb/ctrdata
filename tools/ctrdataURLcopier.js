@@ -1,7 +1,7 @@
 // ==UserScript==
 //
 // @name         ctrdataURLcopier
-// @version      0.7
+// @version      0.8
 // @description  Copies to the clipboard the link to a user's search in trial registers (CTIS, EUCTR, CTGOV, ISRCTN) for use with R package ctrdata
 // @author       ralf.herold@mailbox.org
 //
@@ -38,6 +38,7 @@ function formatUrl(x) {
     x = x.replace(/[&?]rank=[0-9]+/, '');
     x = x.replace(/[&?]tab=[a-z]+/, '');
     x = x.replace(/[&?]lang=[a-z]+/, '');
+    x = x.replace(/[&?]viewType=[a-zA-Z]+/g, '');
     x = x.replace(/[&?]totalResults=[0-9]+/g, '');
     x = x.replace(/[a-z][a-z_]+=&|[a-z_]+=$/ig, ''); // keep &q=&
 

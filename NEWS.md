@@ -2,6 +2,7 @@
 
 - Added tests to increase coverage
 - Added using all secondary identifiers for `dbFindIdsUniqueTrials()` for ISRCTN
+- Minor update to browser script (see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) 
 - Corrected `f.primaryEndpointResults()` for CTGOV (did not affect CTGOV2)
 - Corrected import of history of results for EUCTR (`euctrresultshistory = TRUE`)
 - Added support for MariaDB (available in https://github.com/ropensci/nodbi/tree/mariadb_add)
