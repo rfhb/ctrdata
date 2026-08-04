@@ -76,8 +76,6 @@ jobs:
           database: test
 
       - uses: ankane/setup-mariadb@v1
-        # with:
-        #   database: test
 
       - uses: r-lib/actions/check-r-package@v2
         if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'devel'

@@ -12,25 +12,25 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 \item{verbose}{Print number of studies found in CTGOV2 for `activesubstance`}
 }
 \value{
-A character vector of the active substance (input parameter) and
- synonyms, or NULL if active substance was not found and may be invalid
+A named character vector of the active substance (input parameter),
+ the MeSH code(s) and various names used in registered studies, or NULL if
+ active substance was not found and may be invalid
 }
 \description{
 An active substance can be identified by a recommended international
 nonproprietary name (INN), a trade or product name, or a company code(s).
 To find likely synonyms, the function retrieves from CTGOV2 the field
-protocolSection.armsInterventionsModule.interventions.otherNames.
-Note this does not seem to be based on choices from a dictionary but
-may be manually filled, thus is not free of error and needs to be checked.
+protocolSection.armsInterventionsModule.interventions.
+Note this is mostly manually filled, thus may not be free of errors.
 }
 \examples{
 \dontrun{
 
 ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-#  [1] "imatinib"          "CGP 57148"         "CGP 57148B"
-#  [4] "CGP57148B"         "Gleevec"           "GLIVEC"
-#  [7] "Imatinib"          "Imatinib Mesylate" "NSC 716051"
-# [10] "ST1571"            "STI 571"           "STI571"
+activesubstance                mesh
+     "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
+       "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
+      "gleevac" "mesylate imatinib"    "ST1571"
 }
 
 }
