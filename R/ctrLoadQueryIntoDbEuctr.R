@@ -652,6 +652,7 @@ ctrLoadQueryIntoDbEuctr <- function(
 
       # for date time conversion
       lct <- Sys.getlocale("LC_TIME")
+      on.exit(Sys.setlocale("LC_TIME", lct), add = TRUE)
       Sys.setlocale("LC_TIME", "C")
 
       # helper function
