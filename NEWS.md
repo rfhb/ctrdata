@@ -2,6 +2,7 @@
 
 - Added tests to increase coverage
 - Remove ISRCTN text that represents a missing value
+- Corrected for EUCTR `f.sampleSize()`, notes for 1.26.2 (#62) and testing
 - Refactored `ctrFindActiveSubstanceSynonyms()` to use MeSH terms in CTGOV2
 - Added using all secondary identifiers for `dbFindIdsUniqueTrials()` for ISRCTN
 - Minor update to browser script (see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) 

@@ -7,10 +7,10 @@
 #' Calculate sample size of a study
 #'
 #' Trial concept calculated: sample size of the trial, preferring
-#' results-related (achieved recruitment) over protocol-related information
-#' (planned sample size). Thus, the calculated number depends on the status of
+#' results-related if available over protocol-related information.
+#' Thus, the interpretation of the calculated number depends on the status of
 #' the recruitment (see \link{f.statusRecruitment}) and on the availability of
-#' results data.
+#' results data (see \link{f.resultsDate}).
 #'
 #' @param df data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
 #' prints fields needed in `df` for calculating this trial concept, which can
@@ -104,15 +104,20 @@ f.sampleSize <- function(df = NULL) {
 
 
   #### . EUCTR ####
-  fldsEuctrProtocol <- fldsNeeded$euctr[-1]
   dplyr::mutate(
     df,
-    out = rowSums(
-      dplyr::select(
-        df, fldsEuctrProtocol), na.rm = TRUE)) %>%
-    dplyr::pull("out") -> df$helper_euctr_protocol
+    outA = rowSums(dplyr::select(
+      df, dplyr::matches("^f1[2-3]")), na.rm = TRUE),
+    outP = rowSums(dplyr::select(
+      df, dplyr::matches("^f11[26]")), na.rm = TRUE),
+    outP = case_when(
+      .data$f11_number_of_subjects_for_this_age_range <= .data$outP ~ .data$outP,
+      .default = .data$f11_number_of_subjects_for_this_age_range
+    )
+  ) -> df
   df %>%
     mutate(
+      helper_euctr_protocol = rowSums(dplyr::select(df, dplyr::matches("out[AP]")), na.rm = TRUE),
       helper_euctr_results = sapply(
         .data$trialInformation.countrySubjectCounts.countrySubjectCount.subjects,
         function(i) sum(i, na.rm = TRUE),

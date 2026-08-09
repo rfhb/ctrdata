@@ -53,7 +53,7 @@ tf <- function() {
   # test
   expect_true(all(grepl("_id|ctrname|^[.][a-z]+[A-Z]", names(dF))))
   expect_true(ncol(dF) == 28L)
-  expect_true(nrow(dF) == 24L)
+  expect_true(nrow(dF) == 25L)
 
   # factors
   expect_length(table(dF$.assignmentType, exclude = NULL), 2L)
@@ -70,9 +70,9 @@ tf <- function() {
   expect_length(table(dF$ctrname, exclude = NULL), 5L)
 
   # integers
-  expect_true(sum(dF$.numSites, na.rm = TRUE) == 1017L)
+  expect_true(sum(dF$.numSites, na.rm = TRUE) == 1018L)
   expect_true(sum(dF$.numTestArmsSubstances, na.rm = TRUE) == 26L)
-  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 17917L)
+  expect_true(sum(dF$.sampleSize, na.rm = TRUE) == 17977L)
   expect_true(sum(dF$.primaryEndpointFirstPsize, na.rm = TRUE) == 8854)
 
   # double
