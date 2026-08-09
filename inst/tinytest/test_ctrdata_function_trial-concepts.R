@@ -66,7 +66,7 @@ tf <- function() {
   expect_length(table(dF$.trialPopulationAgeGroup, exclude = NULL), 3L)
   expect_length(table(dF$.sponsorType, exclude = NULL), 4L)
   expect_length(table(dF$.trialPhase, exclude = NULL), 10L)
-  expect_length(table(dF$.trialObjectives, exclude = NULL), 17L)
+  expect_length(table(dF$.trialObjectives, exclude = NULL), 18L)
   expect_length(table(dF$ctrname, exclude = NULL), 5L)
 
   # integers

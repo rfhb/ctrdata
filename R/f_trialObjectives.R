@@ -80,7 +80,7 @@ f.trialObjectives <- function(df = NULL) {
     ),
     "isrctn" = c(
       "trialDescription.studyHypothesis", # free text
-      "trialDesign.trialType" # keywords, e.g. Treatment
+      "trialDesign.trialTypes.trialType" # keywords, e.g. Treatment
     ),
     "ctis" = c(
       # CTIS1
