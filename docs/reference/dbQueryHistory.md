@@ -43,7 +43,7 @@ dbc <- nodbi::src_sqlite(
   flags = RSQLite::SQLITE_RO)
 
 dbQueryHistory(con = dbc)
-#> # A tibble: 6 × 4
+#> # A tibble: 7 × 4
 #>   `query-timestamp`   `query-register` `query-records` `query-term`             
 #>   <chr>               <chr>                      <int> <chr>                    
 #> 1 2024-06-17 20:35:31 CTIS                           2 ""                       
@@ -52,4 +52,5 @@ dbQueryHistory(con = dbc)
 #> 4 2026-03-08 17:34:31 ISRCTN                         9 "q=&filters=ageRange:Neo…
 #> 5 2026-03-08 17:36:40 CTGOV2                         5 "distance=50&cond=neurob…
 #> 6 2026-03-08 17:37:07 CTIS                           2 "searchCriteria={\"conta…
+#> 7 2026-08-09 21:05:42 EUCTR                          1 "query=2013-000615-24"   
 ```

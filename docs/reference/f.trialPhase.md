@@ -63,18 +63,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.trialPhase...                            
 
 trialsDf
-#> # A tibble: 24 × 2
+#> # A tibble: 25 × 2
 #>    `_id`             .trialPhase
 #>    <chr>             <ord>      
 #>  1 12949496          phase 3    
 #>  2 13281214          phase 3    
 #>  3 17473621          phase 3    
-#>  4 2016-004489-24-DE phase 3    
-#>  5 2019-002663-10-ES phase 2+3  
-#>  6 2022-000099-20-DE phase 3    
-#>  7 2022-500244-37-00 phase 2    
-#>  8 2023-505613-24-00 phase 2    
-#>  9 2023-508143-51-01 phase 4    
-#> 10 2024-510663-34-00 phase 2    
-#> # ℹ 14 more rows
+#>  4 2013-000615-24-BE phase 4    
+#>  5 2016-004489-24-DE phase 3    
+#>  6 2019-002663-10-ES phase 2+3  
+#>  7 2022-000099-20-DE phase 3    
+#>  8 2022-500244-37-00 phase 2    
+#>  9 2023-505613-24-00 phase 2    
+#> 10 2023-508143-51-01 phase 4    
+#> # ℹ 15 more rows
 ```

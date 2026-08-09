@@ -54,14 +54,14 @@ sample(dbFindIdsUniqueTrials(con = dbc), 5L)
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
 #>  (may take some time)...
-#> , 24 found in collection
+#> , 25 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 24 records in collection "my_trials"
+#> - Unique are 3 / 5 / 4 / 4 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 25 records in collection "my_trials"
 #>              ISRCTN               CTGOV              ISRCTN               EUCTR 
-#>          "76463425"       "NCT03443973"          "61070850" "2019-002663-10-ES" 
+#>          "61070850"       "NCT03325556"          "20343063" "2016-004489-24-DE" 
 #>               EUCTR 
-#> "2022-000099-20-DE" 
+#> "2019-002663-10-ES" 
 
 # all such identifiers work
 id <- "2014-003556-31"

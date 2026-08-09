@@ -83,6 +83,6 @@ table(
 #>   CTGOV      3    0
 #>   CTGOV2     5    0
 #>   CTIS       3    0
-#>   EUCTR      2    1
+#>   EUCTR      3    1
 #>   ISRCTN     0    0
 ```

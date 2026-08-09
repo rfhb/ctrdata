@@ -68,18 +68,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.sponsorType...                            
 
 trialsDf
-#> # A tibble: 24 × 2
+#> # A tibble: 25 × 2
 #>    `_id`             .sponsorType  
 #>    <chr>             <fct>         
 #>  1 12949496          other         
 #>  2 13281214          other         
 #>  3 17473621          other         
-#>  4 2016-004489-24-DE for profit    
-#>  5 2019-002663-10-ES for profit    
-#>  6 2022-000099-20-DE for profit    
-#>  7 2022-500244-37-00 mixed         
-#>  8 2023-505613-24-00 for profit    
-#>  9 2023-508143-51-01 not for profit
-#> 10 2024-510663-34-00 for profit    
-#> # ℹ 14 more rows
+#>  4 2013-000615-24-BE not for profit
+#>  5 2016-004489-24-DE for profit    
+#>  6 2019-002663-10-ES for profit    
+#>  7 2022-000099-20-DE for profit    
+#>  8 2022-500244-37-00 mixed         
+#>  9 2023-505613-24-00 for profit    
+#> 10 2023-508143-51-01 not for profit
+#> # ℹ 15 more rows
 ```

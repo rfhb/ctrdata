@@ -91,12 +91,13 @@ dbGetFieldsIntoDf(
   con = dbc)
 #> Querying database (1 fields)...
 #> Typing fields...
-#> # A tibble: 3 × 2
+#> # A tibble: 4 × 2
 #>   `_id`             b1_sponsor.b31_and_b32_status_of_the_sponsor
 #>   <chr>             <chr>                                       
-#> 1 2016-004489-24-DE Commercial                                  
-#> 2 2019-002663-10-ES Commercial                                  
-#> 3 2022-000099-20-DE Commercial                                  
+#> 1 2013-000615-24-BE Non-Commercial                              
+#> 2 2016-004489-24-DE Commercial                                  
+#> 3 2019-002663-10-ES Commercial                                  
+#> 4 2022-000099-20-DE Commercial                                  
 
 # fields that are lists of string values are
 # returned by concatenating values with " / "
@@ -126,17 +127,17 @@ df <- dbGetFieldsIntoDf(
 #> Searching for duplicate trials... 
 #> - Getting all trial identifiers...
 #>  (cached)...
-#> , 24 found in collection
+#> , 25 found in collection
 #> - Finding duplicates among registers' and sponsor ids...
-#> - Unique are 3 / 5 / 4 / 3 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-#> = Returning keys (_id) of 24 records in collection "my_trials"
+#> - Unique are 3 / 5 / 4 / 4 / 9 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
+#> = Returning keys (_id) of 25 records in collection "my_trials"
 #> Calculating f.startDate...                            
 
 
 table(df$.statusRecruitment, exclude = NULL)
 #> 
 #>     ongoing   completed ended early       other 
-#>           5          15           3           1 
+#>           5          15           4           1 
 
 if (FALSE) { # \dontrun{
 library(dplyr)

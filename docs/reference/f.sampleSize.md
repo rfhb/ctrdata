@@ -1,11 +1,12 @@
 # Calculate sample size of a study
 
 Trial concept calculated: sample size of the trial, preferring
-results-related (achieved recruitment) over protocol-related information
-(planned sample size). Thus, the calculated number depends on the status
-of the recruitment (see
+results-related if available over protocol-related information. Thus,
+the interpretation of the calculated number depends on the status of the
+recruitment (see
 [f.statusRecruitment](https://rfhb.github.io/ctrdata/reference/f.statusRecruitment.md))
-and on the availability of results data.
+and on the availability of results data (see
+[f.resultsDate](https://rfhb.github.io/ctrdata/reference/f.resultsDate.md)).
 
 ## Usage
 
@@ -74,18 +75,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.sampleSize...                            
 
 trialsDf
-#> # A tibble: 24 × 2
+#> # A tibble: 25 × 2
 #>    `_id`             .sampleSize
 #>    <chr>                   <int>
 #>  1 12949496                    9
 #>  2 13281214                   60
 #>  3 17473621                  100
-#>  4 2016-004489-24-DE         186
-#>  5 2019-002663-10-ES         145
-#>  6 2022-000099-20-DE        8057
-#>  7 2022-500244-37-00         150
-#>  8 2023-505613-24-00          13
-#>  9 2023-508143-51-01          11
-#> 10 2024-510663-34-00          11
-#> # ℹ 14 more rows
+#>  4 2013-000615-24-BE          60
+#>  5 2016-004489-24-DE         186
+#>  6 2019-002663-10-ES         145
+#>  7 2022-000099-20-DE        8057
+#>  8 2022-500244-37-00         150
+#>  9 2023-505613-24-00          13
+#> 10 2023-508143-51-01          11
+#> # ℹ 15 more rows
 ```

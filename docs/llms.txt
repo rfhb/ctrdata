@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-07-19 for version 1.26.2.9000.
+package. This README was reviewed on 2026-08-09 for version 1.26.2.9000.
 
 ## Main features
 
@@ -47,7 +47,7 @@ package. This README was reviewed on 2026-07-19 for version 1.26.2.9000.
 - Downloaded trial information is stored in a document-centric database,
   for fast and offline access. Information from different registers can
   be accumulated in a single collection. Uses `RSQLite`, `DuckDB`,
-  `PostgreSQL` or `MongoDB`, see
+  `PostgreSQL`, `MariaDB` or `MongoDB`, see
   [Databases](#databases-that-can-be-used-with-ctrdata). Interactively
   browse through trial structure and data. Easily re-run a previous
   query to update trial records.
@@ -70,7 +70,7 @@ in any publication or work as follows:
 > Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (2026-07-19). *ctrdata: Retrieve and Analyze Clinical Trials
+> Herold R (2026-08-09). *ctrdata: Retrieve and Analyze Clinical Trials
 > Data from Public Registers*. R package version 1.26.2.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
@@ -133,15 +133,7 @@ GitHub](https://github.com/rfhb/ctrdata). Within
 [R](https://www.r-project.org/), use the following commands to install
 package `ctrdata`:
 
-``` r
-
-# Install CRAN version:
-install.packages("ctrdata")
-
-# Alternatively, install development version:
-install.packages("devtools")
-remotes::install_github("rfhb/ctrdata", build_vignettes = TRUE)
-```
+`# Install CRAN version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``)`` `` ``# Alternatively, install development version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"devtools"``)`` ``remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, build_vignettes ``=`` ``TRUE``)`
 
 These commands also install the package’s dependencies (`jsonlite`,
 `httr2`, `xml2`, `nodbi`, `stringi`, `lubridate`, `jqr`, `dplyr`, `zip`,
@@ -262,22 +254,14 @@ vignettes).
 | Create **DuckDB** database connection\* | `dbc <- nodbi::src_duckdb(dbdir = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Create **MariaDB** database connection | `dbc <- nodbi::src_mariadb(db = "name_of_my_database", collection = "name_of_my_collection")` |
 | Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
 | Use connection with `nodbi` functions | e.g., `nodbi::docdb_query(src = dbc, key = dbc$collection, ...)` |
 
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-``` r
-
-# user to specify their directory of choice;
-# remember to set option for each new R session
-options(duckdb.extension_directory = "~/.duckdb_extensions")
-
-# load and store in above-mentioned 
-# directory; only once to be executed
-DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
-```
+`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.extension_directory ``=`` ``"~/.duckdb_extensions"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
 
 ## Vignettes
 
@@ -295,35 +279,20 @@ and tabulate the trials’ status of conduct.
 
 - Attach package `ctrdata`:
 
-``` r
-
-library(ctrdata)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`ctrdata`](https://cran.r-project.org/package=ctrdata)`)`
 
 - See help to get started with `ctrdata`:
 
-``` r
-
-help("ctrdata")
-```
+[`help`](https://rdrr.io/r/utils/help.html)`(``"ctrdata"``)`
 
 - Information on trial registers, their contents and how they can be
   used with `ctrdata` (last updated 2026-01-11):
 
-``` r
-
-help("ctrdata-registers")
-```
+[`help`](https://rdrr.io/r/utils/help.html)`(``"ctrdata-registers"``)`
 
 - Open registers’ advanced search pages in browser:
 
-``` r
-
-ctrOpenSearchPagesInBrowser()
-
-# Please review and respect register copyrights:
-ctrOpenSearchPagesInBrowser(copyright = TRUE)
-```
+[`ctrOpenSearchPagesInBrowser`](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)`(``)`` `` ``# Please review and respect register copyrights:`` `[`ctrOpenSearchPagesInBrowser`](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)`(``copyright ``=`` ``TRUE``)`
 
 - Adjust search parameters and execute search in browser
 
@@ -335,16 +304,7 @@ ctrOpenSearchPagesInBrowser(copyright = TRUE)
 
 - Get address from clipboard:
 
-``` r
-
-q <- ctrGetQueryUrl()
-# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children
-# * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children
-
-q
-#                                         query-term query-register
-# 1 query=neuroblastoma&phase=phase-two&age=children          EUCTR
-```
+`q`` ``<-`` `[`ctrGetQueryUrl`](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)`(``)`` ``# * Using clipboard content as register query URL: https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children`` ``# * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children`` `` ``q`` ``# query-term query-register`` ``# 1 query=neuroblastoma&phase=phase-two&age=children EUCTR`
 
 Queries in the trial registers can automatically copied to the clipboard
 (including for “CTIS”, where the URL otherwise does not show the user’s
@@ -358,50 +318,11 @@ specified, using `nodbi` (see above for how to specify `PostgreSQL`,
 `RSQlite`, `DuckDB` or `MongoDB` as backend, see section
 [Databases](#databases-that-can-be-used-with-ctrdata)):
 
-``` r
-
-# Connect to (or create) an SQLite database
-# stored in a file on the local system:
-db <- nodbi::src_sqlite(
-  dbname = "database_name.sql",
-  collection = "collection_name"
-)
-```
+`# Connect to (or create) an SQLite database`` ``# stored in a file on the local system:`` ``db`` ``<-`` ``nodbi``::`[`src_sqlite`](https://docs.ropensci.org/nodbi/reference/src_sqlite.html)`(`` `` dbname ``=`` ``"database_name.sql"``,`` `` collection ``=`` ``"collection_name"`` ``)`
 
 Then, the trial information is retrieved and loaded into the collection:
 
-``` r
-
-# Retrieve trials from public register EUCTR,
-# both protocol- and results-related data:
-ctrLoadQueryIntoDb(
-  queryterm = q,
-  euctrresults = TRUE,
-  euctrprotocolsall = FALSE, # new since 2025-07-20, loads single 
-  # instead of all available country versions of a trial in EUCTR
-  con = db
-)
-# * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children
-# * Checking trials in EUCTR, found 73 trials 
-# - Downloading in 4 batch(es) (20 trials each; estimate: 5 s)...
-# - Downloading 73 records of 73 trials (estimate: 4 s)...            
-# - Converting to NDJSON (estimate: 0.2 s)...                           
-# - Importing records into database...
-# = Imported or updated 73 records on 73 trial(s)  
-# * Checking results if available from EUCTR for 73 trials: 
-# - Downloading results...
-# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . .
-# F . . F . . . . . . . F . F F F . . . . . . F . . . . 
-# - Data found for 34 trials
-# - Converting to NDJSON (estimate: 1 s)...
-# - Importing 34 results into database (may take some time)...
-# - Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 34 trials
-# No history found in expected format.
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 73
-```
+`# Retrieve trials from public register EUCTR,`` ``# both protocol- and results-related data:`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``q``,`` `` euctrresults ``=`` ``TRUE``,`` `` euctrprotocolsall ``=`` ``FALSE``, ``# new since 2025-07-20, loads single `` `` ``# instead of all available country versions of a trial in EUCTR`` `` con ``=`` ``db`` ``)`` ``# * Found search query from EUCTR: query=neuroblastoma&phase=phase-two&age=children`` ``# * Checking trials in EUCTR, found 73 trials `` ``# - Downloading in 4 batch(es) (20 trials each; estimate: 5 s)...`` ``# - Downloading 73 records of 73 trials (estimate: 4 s)... `` ``# - Converting to NDJSON (estimate: 0.2 s)... `` ``# - Importing records into database...`` ``# = Imported or updated 73 records on 73 trial(s) `` ``# * Checking results if available from EUCTR for 73 trials: `` ``# - Downloading results...`` ``# - Extracting results (. = data, F = file[s] and data, x = none): . . . F . . .`` ``# F . . F . . . . . . . F . F F F . . . . . . F . . . . `` ``# - Data found for 34 trials`` ``# - Converting to NDJSON (estimate: 1 s)...`` ``# - Importing 34 results into database (may take some time)...`` ``# - Results history: not retrieved (euctrresultshistory = FALSE)`` ``# = Imported or updated results for 34 trials`` ``# No history found in expected format.`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 73`
 
 Under the hood, plain text from EUCTR and XML files from EUCTR, CTGOV,
 ISRCTN are converted using Javascript via `V8` in `R` into `NDJSON`,
@@ -414,39 +335,7 @@ The same parameters can be used to ask `ctrdata` to generate search
 queries that apply to each register, for opening the web interfaces and
 for loading the trial data into the collection:
 
-``` r
-
-# Generate queries for each register
-queries <- ctrGenerateQueries(
-  condition = "neuroblastoma",
-  recruitment = "completed",
-  phase = "phase 2",
-  population = "P"
-)
-
-queries
-# EUCTR 
-# "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed" 
-# ISRCTN 
-# "https://www.isrctn.com/search?&q=&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" 
-# CTGOV2 
-# "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:2,ages:child,status:com,studyType:int" 
-# CTGOV2expert 
-# "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))" 
-# CTIS 
-# "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}"   
-
-# Open queries in registers' web interfaces
-# Note the regular and expert CTGOV2 query
-sapply(queries, ctrOpenSearchPagesInBrowser)
-
-# Load all queries into database collection
-result <- lapply(queries, ctrLoadQueryIntoDb, con = db)
-
-sapply(result, "[[", "n")
-# EUCTR       ISRCTN       CTGOV2 CTGOV2expert         CTIS 
-#   180            0          105          105            2
-```
+`# Generate queries for each register`` ``queries`` ``<-`` `[`ctrGenerateQueries`](https://rfhb.github.io/ctrdata/reference/ctrGenerateQueries.md)`(`` `` condition ``=`` ``"neuroblastoma"``,`` `` recruitment ``=`` ``"completed"``,`` `` phase ``=`` ``"phase 2"``,`` `` population ``=`` ``"P"`` ``)`` `` ``queries`` ``# EUCTR `` ``# "https://www.clinicaltrialsregister.eu/ctr-search/search?query=neuroblastoma&phase=phase-two&age=children&age=adolescent&age=infant-and-toddler&age=newborn&age=preterm-new-born-infants&age=under-18&status=completed" `` ``# ISRCTN `` ``# "https://www.isrctn.com/search?&q=&filters=condition:neuroblastoma,phase:Phase II,ageRange:Child,trialStatus:completed,primaryStudyDesign:Interventional" `` ``# CTGOV2 `` ``# "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug OR Biological&term=AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)&aggFilters=phase:2,ages:child,status:com,studyType:int" `` ``# CTGOV2expert `` ``# "https://clinicaltrials.gov/expert-search?term=AREA[ConditionSearch]\"neuroblastoma\" AND (AREA[Phase]\"PHASE2\") AND (AREA[StdAge]\"CHILD\") AND (AREA[OverallStatus]\"COMPLETED\") AND (AREA[StudyType]INTERVENTIONAL) AND (AREA[DesignPrimaryPurpose](DIAGNOSTIC OR PREVENTION OR TREATMENT)) AND (AREA[InterventionSearch](DRUG OR BIOLOGICAL))" `` ``# CTIS `` ``# "https://euclinicaltrials.eu/ctis-public/search#searchCriteria={\"medicalCondition\":\"neuroblastoma\",\"trialPhaseCode\":[4],\"ageGroupCode\":[2],\"status\":[5,8]}" `` `` ``# Open queries in registers' web interfaces`` ``# Note the regular and expert CTGOV2 query`` `[`sapply`](https://rdrr.io/r/base/lapply.html)`(``queries``, ``ctrOpenSearchPagesInBrowser``)`` `` ``# Load all queries into database collection`` ``result`` ``<-`` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``queries``, ``ctrLoadQueryIntoDb``, con ``=`` ``db``)`` `` `[`sapply`](https://rdrr.io/r/base/lapply.html)`(``result``, ``"[["``, ``"n"``)`` ``# EUCTR ISRCTN CTGOV2 CTGOV2expert CTIS `` ``# 180 0 105 105 2`
 
 - Analyse
 
@@ -455,40 +344,7 @@ development program (paediatric investigation plan, PIP). `ctrdata`
 functions return a data.frame (or a tibble, if package `tibble` is
 loaded).
 
-``` r
-
-# Get all records that have values in the fields of interest:
-result <- dbGetFieldsIntoDf(
-  # Field of interest
-  fields = c("a7_trial_is_part_of_a_paediatric_investigation_plan"),
-  # Trial concepts calculated across registers
-  calculate = c("f.statusRecruitment", "f.isUniqueTrial"),
-  con = db
-)
-# To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-# Querying database (16 fields)...
-# Searching for duplicate trials...                             
-# - Getting all trial identifiers (may take some time), 316 found in collection
-# - Finding duplicates among registers' and sponsor ids...
-# - 114 EUCTR _id were not preferred EU Member State record for 67 trials
-# - Unique are 0 / 105 / 0 / 60 / 0 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN
-# = Returning keys (_id) of 165 records in collection "collection_name"
-
-# Tabulate the clinical trial information of interest
-with(
-  result[result$.isUniqueTrial, ],
-  table(
-    .statusRecruitment,
-    a7_trial_is_part_of_a_paediatric_investigation_plan
-  )
-)
-#                   a7_trial_is_part_of_a_paediatric_investigation_plan
-# .statusRecruitment FALSE TRUE
-#        ongoing         4    3
-#        completed      11    6
-#        ended early     7    3
-#        other           8    2
-```
+`# Get all records that have values in the fields of interest:`` ``result`` ``<-`` `[`dbGetFieldsIntoDf`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)`(`` `` ``# Field of interest`` `` fields ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"a7_trial_is_part_of_a_paediatric_investigation_plan"``)``,`` `` ``# Trial concepts calculated across registers`` `` calculate ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"f.statusRecruitment"``, ``"f.isUniqueTrial"``)``,`` `` con ``=`` ``db`` ``)`` ``# To review trial concepts details, call 'help("ctrdata-trial-concepts")'`` ``# Querying database (16 fields)...`` ``# Searching for duplicate trials... `` ``# - Getting all trial identifiers (may take some time), 316 found in collection`` ``# - Finding duplicates among registers' and sponsor ids...`` ``# - 114 EUCTR _id were not preferred EU Member State record for 67 trials`` ``# - Unique are 0 / 105 / 0 / 60 / 0 records from CTGOV / CTGOV2 / CTIS / EUCTR / ISRCTN`` ``# = Returning keys (_id) of 165 records in collection "collection_name"`` `` ``# Tabulate the clinical trial information of interest`` `[`with`](https://rdrr.io/r/base/with.html)`(`` `` ``result``[``result``$``.isUniqueTrial``, ``]``,`` `` `[`table`](https://rdrr.io/r/base/table.html)`(`` `` ``.statusRecruitment``,`` `` ``a7_trial_is_part_of_a_paediatric_investigation_plan`` `` ``)`` ``)`` ``# a7_trial_is_part_of_a_paediatric_investigation_plan`` ``# .statusRecruitment FALSE TRUE`` ``# ongoing 4 3`` ``# completed 11 6`` ``# ended early 7 3`` ``# other 8 2`
 
 - Queries to CTGOV and CTGOV2
 
@@ -524,35 +380,7 @@ with `CTGOV2` data, whether the previous record was retrieved using
 
 Example using a CTGOV query:
 
-``` r
-
-# CTGOV search query URL
-q <- "https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug"
-
-# Open old URL (CTGOV) in current website (CTGOV2):
-ctrOpenSearchPagesInBrowser(q)
-# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2.
-# 
-# Replace this URL:
-# 
-# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug
-# 
-# with this URL:
-# 
-# https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com
-# 
-# * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com
-# [1] "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com"
-
-# Count trials
-ctrLoadQueryIntoDb(
-  queryterm = q,
-  con = db,
-  only.count = TRUE
-)
-# $n
-# [1] 70
-```
+`# CTGOV search query URL`` ``q`` ``<-`` ``"https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug"`` `` ``# Open old URL (CTGOV) in current website (CTGOV2):`` `[`ctrOpenSearchPagesInBrowser`](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)`(``q``)`` ``# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2.`` ``# `` ``# Replace this URL:`` ``# `` ``# https://classic.clinicaltrials.gov/ct2/results?cond=neuroblastoma&rslt=With&recrs=e&age=0&intr=Drug`` ``# `` ``# with this URL:`` ``# `` ``# https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com`` ``# `` ``# * Found search query from CTGOV2: cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com`` ``# [1] "https://clinicaltrials.gov/search?cond=neuroblastoma&intr=Drug&aggFilters=ages:child,results:with,status:com"`` `` ``# Count trials`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``q``,`` `` con ``=`` ``db``,`` `` only.count ``=`` ``TRUE`` ``)`` ``# $n`` ``# [1] 70`
 
 - Queries to CTIS
 
@@ -565,29 +393,7 @@ Subsequent to the relaunch of CTIS on 2024-07-24, there are now more
 than 11,050 trials publicly accessible in CTIS. See
 [below](#documents-example) for how to download documents from CTIS.
 
-``` r
-
-# See how many trials are in CTIS publicly accessible:
-ctrLoadQueryIntoDb(
-  queryterm = "",
-  register = "CTIS",
-  only.count = TRUE
-)
-# $n
-# [1] 11057
-
-# Trials in therapeutic area neoplasms (ICD C04):
-ctrLoadQueryIntoDb(
-  queryterm = 'searchCriteria={"therapeuticAreaCode":[4]}',
-  register = "CTIS",
-  only.count = TRUE
-)
-# * Found search query from CTIS: searchCriteria={"therapeuticAreaCode":[4]}
-# * Checking trials in CTIS, found 3532 trials 
-# = Not done (only.count = TRUE): Imported 3532 trial(s)
-# $n
-# [1] 3622
-```
+`# See how many trials are in CTIS publicly accessible:`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``""``,`` `` register ``=`` ``"CTIS"``,`` `` only.count ``=`` ``TRUE`` ``)`` ``# $n`` ``# [1] 11057`` `` ``# Trials in therapeutic area neoplasms (ICD C04):`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``'searchCriteria={"therapeuticAreaCode":[4]}'``,`` `` register ``=`` ``"CTIS"``,`` `` only.count ``=`` ``TRUE`` ``)`` ``# * Found search query from CTIS: searchCriteria={"therapeuticAreaCode":[4]}`` ``# * Checking trials in CTIS, found 3532 trials `` ``# = Not done (only.count = TRUE): Imported 3532 trial(s)`` ``# $n`` ``# [1] 3622`
 
 - Inspect and search structure of trial information
 
@@ -598,16 +404,7 @@ user’s local web browser, to search for field names and field values,
 and to select and copy selected fields’ names for use with function
 [dbGetFieldsIntoDf()](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.html).
 
-``` r
-
-# This opens a local browser for user interaction.
-# If the trial identifier (_id) is not found in the specified 
-# collection, it will be retrieved from the relevant register.
-ctrShowOneTrial(
-  identifier = "2024-518931-12-00",
-  con = db
-)
-```
+`# This opens a local browser for user interaction.`` ``# If the trial identifier (_id) is not found in the specified `` ``# collection, it will be retrieved from the relevant register.`` `[`ctrShowOneTrial`](https://rfhb.github.io/ctrdata/reference/ctrShowOneTrial.md)`(`` `` identifier ``=`` ``"2024-518931-12-00"``,`` `` con ``=`` ``db`` ``)`
 
 ![ctrShowOneTrial](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/ctrdata_ctrShowOneTrial.jpg)
 
@@ -619,55 +416,7 @@ Show cumulative start of trials over time. This uses the calculation of
 one of the trial concepts that are implemented in `ctrdata` since
 version 1.21.0.
 
-``` r
-
-# explore 20 pre-defined concepts for 
-# trial analysis across registers
-help("ctrdata-trial-concepts")
-
-# use helper packages
-library(dplyr)
-library(ggplot2)
-
-# calculate concept across registers
-result <- dbGetFieldsIntoDf(
-  calculate = c(
-    "f.statusRecruitment", 
-    "f.startDate"),
-  con = db
-)
-
-# not using trial concept f.isUniqueTrial
-# but using dbFindIdsUniqueTrials() in 
-# order to prefer CTIS over EUCTR
-result$.isUniqueTrial <- result$`_id` %in% 
-  dbFindIdsUniqueTrials(
-    preferregister = c("CTGOV2", "CTIS", "EUCTR", "CTGOV", "ISRCTN"),
-    con = db
-  ) 
-
-# plot concepts
-result %>%
-  filter(.isUniqueTrial) %>%
-  ggplot() +
-  stat_ecdf(aes(
-    x = .startDate,
-    colour = .statusRecruitment
-  )) +
-  labs(
-    title = "Evolution over time of selected trials",
-    subtitle = "Data from EUCTR, CTIS, ISRCTN, CTGOV2",
-    x = "Date of start (proposed or realised)",
-    y = "Cumulative proportion of trials",
-    colour = "Current status",
-    caption = Sys.Date()
-  )
-
-ggsave(
-  filename = "man/figures/README-ctrdata_across_registers.png",
-  width = 5, height = 3, units = "in"
-)
-```
+`# explore 20 pre-defined concepts for `` ``# trial analysis across registers`` `[`help`](https://rdrr.io/r/utils/help.html)`(``"ctrdata-trial-concepts"``)`` `` ``# use helper packages`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`dplyr`](https://dplyr.tidyverse.org)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`ggplot2`](https://ggplot2.tidyverse.org)`)`` `` ``# calculate concept across registers`` ``result`` ``<-`` `[`dbGetFieldsIntoDf`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)`(`` `` calculate ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` ``"f.statusRecruitment"``, `` `` ``"f.startDate"``)``,`` `` con ``=`` ``db`` ``)`` `` ``# not using trial concept f.isUniqueTrial`` ``# but using dbFindIdsUniqueTrials() in `` ``# order to prefer CTIS over EUCTR`` ``result``$``.isUniqueTrial`` ``<-`` ``result``$``` `_id` ``` `[`%in%`](https://rdrr.io/r/base/match.html)` `` `` `[`dbFindIdsUniqueTrials`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)`(`` `` preferregister ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"CTGOV2"``, ``"CTIS"``, ``"EUCTR"``, ``"CTGOV"``, ``"ISRCTN"``)``,`` `` con ``=`` ``db`` `` ``)`` `` `` ``# plot concepts`` ``result`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`filter`](https://dplyr.tidyverse.org/reference/filter.html)`(``.isUniqueTrial``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`ggplot`](https://ggplot2.tidyverse.org/reference/ggplot.html)`(``)`` ``+`` `` `[`stat_ecdf`](https://ggplot2.tidyverse.org/reference/stat_ecdf.html)`(`[`aes`](https://ggplot2.tidyverse.org/reference/aes.html)`(`` `` x ``=`` ``.startDate``,`` `` colour ``=`` ``.statusRecruitment`` `` ``)``)`` ``+`` `` `[`labs`](https://ggplot2.tidyverse.org/reference/labs.html)`(`` `` title ``=`` ``"Evolution over time of selected trials"``,`` `` subtitle ``=`` ``"Data from EUCTR, CTIS, ISRCTN, CTGOV2"``,`` `` x ``=`` ``"Date of start (proposed or realised)"``,`` `` y ``=`` ``"Cumulative proportion of trials"``,`` `` colour ``=`` ``"Current status"``,`` `` caption ``=`` `[`Sys.Date`](https://rdrr.io/r/base/Sys.time.html)`(``)`` `` ``)`` `` `[`ggsave`](https://ggplot2.tidyverse.org/reference/ggsave.html)`(`` `` filename ``=`` ``"man/figures/README-ctrdata_across_registers.png"``,`` `` width ``=`` ``5``, height ``=`` ``3``, units ``=`` ``"in"`` ``)`
 
 ![Analysis across
 registers](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_across_registers.png)
@@ -680,57 +429,7 @@ Analyse some simple result details, here from CTGOV2 (see this
 [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)
 for more examples):
 
-``` r
-
-# use helper packages
-library(dplyr)
-library(ggplot2)
-
-# calculate concept across registers
-result <- dbGetFieldsIntoDf(
-  calculate = c(
-    "f.numSites",
-    "f.sampleSize",
-    "f.controlType",
-    "f.isUniqueTrial", 
-    "f.numTestArmsSubstances"
-  ),
-  con = db
-)
-# To review trial concepts details, call 'help("ctrdata-trial-concepts")'
-# Querying database (50 fields)...
-
-# plot concept
-result %>%
-  filter(.isUniqueTrial) %>%
-  ggplot() +
-  labs(
-    title = "Selected trials",
-    subtitle = "Patients with a neuroblastoma"
-  ) +
-  geom_point(
-    mapping = aes(
-      x = .numSites,
-      y = .sampleSize,
-      size = .numTestArmsSubstances,
-      colour = .controlType
-    )
-  ) +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(
-    x = "Number of sites",
-    y = "Total number of participants",
-    colour = "Control",
-    size = "# Treatments",
-    caption = Sys.Date()
-  )
-
-ggsave(
-  filename = "man/figures/README-ctrdata_results_neuroblastoma.png",
-  width = 5, height = 3, units = "in"
-)
-```
+`# use helper packages`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`dplyr`](https://dplyr.tidyverse.org)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`ggplot2`](https://ggplot2.tidyverse.org)`)`` `` ``# calculate concept across registers`` ``result`` ``<-`` `[`dbGetFieldsIntoDf`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)`(`` `` calculate ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` ``"f.numSites"``,`` `` ``"f.sampleSize"``,`` `` ``"f.controlType"``,`` `` ``"f.isUniqueTrial"``, `` `` ``"f.numTestArmsSubstances"`` `` ``)``,`` `` con ``=`` ``db`` ``)`` ``# To review trial concepts details, call 'help("ctrdata-trial-concepts")'`` ``# Querying database (50 fields)...`` `` ``# plot concept`` ``result`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`filter`](https://dplyr.tidyverse.org/reference/filter.html)`(``.isUniqueTrial``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`ggplot`](https://ggplot2.tidyverse.org/reference/ggplot.html)`(``)`` ``+`` `` `[`labs`](https://ggplot2.tidyverse.org/reference/labs.html)`(`` `` title ``=`` ``"Selected trials"``,`` `` subtitle ``=`` ``"Patients with a neuroblastoma"`` `` ``)`` ``+`` `` `[`geom_point`](https://ggplot2.tidyverse.org/reference/geom_point.html)`(`` `` mapping ``=`` `[`aes`](https://ggplot2.tidyverse.org/reference/aes.html)`(`` `` x ``=`` ``.numSites``,`` `` y ``=`` ``.sampleSize``,`` `` size ``=`` ``.numTestArmsSubstances``,`` `` colour ``=`` ``.controlType`` `` ``)`` `` ``)`` ``+`` `` `[`scale_x_log10`](https://ggplot2.tidyverse.org/reference/scale_continuous.html)`(``)`` ``+`` `` `[`scale_y_log10`](https://ggplot2.tidyverse.org/reference/scale_continuous.html)`(``)`` ``+`` `` `[`labs`](https://ggplot2.tidyverse.org/reference/labs.html)`(`` `` x ``=`` ``"Number of sites"``,`` `` y ``=`` ``"Total number of participants"``,`` `` colour ``=`` ``"Control"``,`` `` size ``=`` ``"# Treatments"``,`` `` caption ``=`` `[`Sys.Date`](https://rdrr.io/r/base/Sys.time.html)`(``)`` `` ``)`` `` `[`ggsave`](https://ggplot2.tidyverse.org/reference/ggsave.html)`(`` `` filename ``=`` ``"man/figures/README-ctrdata_results_neuroblastoma.png"``,`` `` width ``=`` ``5``, height ``=`` ``3``, units ``=`` ``"in"`` ``)`
 
 ![Neuroblastoma
 trials](https://raw.githubusercontent.com/rfhb/ctrdata/master/docs/reference/figures/README-ctrdata_results_neuroblastoma.png)
@@ -740,257 +439,15 @@ Neuroblastoma trials
 - Download documents: retrieve protocols, statistical analysis plans and
   other documents into the local folder `./files-.../`
 
-``` r
-
-### EUCTR document files can be downloaded when results are requested
-
-# All files are downloaded and saved (documents.regexp is not used with EUCTR)
-ctrLoadQueryIntoDb(
-  queryterm = "query=cancer&age=under-18&phase=phase-one",
-  register = "EUCTR",
-  euctrresults = TRUE,
-  euctrprotocolsall = FALSE, # new since 2025-07-20, loads single 
-  # instead of all available country versions of a trial in EUCTR
-  documents.path = "./files-euctr/",
-  con = db
-)
-# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one
-# * Checking trials in EUCTR, found 249 trials 
-# - Running with euctrresults = TRUE to download documents
-# - Created directory ./files-euctr/
-# - Downloading in 13 batch(es) (20 trials each; estimate: 30 MB)
-# - Downloading 249 records of 249 trials (estimate: 10 s)             
-# - Converting to NDJSON (estimate: 0.7 s)...                             
-# - Importing records into database...
-# = Imported or updated 249 records on 249 trial(s)
-# * Checking results if available from EUCTR for 249 trials: 
-# - Downloading results...
-# - Downloading documents into 'documents.path' = ./files-euctr
-# - Extracting results (. = data, F = file[s] and data, x = none): F . . . . F . . F F . F . . . . F . . . . F . . . . . . . F . F . . F . . . . . . . . F F . . . . . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . . . . . . . . . . . . . . F . . . . . . . . . . F F . . . . . . . . . . . . . . F . . . . F . . F . . . F . . . . 
-# - Data found for 138 trials
-# - Converting to NDJSON (estimate: 4 s)...
-# - Importing 138 results into database (may take some time)...
-# - Results history: not retrieved (euctrresultshistory = FALSE)
-# = Imported or updated results for 138 trials
-# = Documents saved in './files-euctr'
-# No history found in expected format.
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 249
-
-
-### CTGOV files are downloaded, here corresponding to the default of
-# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "
-ctrLoadQueryIntoDb(
-  queryterm = "cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y",
-  register = "CTGOV",
-  documents.path = "./files-ctgov/",
-  con = db
-)
-# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. 
-# 
-# Replace this URL:
-# 
-# https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y
-# 
-# with this URL:
-# 
-# https://clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=phase:2,docs:prot sap icf,studyType:int,status:com
-# 
-# * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=phase:2,docs:prot sap icf,studyType:int,status:com
-# * Checking trials in CTGOV2, found 35 trials
-# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 3.5 MB total)
-# - Load and convert batch 1...
-# - Importing records into database...
-# JSON file #: 1 / 1                               
-# * Checking for documents...
-# - Getting links to documents
-# - Downloading documents into 'documents.path' = ./files-ctgov/
-# - Created directory ./files-ctgov
-# - Applying 'documents.regexp' to 45 missing documents
-# - Creating subfolder for each trial
-# = Newly saved 45 document(s) for 35 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov
-# = Imported or updated 35 trial(s)
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 35
-
-
-### CTGOV2 files are downloaded, using the default of documents.regexp
-ctrLoadQueryIntoDb(
-  queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:1,results:with",
-  documents.path = "./files-ctgov2/",
-  con = db
-)
-# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:1,results:with
-# * Checking trials in CTGOV2, found 42 trials
-# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 4.2 MB total)
-# - Load and convert batch 1...
-# - Importing records into database...
-# JSON file #: 1 / 1                               
-# * Checking for documents...
-# - Getting links to documents
-# - Downloading documents into 'documents.path' = ./files-ctgov2/
-# - Created directory ./files-ctgov2
-# - Applying 'documents.regexp' to 46 missing documents
-# - Creating subfolder for each trial
-# = Newly saved 46 document(s) for 29 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov2
-# = Imported or updated 42 trial(s)
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 42
-
-
-### ISRCTN files are downloaded, using the default of documents.regexp
-ctrLoadQueryIntoDb(
-  queryterm = "https://www.isrctn.com/search?q=alzheimer",
-  documents.path = "./files-isrctn/",
-  con = db
-)
-# * Found search query from ISRCTN: q=alzheimer
-# * Checking trials in ISRCTN, found 350 trials 
-# - Downloading trial file (estimate: 6 MB)...
-# - Converting to NDJSON (estimate: 2 s)...
-# - Importing records into database...
-# * Checking for documents...                      
-# - Getting links to documents from data . correct with web pages . . . . . . . . 
-# - Downloading documents into 'documents.path' = ./files-isrctn/
-# - Created directory ./files-isrctn
-# - Applying 'documents.regexp' to 61 missing documents
-# - Creating subfolder for each trial
-# = Newly saved 37 document(s) for 16 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-isrctn
-# = Imported or updated 350 trial(s)
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 350
-
-
-### CTIS files are downloaded, using a specific documents.regexp
-ctrLoadQueryIntoDb(
-  queryterm = paste0(
-    "https://euclinicaltrials.eu/ctis-public/search#",
-    'searchCriteria={"containAny":"cancer","status":[8]}'),
-  documents.path = "./files-ctis/",
-  documents.regexp = "^Prtcl-Extrct",
-  con = db
-)
-# * Found search query from CTIS: searchCriteria={"containAny":"cancer","status":[8]}
-# * Checking trials in CTIS, found 440 trials 
-# - Downloading and processing trial list... (estimate: 0.8 s)
-# - Downloading and processing trial data... (estimate: 60 MB)        
-# - Importing records into database...                                     
-# - Updating with additional data: .               
-# * Checking for documents . . . . .  
-# - Downloading documents into 'documents.path' = ./files-ctis/
-# - Created directory ./files-ctis
-# - Applying 'documents.regexp' to 8125 missing documents
-# - Creating subfolder for each trial
-# - Downloading 2 missing documents . . 
-# = Newly saved 2 document(s) for 2 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctis
-# = Imported 440, updated 440 record(s) on 440 trial(s)
-# Updated history ("meta-info" in "collection_name")
-# $n
-# [1] 440
-#
-# explore types of documents
-ctrLoadQueryIntoDb(
-  queryterm = paste0(
-    "https://euclinicaltrials.eu/ctis-public/search#",
-    'searchCriteria={"containAny":"cancer","status":[8]}'),
-  documents.path = "./files-ctis/",
-  documents.regexp = NULL,
-  con = db
-)
-#
-# get names of document files
-docNames <- dir(
-  path = "./files-ctis/", 
-  recursive = TRUE)
-# get type of document
-docNames <- sub(".+/(.+?) - .+", "\\1", docNames)
-# 
-table(docNames)
-# ClnclStdyRpr LyprsnsSmmoR     Protocol Prtcl-Extrct RcrtmntArrng 
-#           48          538         1800            2         1634 
-# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr 
-#            2         5595          495          176         1516 
-```
+`### EUCTR document files can be downloaded when results are requested`` `` ``# All files are downloaded and saved (documents.regexp is not used with EUCTR)`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``"query=cancer&age=under-18&phase=phase-one"``,`` `` register ``=`` ``"EUCTR"``,`` `` euctrresults ``=`` ``TRUE``,`` `` euctrprotocolsall ``=`` ``FALSE``, ``# new since 2025-07-20, loads single `` `` ``# instead of all available country versions of a trial in EUCTR`` `` documents.path ``=`` ``"./files-euctr/"``,`` `` con ``=`` ``db`` ``)`` ``# * Found search query from EUCTR: query=cancer&age=under-18&phase=phase-one`` ``# * Checking trials in EUCTR, found 249 trials `` ``# - Running with euctrresults = TRUE to download documents`` ``# - Created directory ./files-euctr/`` ``# - Downloading in 13 batch(es) (20 trials each; estimate: 30 MB)`` ``# - Downloading 249 records of 249 trials (estimate: 10 s) `` ``# - Converting to NDJSON (estimate: 0.7 s)... `` ``# - Importing records into database...`` ``# = Imported or updated 249 records on 249 trial(s)`` ``# * Checking results if available from EUCTR for 249 trials: `` ``# - Downloading results...`` ``# - Downloading documents into 'documents.path' = ./files-euctr`` ``# - Extracting results (. = data, F = file[s] and data, x = none): F . . . . F . . F F . F . . . . F . . . . F . . . . . . . F . F . . F . . . . . . . . F F . . . . . . . . . . . . . . . . . . . F F . F . . . . . . . . . . . . . . . . . . . . . . . . . . F . . . . . . . . . . F F . . . . . . . . . . . . . . F . . . . F . . F . . . F . . . . `` ``# - Data found for 138 trials`` ``# - Converting to NDJSON (estimate: 4 s)...`` ``# - Importing 138 results into database (may take some time)...`` ``# - Results history: not retrieved (euctrresultshistory = FALSE)`` ``# = Imported or updated results for 138 trials`` ``# = Documents saved in './files-euctr'`` ``# No history found in expected format.`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 249`` `` `` ``### CTGOV files are downloaded, here corresponding to the default of`` ``# documents.regexp = "prot|sample|statist|sap_|p1ar|p2ars|icf|ctalett|lay|^[0-9]+ "`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``"cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y"``,`` `` register ``=`` ``"CTGOV"``,`` `` documents.path ``=`` ``"./files-ctgov/"``,`` `` con ``=`` ``db`` ``)`` ``# Since 2024-06-25, the classic CTGOV servers are no longer available. Package ctrdata has translated the classic CTGOV query URL from this call of function ctrLoadQueryIntoDb(queryterm = ...) into a query URL that works with the current CTGOV2. This is printed below and is also part of the return value of this function, ctrLoadQueryIntoDb(...)$url. This URL can be used with ctrdata functions. Note that the fields and data schema of trials differ between CTGOV and CTGOV2. `` ``# `` ``# Replace this URL:`` ``# `` ``# https://classic.clinicaltrials.gov/ct2/results?cond=Neuroblastoma&type=Intr&recrs=e&phase=1&u_prot=Y&u_sap=Y&u_icf=Y`` ``# `` ``# with this URL:`` ``# `` ``# https://clinicaltrials.gov/search?cond=Neuroblastoma&aggFilters=phase:2,docs:prot sap icf,studyType:int,status:com`` ``# `` ``# * Found search query from CTGOV2: cond=Neuroblastoma&aggFilters=phase:2,docs:prot sap icf,studyType:int,status:com`` ``# * Checking trials in CTGOV2, found 35 trials`` ``# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 3.5 MB total)`` ``# - Load and convert batch 1...`` ``# - Importing records into database...`` ``# JSON file #: 1 / 1 `` ``# * Checking for documents...`` ``# - Getting links to documents`` ``# - Downloading documents into 'documents.path' = ./files-ctgov/`` ``# - Created directory ./files-ctgov`` ``# - Applying 'documents.regexp' to 45 missing documents`` ``# - Creating subfolder for each trial`` ``# = Newly saved 45 document(s) for 35 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov`` ``# = Imported or updated 35 trial(s)`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 35`` `` `` ``### CTGOV2 files are downloaded, using the default of documents.regexp`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``"https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:1,results:with"``,`` `` documents.path ``=`` ``"./files-ctgov2/"``,`` `` con ``=`` ``db`` ``)`` ``# * Found search query from CTGOV2: cond=neuroblastoma&aggFilters=phase:1,results:with`` ``# * Checking trials in CTGOV2, found 42 trials`` ``# - Downloading in 1 batch(es) (max. 1000 trials each; estimate: 4.2 MB total)`` ``# - Load and convert batch 1...`` ``# - Importing records into database...`` ``# JSON file #: 1 / 1 `` ``# * Checking for documents...`` ``# - Getting links to documents`` ``# - Downloading documents into 'documents.path' = ./files-ctgov2/`` ``# - Created directory ./files-ctgov2`` ``# - Applying 'documents.regexp' to 46 missing documents`` ``# - Creating subfolder for each trial`` ``# = Newly saved 46 document(s) for 29 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctgov2`` ``# = Imported or updated 42 trial(s)`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 42`` `` `` ``### ISRCTN files are downloaded, using the default of documents.regexp`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` ``"https://www.isrctn.com/search?q=alzheimer"``,`` `` documents.path ``=`` ``"./files-isrctn/"``,`` `` con ``=`` ``db`` ``)`` ``# * Found search query from ISRCTN: q=alzheimer`` ``# * Checking trials in ISRCTN, found 350 trials `` ``# - Downloading trial file (estimate: 6 MB)...`` ``# - Converting to NDJSON (estimate: 2 s)...`` ``# - Importing records into database...`` ``# * Checking for documents... `` ``# - Getting links to documents from data . correct with web pages . . . . . . . . `` ``# - Downloading documents into 'documents.path' = ./files-isrctn/`` ``# - Created directory ./files-isrctn`` ``# - Applying 'documents.regexp' to 61 missing documents`` ``# - Creating subfolder for each trial`` ``# = Newly saved 37 document(s) for 16 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-isrctn`` ``# = Imported or updated 350 trial(s)`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 350`` `` `` ``### CTIS files are downloaded, using a specific documents.regexp`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(`` `` ``"https://euclinicaltrials.eu/ctis-public/search#"``,`` `` ``'searchCriteria={"containAny":"cancer","status":[8]}'``)``,`` `` documents.path ``=`` ``"./files-ctis/"``,`` `` documents.regexp ``=`` ``"^Prtcl-Extrct"``,`` `` con ``=`` ``db`` ``)`` ``# * Found search query from CTIS: searchCriteria={"containAny":"cancer","status":[8]}`` ``# * Checking trials in CTIS, found 440 trials `` ``# - Downloading and processing trial list... (estimate: 0.8 s)`` ``# - Downloading and processing trial data... (estimate: 60 MB) `` ``# - Importing records into database... `` ``# - Updating with additional data: . `` ``# * Checking for documents . . . . . `` ``# - Downloading documents into 'documents.path' = ./files-ctis/`` ``# - Created directory ./files-ctis`` ``# - Applying 'documents.regexp' to 8125 missing documents`` ``# - Creating subfolder for each trial`` ``# - Downloading 2 missing documents . . `` ``# = Newly saved 2 document(s) for 2 trial(s); 0 of such document(s) for 0 trial(s) already existed in ./files-ctis`` ``# = Imported 440, updated 440 record(s) on 440 trial(s)`` ``# Updated history ("meta-info" in "collection_name")`` ``# $n`` ``# [1] 440`` ``#`` ``# explore types of documents`` `[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`` `` queryterm ``=`` `[`paste0`](https://rdrr.io/r/base/paste.html)`(`` `` ``"https://euclinicaltrials.eu/ctis-public/search#"``,`` `` ``'searchCriteria={"containAny":"cancer","status":[8]}'``)``,`` `` documents.path ``=`` ``"./files-ctis/"``,`` `` documents.regexp ``=`` ``NULL``,`` `` con ``=`` ``db`` ``)`` ``#`` ``# get names of document files`` ``docNames`` ``<-`` `[`dir`](https://rdrr.io/r/base/list.files.html)`(`` `` path ``=`` ``"./files-ctis/"``, `` `` recursive ``=`` ``TRUE``)`` ``# get type of document`` ``docNames`` ``<-`` `[`sub`](https://rdrr.io/r/base/grep.html)`(``".+/(.+?) - .+"``, ``"\\1"``, ``docNames``)`` ``# `` `[`table`](https://rdrr.io/r/base/table.html)`(``docNames``)`` ``# ClnclStdyRpr LyprsnsSmmoR Protocol Prtcl-Extrct RcrtmntArrng `` ``# 48 538 1800 2 1634 `` ``# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr `` ``# 2 5595 495 176 1516 `
 
 ## Tests and coverage
 
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
 
-``` r
+`# 2026-07-19`` ``tt`` ``<-`` ``tinytest``::`[`test_all`](https://rdrr.io/pkg/tinytest/man/run_test_dir.html)`(``)`` ``tt``; `[`summary`](https://rdrr.io/r/base/summary.html)`(``tt``)`` ``# `` ``# All ok, 618 results (13m 9.1s)`` ``#`` ``# File Results fails passes`` ``# test_ctrdata_duckdb_ctgov2.R 80 0 80`` ``# test_ctrdata_function_activesubstance.R 4 0 4`` ``# test_ctrdata_function_ctrgeneratequeries.R 10 0 10`` ``# test_ctrdata_function_params.R 25 0 25`` ``# test_ctrdata_function_trial-concepts.R 94 0 94`` ``# test_ctrdata_function_various.R 89 0 89`` ``# test_ctrdata_mongo_local_euctr.R 116 0 116`` ``# test_ctrdata_mongo_remote_ro.R 4 0 4`` ``# test_ctrdata_sqlite_ctgov.R 46 0 46`` ``# test_ctrdata_sqlite_ctis.R 95 0 95`` ``# test_ctrdata_sqlite_isrctn.R 45 0 45`` ``# test_euctr_error_sample.R 10 0 10`` ``# Total 618 0 618`
 
-# 2026-07-19
-tt <- tinytest::test_all()
-tt; summary(tt)
-# 
-# All ok, 618 results (13m 9.1s)
-#
-# File                                         Results fails passes
-#   test_ctrdata_duckdb_ctgov2.R                    80     0     80
-#   test_ctrdata_function_activesubstance.R          4     0      4
-#   test_ctrdata_function_ctrgeneratequeries.R      10     0     10
-#   test_ctrdata_function_params.R                  25     0     25
-#   test_ctrdata_function_trial-concepts.R          94     0     94
-#   test_ctrdata_function_various.R                 89     0     89
-#   test_ctrdata_mongo_local_euctr.R               116     0    116
-#   test_ctrdata_mongo_remote_ro.R                   4     0      4
-#   test_ctrdata_sqlite_ctgov.R                     46     0     46
-#   test_ctrdata_sqlite_ctis.R                      95     0     95
-#   test_ctrdata_sqlite_isrctn.R                    45     0     45
-#   test_euctr_error_sample.R                       10     0     10
-#   Total                                          618     0    618
-```
-
-``` r
-
-# 2026-07-19
-cp <- covr::package_coverage(path = ".", type = "tests")
-covr::report(cp); cp
-# ctrdata Coverage: 94.35%
-# R/ctrShowOneTrial.R: 84.21%
-# R/ctrLoadQueryIntoDbEuctr.R: 85.97%
-# R/ctrGetQueryUrl.R: 88.19%
-# R/ctrFindActiveSubstanceSynonyms.R: 88.89%
-# R/dbGetFieldsIntoDf.R: 89.54%
-# R/ctrLoadQueryIntoDbCtis.R: 90.00%
-# R/f_primaryEndpointResults.R: 90.08%
-# R/util_functions.R: 90.08%
-# R/f_sponsorType.R: 91.00%
-# R/ctrRerunQuery.R: 92.22%
-# R/ctrLoadQueryIntoDbCtgov2.R: 92.70%
-# R/zzz.R: 92.86%
-# R/ctrLoadQueryIntoDbIsrctn.R: 93.72%
-# R/dbFindFields.R: 95.88%
-# R/dfMergeVariablesRelevel.R: 96.55%
-# R/ctrGenerateQueries.R: 97.16%
-# R/ctrOpenSearchPagesInBrowser.R: 97.50%
-# R/f_likelyPlatformTrial.R: 98.78%
-# R/dbFindIdsUniqueTrials.R: 98.82%
-# R/f_numTestArmsSubstances.R: 98.95%
-# R/f_externalLinks.R: 99.10%
-# R/ctrLoadQueryIntoDb.R: 100.00%
-# R/dbQueryHistory.R: 100.00%
-# R/dfName2Value.R: 100.00%
-# R/dfTrials2Long.R: 100.00%
-# R/f_assignmentType.R: 100.00%
-# R/f_controlType.R: 100.00%
-# R/f_hasResults.R: 100.00%
-# R/f_isMedIntervTrial.R: 100.00%
-# R/f_isUniqueTrial.R: 100.00%
-# R/f_numSites.R: 100.00%
-# R/f_primaryEndpointDescription.R: 100.00%
-# R/f_resultsDate.R: 100.00%
-# R/f_sampleSize.R: 100.00%
-# R/f_startDate.R: 100.00%
-# R/f_statusRecruitment.R: 100.00%
-# R/f_trialObjectives.R: 100.00%
-# R/f_trialPhase.R: 100.00%
-# R/f_trialPopulation.R: 100.00%
-# R/f_trialTitle.R: 100.00%
-```
+`# 2026-07-19`` ``cp`` ``<-`` ``covr``::`[`package_coverage`](http://covr.r-lib.org/reference/package_coverage.md)`(``path ``=`` ``"."``, type ``=`` ``"tests"``)`` ``covr``::`[`report`](http://covr.r-lib.org/reference/report.md)`(``cp``)``; ``cp`` ``# ctrdata Coverage: 94.35%`` ``# R/ctrShowOneTrial.R: 84.21%`` ``# R/ctrLoadQueryIntoDbEuctr.R: 85.97%`` ``# R/ctrGetQueryUrl.R: 88.19%`` ``# R/ctrFindActiveSubstanceSynonyms.R: 88.89%`` ``# R/dbGetFieldsIntoDf.R: 89.54%`` ``# R/ctrLoadQueryIntoDbCtis.R: 90.00%`` ``# R/f_primaryEndpointResults.R: 90.08%`` ``# R/util_functions.R: 90.08%`` ``# R/f_sponsorType.R: 91.00%`` ``# R/ctrRerunQuery.R: 92.22%`` ``# R/ctrLoadQueryIntoDbCtgov2.R: 92.70%`` ``# R/zzz.R: 92.86%`` ``# R/ctrLoadQueryIntoDbIsrctn.R: 93.72%`` ``# R/dbFindFields.R: 95.88%`` ``# R/dfMergeVariablesRelevel.R: 96.55%`` ``# R/ctrGenerateQueries.R: 97.16%`` ``# R/ctrOpenSearchPagesInBrowser.R: 97.50%`` ``# R/f_likelyPlatformTrial.R: 98.78%`` ``# R/dbFindIdsUniqueTrials.R: 98.82%`` ``# R/f_numTestArmsSubstances.R: 98.95%`` ``# R/f_externalLinks.R: 99.10%`` ``# R/ctrLoadQueryIntoDb.R: 100.00%`` ``# R/dbQueryHistory.R: 100.00%`` ``# R/dfName2Value.R: 100.00%`` ``# R/dfTrials2Long.R: 100.00%`` ``# R/f_assignmentType.R: 100.00%`` ``# R/f_controlType.R: 100.00%`` ``# R/f_hasResults.R: 100.00%`` ``# R/f_isMedIntervTrial.R: 100.00%`` ``# R/f_isUniqueTrial.R: 100.00%`` ``# R/f_numSites.R: 100.00%`` ``# R/f_primaryEndpointDescription.R: 100.00%`` ``# R/f_resultsDate.R: 100.00%`` ``# R/f_sampleSize.R: 100.00%`` ``# R/f_startDate.R: 100.00%`` ``# R/f_statusRecruitment.R: 100.00%`` ``# R/f_trialObjectives.R: 100.00%`` ``# R/f_trialPhase.R: 100.00%`` ``# R/f_trialPopulation.R: 100.00%`` ``# R/f_trialTitle.R: 100.00%`
 
 ## Future features
 

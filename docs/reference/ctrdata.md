@@ -18,6 +18,7 @@ connection object is specified once and then can be used as parameter
 | DuckDB\* | `dbc <- `[`nodbi::src_duckdb`](https://docs.ropensci.org/nodbi/reference/src_duckdb.html)`(dbname = "my_db", collection = "my_coll")` |
 | MongoDB | `dbc <- `[`nodbi::src_mongo`](https://docs.ropensci.org/nodbi/reference/src_mongo.html)`(db = "my_db", collection = "my_coll")` |
 | PostgreSQL | `dbc <- `[`nodbi::src_postgres`](https://docs.ropensci.org/nodbi/reference/src_postgres.html)`(dbname = "my_db"); dbc[["collection"]] <- "my_coll"` |
+| MariaDB | `dbc <- `[`nodbi::src_mariadb`](https://docs.ropensci.org/nodbi/reference/src_mariadb.html)`(db = "my_db", collection = "my_coll")` |
 
 \*For DuckDB, the JSON extension is needed which can be permanently
 downloaded as follows. User sets a directory of choice for each new R

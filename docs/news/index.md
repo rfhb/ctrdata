@@ -3,14 +3,26 @@
 ## ctrdata 1.26.2.9000
 
 - Added tests to increase coverage
+- Remove ISRCTN text that represents a missing value
+- Corrected for EUCTR
+  [`f.sampleSize()`](https://rfhb.github.io/ctrdata/reference/f.sampleSize.md),
+  notes for 1.26.2 ([\#62](https://github.com/rfhb/ctrdata/issues/62))
+  and testing
+- Refactored
+  [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
+  to use MeSH terms in CTGOV2
 - Added using all secondary identifiers for
   [`dbFindIdsUniqueTrials()`](https://rfhb.github.io/ctrdata/reference/dbFindIdsUniqueTrials.md)
   for ISRCTN
+- Minor update to browser script (see
+  <https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser>)
 - Corrected
   [`f.primaryEndpointResults()`](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointResults.md)
   for CTGOV (did not affect CTGOV2)
 - Corrected import of history of results for EUCTR
   (`euctrresultshistory = TRUE`)
+- Added support for MariaDB (available in
+  <https://github.com/ropensci/nodbi/tree/mariadb_add>)
 
 ## ctrdata 1.26.2
 

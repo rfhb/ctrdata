@@ -57,7 +57,7 @@ f.trialObjectives()
 #> 
 #> $isrctn
 #> [1] "trialDescription.studyHypothesis"           
-#> [2] "trialDesign.trialType"                      
+#> [2] "trialDesign.trialTypes.trialType"           
 #> [3] "interventions.intervention.interventionType"
 #> [4] "trialDesign.primaryStudyDesign"             
 #> 
@@ -84,18 +84,18 @@ trialsDf <- dbGetFieldsIntoDf(
 #> Calculating f.trialObjectives...                            
 
 trialsDf
-#> # A tibble: 24 × 2
+#> # A tibble: 25 × 2
 #>    `_id`             .trialObjectives
 #>    <chr>             <chr>           
 #>  1 12949496          S PD A          
 #>  2 13281214          E PD A          
 #>  3 17473621          NA              
-#>  4 2016-004489-24-DE E S A           
-#>  5 2019-002663-10-ES E S PK A        
-#>  6 2022-000099-20-DE E S             
-#>  7 2022-500244-37-00 E S A           
-#>  8 2023-505613-24-00 S PK A          
-#>  9 2023-508143-51-01 S PD            
-#> 10 2024-510663-34-00 S PK            
-#> # ℹ 14 more rows
+#>  4 2013-000615-24-BE E S PD PK A D   
+#>  5 2016-004489-24-DE E S A           
+#>  6 2019-002663-10-ES E S PK A        
+#>  7 2022-000099-20-DE E S             
+#>  8 2022-500244-37-00 E S A           
+#>  9 2023-505613-24-00 S PK A          
+#> 10 2023-508143-51-01 S PD            
+#> # ℹ 15 more rows
 ```

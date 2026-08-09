@@ -33,7 +33,9 @@ Kundu
 Lasch
 MAMS
 MPRPs
+Machado
 Mapreduce
+MariaDB
 MeSH
 MedDRA
 MongoDB
@@ -144,13 +146,13 @@ nodbi
 nonproprietary
 numSites
 numTestArmsSubstances
-otherNames
 paed
 perl
 pipleline
 pkgdown
 postgres
 preferrably
+preferregister
 primaryEndpointDescription
 primaryEndpointFirstPmethod
 primaryEndpointFirstPsize
