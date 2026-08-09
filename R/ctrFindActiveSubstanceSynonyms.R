@@ -14,7 +14,8 @@
 #'
 #' @returns A named character vector of the active substance (input parameter),
 #'  the MeSH code(s) and various names used in registered studies, or NULL if
-#'  active substance was not found and may be invalid
+#'  active substance was not found and may be invalid. The active substances
+#'  are ordered in decreasing number of occurrence.
 #'
 #' @importFrom utils str
 #' @importFrom jqr jq
@@ -65,7 +66,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     "protocolSection.armsInterventionsModule.interventions.name|",
     "derivedSection.interventionBrowseModule.meshes.term",
     "&pageSize=%i"
-  ), activesubstance, 50L)
+  ), activesubstance, 500L)
 
   # call endpoint
   res <- try(httr2::req_perform(
@@ -98,6 +99,26 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # - obtain the MeSH term for these, deduplicate etc.
   # - get name and otherNames for the MeSH term(s)
   # - clean up, get most frequent names
+
+  # get logical index in array of interventions
+  names <- jqr::jq(textConnection(jsn), paste0(
+    '.studies[]
+
+    | ( .protocolSection.armsInterventionsModule.interventions
+    | map(.name | test("^', activesubstance, '( |$)"; "i"))
+    ) as $indN
+
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[].name], $indN ]
+    | transpose | map(select(.[1]) | .[0]) | .[]
+    ) as $outN
+
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[].otherNames], $indN ]
+    | transpose | map(select(.[1]) | .[0]) | .[]
+    ) as $outO
+
+    | {name: $outN, otherNames: $outO}
+
+  '))
 
   # get mesh from intervention names
   mesh1 <- jqr::jq(textConnection(jsn), paste0(
@@ -148,7 +169,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   if (length(meshes)) {
 
     # use mesh to find names and othernames
-    names <- jqr::jq(textConnection(jsn), paste0(
+    names <- c(names, jqr::jq(textConnection(jsn), paste0(
       '.studies[]
 
     | ( .derivedSection.interventionBrowseModule.meshes
@@ -165,29 +186,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
 
     | {name: $outN, otherNames: $outO}
 
-  '))
-
-  } else {
-
-    # get logical index in array of interventions
-    names <- jqr::jq(textConnection(jsn), paste0(
-      '.studies[]
-
-    | ( .protocolSection.armsInterventionsModule.interventions
-    | map(.name | test("^', activesubstance, '( |$)"; "i"))
-    ) as $indN
-
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].name], $indN ]
-    | transpose | map(select(.[1]) | .[0]) | .[]
-    ) as $outN
-
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].otherNames], $indN ]
-    | transpose | map(select(.[1]) | .[0]) | .[]
-    ) as $outO
-
-    | {name: $outN, otherNames: $outO}
-
-  '))
+  ')))
 
   }
 
@@ -217,17 +216,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     sub("^([a-zA-Z ]+)$", "\\L\\1", x = _, perl = TRUE) |>
     table() |>
     sort(decreasing = TRUE)
-
-  # TODO
-  # sum(names)
-  # length(names)
-  # sum(names) / length(names)
-  #
-  # sapply(
-  #   seq_along(names),
-  #   function(i) if (i == 1L) names[i] else
-  #   names[i] + as.integer(names[i - 1L])
-  # )
 
   # prepare output
   names <- c(

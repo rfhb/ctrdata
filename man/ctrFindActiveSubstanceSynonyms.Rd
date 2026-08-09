@@ -14,7 +14,8 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 \value{
 A named character vector of the active substance (input parameter),
  the MeSH code(s) and various names used in registered studies, or NULL if
- active substance was not found and may be invalid
+ active substance was not found and may be invalid. The active substances
+ are ordered in decreasing number of occurrence.
 }
 \description{
 An active substance can be identified by a recommended international
