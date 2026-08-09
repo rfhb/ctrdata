@@ -669,7 +669,7 @@ typeField <- function(dv, fn) {
   if (is.null(ft)) {
 
     # - if NA or similar is a string, change to NA
-    if (typeof(dv) == "character") dv[grepl("^N/?A$|^ND$", dv)] <- NA_character_
+    if (typeof(dv) == "character") dv[grepl("^N/?A$|^ND$|^Nil known$", dv)] <- NA_character_
 
     # - check if any html entities
     htmlEnt <- grepl("&[#a-zA-Z]+;", dv)
@@ -702,7 +702,8 @@ typeField <- function(dv, fn) {
       #
       dv <- sapply(dv, function(i) {
         i <- gsub("\r", "\n", i)
-        i <- sub("^Information not present in EudraCT", "", i)
+        i <- sub("^Information not present in EudraCT|^Nil known$", "", i)
+        i[!nchar(i)] <- NA_character_
         if (length(i) > 1L) {
           rowI <- paste0(i[!is.na(i)], collapse = " / ")
           if (nchar(rowI)) rowI else NA_character_
