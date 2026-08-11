@@ -56,7 +56,7 @@ Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQuery
 ```{r }
 # user to specify their directory of choice;
 # remember to set option for each new R session
-options(duckdb.extension_directory = "~/.duckdb_extensions")
+options(duckdb.home = "~/.duckdb")
 
 # load and store in above-mentioned 
 # directory; only once to be executed

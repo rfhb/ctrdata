@@ -50,7 +50,7 @@ local server.
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.extension_directory ``=`` ``"~/.duckdb_extensions"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
+`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
 
 ## Attach package `ctrdata`
 

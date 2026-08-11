@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-08-09 for version 1.26.2.9000.
+package. This README was reviewed on 2026-08-11 for version 1.26.2.9000.
 
 ## Main features
 
@@ -261,7 +261,7 @@ vignettes).
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.extension_directory ``=`` ``"~/.duckdb_extensions"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
+`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
 
 ## Vignettes
 

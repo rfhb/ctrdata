@@ -30,3 +30,14 @@ active substance was not found and may be invalid. The active substances
 are ordered in decreasing number of occurrence.
 
 ## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+
+ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
+# activesubstance                mesh
+#      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
+#        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
+#       "gleevac" "mesylate imatinib"    "ST1571"
+} # }
+```

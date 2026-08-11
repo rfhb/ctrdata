@@ -20,7 +20,7 @@
 #'
 #' *For DuckDB, the JSON extension is needed which can be permanently downloaded as follows.
 #' User sets a directory of choice for each new R session:
-#' \code{options(duckdb.extension_directory = "~/.duckdb_extensions")}
+#' \code{options(duckdb.home = "~/.duckdb")}
 #' Load and store in this directory; needs to be executed only once after a DuckDB install:
 #' \code{DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')}
 #'

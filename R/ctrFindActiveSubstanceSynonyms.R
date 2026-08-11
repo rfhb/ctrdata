@@ -29,10 +29,10 @@
 #' \dontrun{
 #'
 #' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
-#' activesubstance                mesh
-#'      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
-#'        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
-#'       "gleevac" "mesylate imatinib"    "ST1571"
+#' # activesubstance                mesh
+#' #      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
+#' #        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
+#' #       "gleevac" "mesylate imatinib"    "ST1571"
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
