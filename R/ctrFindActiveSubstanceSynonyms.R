@@ -13,9 +13,10 @@
 #' @param verbose Print number of studies found in CTGOV2 for `activesubstance`
 #'
 #' @returns A named character vector of the active substance (input parameter),
-#'  the MeSH code(s) and various names used in registered studies, or NULL if
-#'  active substance was not found and may be invalid. The active substances
-#'  are ordered in decreasing number of occurrence.
+#'  the MeSH term(s) and various names (other than the MeSH term) used in
+#'  registered studies, or NULL if the active substance was not found and may
+#'  be invalid. The active substances are ordered in decreasing number of
+#'  occurrence.
 #'
 #' @importFrom utils str
 #' @importFrom jqr jq
@@ -30,9 +31,8 @@
 #'
 #' ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 #' # activesubstance                mesh
-#' #      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
-#' #        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
-#' #       "gleevac" "mesylate imatinib"    "ST1571"
+#' #      "imatinib" "imatinib mesylate"  "imatinib" "gleevec" "glivec"
+#' #        "STI571"          "CGP57148" "CGP57148B" "NSC716051"
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
@@ -45,12 +45,6 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
          call. = FALSE
     )
   }
-
-  # TODO explore
-  # https://rxnav.nlm.nih.gov/REST/rxcui.json?name=%s&search=1
-  # https://rxnav.nlm.nih.gov/REST/approximateTerm.json?term=%s&maxEntries=1
-  # https://rxnav.nlm.nih.gov/REST/rxcui/1656328/allallonym.json
-  # https://rxnav.nlm.nih.gov/REST/rxcui/1656328/allproperties.json?prop=ALL
 
   # using CTGOV2 API as per
   # https://clinicaltrials.gov/data-api/about-api/api-migration#query-endpoints
@@ -100,19 +94,26 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   # - get name and otherNames for the MeSH term(s)
   # - clean up, get most frequent names
 
+  # local changes
+  # - added string interpolation | "\\(.)" as some interventions
+  #   were found to be empty sets and thus did not have any names
+  # - added length check and []? to handle no / empty array, object
+
   # get logical index in array of interventions
   names <- jqr::jq(textConnection(jsn), paste0(
     '.studies[]
 
     | ( .protocolSection.armsInterventionsModule.interventions
-    | map(.name | test("^', activesubstance, '( |$)"; "i"))
+    | if length == 0 then [false] else
+      map(.name | "\\(.)" | test("', activesubstance, '"; "i"))
+      end
     ) as $indN
 
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].name], $indN ]
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[]?.name], $indN ]
     | transpose | map(select(.[1]) | .[0]) | .[]
     ) as $outN
 
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].otherNames], $indN ]
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[]?.otherNames], $indN ]
     | transpose | map(select(.[1]) | .[0]) | .[]
     ) as $outO
 
@@ -125,7 +126,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     '.studies[]
 
     | ( .protocolSection.armsInterventionsModule.interventions
-    | if length == 0 then [false] else map(.name | test("^', activesubstance, '( |$)"; "i")) end
+    | if length == 0 then [false] else map(.name | "\\(.)" | test("', activesubstance, '"; "i")) end
     ) as $indN
 
     | [ .derivedSection.interventionBrowseModule.meshes, $indN]
@@ -166,27 +167,29 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   meshes <- tolower(unique(c(mesh1, mesh2)))
 
   # process meshes
-  if (length(meshes)) {
+  if (length(meshes) >= 1L) {
 
     # use mesh to find names and othernames
-    names <- c(names, jqr::jq(textConnection(jsn), paste0(
+    names <- jqr::jq(textConnection(jsn), paste0(
       '.studies[]
 
     | ( .derivedSection.interventionBrowseModule.meshes
-    | map(.term | test("', paste0(meshes, collapse = "|"), '"; "i"))
+    | if (length == 0 or length > 4) then [false] else
+      map(.term | test("', paste0(meshes, collapse = "|"), '"; "i"))
+      end
     ) as $outM
 
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].name], $outM ]
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[]?.name], $outM ]
     | transpose | map(select(.[1]) | .[0]) | .[]
     ) as $outN
 
-    | ( [ [.protocolSection.armsInterventionsModule.interventions[].otherNames], $outM ]
+    | ( [ [.protocolSection.armsInterventionsModule.interventions[]?.otherNames], $outM ]
     | transpose | map(select(.[1]) | .[0]) | .[]
     ) as $outO
 
     | {name: $outN, otherNames: $outO}
 
-  ')))
+  '))
 
   }
 
@@ -200,7 +203,7 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
   names <- gsub("@|\U000AE|Trade name: ?| ?[(]?INN[)]?|[(]R[)]|\\(.+\\)", "", names)
 
   # remove other components
-  names <- gsub("oral|tablet|capsule|withdrawal", "", names)
+  names <- gsub("oral|tablet|capsule|withdrawal|injection|placebo", "", names)
 
   # some otherNames are multiple active substances
   names <- names[!grepl("(,|/| and | or )", names)]
@@ -213,9 +216,17 @@ ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE
     sub("([0-9]+)[- ]([a-zA-Z]+)", "\\1\\2", x = _) |>
     sub("([a-zA-Z]+)[- ]([0-9]+)", "\\1\\2", x = _) |>
     trimws() |>
-    sub("^([a-zA-Z ]+)$", "\\L\\1", x = _, perl = TRUE) |>
+    sub("^([a-zA-Z ]+)$", "\\L\\1", x = _, perl = TRUE)
+  names <- names[names != ""]
+
+  # exclude meshes from names
+  names <- names[sapply(names, function(i) !any(i == meshes))]
+
+  # select most frequent
+  names <- names |>
     table() |>
     sort(decreasing = TRUE)
+  names <- names[names >= (sum(names) / 50)]
 
   # prepare output
   names <- c(
