@@ -41,7 +41,7 @@ Either of the above should install package `ctrdata` into the user's library.
 
 ## Databases to use
 
-At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or remote) database can be used with the package `ctrdata`. A full SQLite database is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://www.mongodb.com/docs/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/products/platform). See [here](https://github.com/ropensci/nodbi#benchmark) for a speed comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB local server. 
+At this time, a SQLite, DuckDB, PostgreSQL, MariaDB (local or remote) or MongoDB (local or remote) database can be used with the package `ctrdata`. A full SQLite database adapter is provided in the R package [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation instructions for PostgreSQL are [here](https://www.postgresql.org/download/) and for a local MongoDB server are [here](https://www.mongodb.com/docs/manual/administration/install-community/); a remote MongoDB database server is accessible [here](https://www.mongodb.com/products/platform). See [here](https://github.com/ropensci/nodbi#benchmark) for a speed comparison of the databases; recommended: DuckDB, SQLite or MongoDB local server. 
 
 Purpose | Function call
 -------------------- | --------------------
@@ -49,6 +49,7 @@ Create **SQLite** database connection | `dbc <- nodbi::src_sqlite(dbname = "name
 Create **DuckDB** database connection* | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")`
 Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")`
 Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"`
+Create **MariaDB** database connection | `dbc <- nodbi::src_mariadb(db = "name_of_my_database", collection = "name_of_my_collection")`
 Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)`
 
 * For DuckDB, the JSON extension is needed which can be permanently downloaded as follows:
@@ -58,7 +59,7 @@ Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQuery
 # remember to set option for each new R session
 options(duckdb.home = "~/.duckdb")
 
-# load and store in above-mentioned 
+# load and install in above-mentioned 
 # directory; only once to be executed
 DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
 ```

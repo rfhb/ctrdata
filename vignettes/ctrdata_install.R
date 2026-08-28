@@ -14,7 +14,7 @@ knitr::opts_chunk$set(eval = FALSE)
 # # remember to set option for each new R session
 # options(duckdb.home = "~/.duckdb")
 # 
-# # load and store in above-mentioned
+# # load and install in above-mentioned
 # # directory; only once to be executed
 # DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
 

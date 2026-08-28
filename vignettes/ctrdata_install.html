@@ -380,13 +380,14 @@ the user’s library.</p>
 </div>
 <div id="databases-to-use" class="section level2">
 <h2>Databases to use</h2>
-<p>At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or
-remote) database can be used with the package <code>ctrdata</code>. A
-full SQLite database is provided in the R package <a href="https://rsqlite.r-dbi.org/"><code>RSQLite</code></a>. Suggested
-installation instructions for PostgreSQL are <a href="https://www.postgresql.org/download/">here</a> and for a local
+<p>At this time, a SQLite, DuckDB, PostgreSQL, MariaDB (local or remote)
+or MongoDB (local or remote) database can be used with the package
+<code>ctrdata</code>. A full SQLite database adapter is provided in the
+R package <a href="https://rsqlite.r-dbi.org/"><code>RSQLite</code></a>.
+Suggested installation instructions for PostgreSQL are <a href="https://www.postgresql.org/download/">here</a> and for a local
 MongoDB server are <a href="https://www.mongodb.com/docs/manual/administration/install-community/">here</a>;
 a remote MongoDB database server is accessible <a href="https://www.mongodb.com/products/platform">here</a>. See <a href="https://github.com/ropensci/nodbi#benchmark">here</a> for a speed
-comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB
+comparison of the databases; recommended: DuckDB, SQLite or MongoDB
 local server.</p>
 <table>
 <colgroup>
@@ -417,6 +418,10 @@ local server.</p>
 <td><code>dbc &lt;- nodbi::src_postgres(dbname = &quot;name_of_my_database&quot;); dbc[[&quot;collection&quot;]] &lt;- &quot;name_of_my_collection&quot;</code></td>
 </tr>
 <tr class="odd">
+<td>Create <strong>MariaDB</strong> database connection</td>
+<td><code>dbc &lt;- nodbi::src_mariadb(db = &quot;name_of_my_database&quot;, collection = &quot;name_of_my_collection&quot;)</code></td>
+</tr>
+<tr class="even">
 <td>Use connection with <code>ctrdata</code> functions</td>
 <td><code>ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)</code></td>
 </tr>
@@ -430,7 +435,7 @@ downloaded as follows:</li>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># remember to set option for each new R session</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">options</span>(<span class="at">duckdb.home =</span> <span class="st">&quot;~/.duckdb&quot;</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># load and store in above-mentioned </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># load and install in above-mentioned </span></span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co"># directory; only once to be executed</span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbExecute</span>(duckdb<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>()), <span class="st">&#39;INSTALL json;&#39;</span>)</span></code></pre></div>
 </div>
