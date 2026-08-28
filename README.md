@@ -82,7 +82,7 @@ Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
 Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
-or <br/>Herold R (2026-08-11). *ctrdata: Retrieve and Analyze Clinical
+or <br/>Herold R (2026-08-28). *ctrdata: Retrieve and Analyze Clinical
 Trials Data from Public Registers*. R package version 1.26.2.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>
@@ -119,7 +119,7 @@ publications:
   Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684>
 - Clinical Studies Sweden (2025) National Summary of Clinical Trials in
   Human Medicines Based on CTIS Data
-  [link](https://www.kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
+  [link](https://kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
 - Alzheimer’s disease Horizon Scanning Report (2024)
   [link](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success

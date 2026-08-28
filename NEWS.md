@@ -1,22 +1,22 @@
-# ctrdata 1.26.2.9000
+# ctrdata 1.26.3
 
-- Added tests to increase coverage
-- Remove ISRCTN text that represents a missing value
-- Corrected for EUCTR `f.sampleSize()`, notes for 1.26.2 (#62) and testing
+- Added support for MariaDB (nodbi v0.15.0)
+- Added tests to increase coverage of code testing
+- Type as `NA` new ISRCTN texts that indicate a value is missing 
+- Added using all secondary ISRCTN identifiers for `dbFindIdsUniqueTrials()`
 - Refactored `ctrFindActiveSubstanceSynonyms()` to use MeSH terms in CTGOV2
-- Added using all secondary identifiers for `dbFindIdsUniqueTrials()` for ISRCTN
-- Minor update to browser script (see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) 
 - Corrected `f.primaryEndpointResults()` for CTGOV (did not affect CTGOV2)
+- Corrected `f.sampleSize()`: for EUCTR, in news for 1.26.2 (#62), testing
 - Corrected import of history of results for EUCTR (`euctrresultshistory = TRUE`)
-- Added support for MariaDB (available in https://github.com/ropensci/nodbi/tree/mariadb_add)
+- Minor update to browser script (see https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser) 
 
 # ctrdata 1.26.2
 
-- Made `f.sampleSize()` return the number of enrolled participants also for CTIS, where available
+- Minor typing function speed up
 - Enabled international characters in `queryterm`
+- Used for `f.sampleSize()` for CTIS additional field 'enrolled' participants (news corrected)
 - Revised how failed batch imports are handled through iterating over individual trial records
 - Updated user and editorial information, including how `dbFindIdsUniqueTrials()` handles so-called transitioned trials
-- Minor typing function speed up
 
 # ctrdata 1.26.1
 

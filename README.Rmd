@@ -87,7 +87,7 @@ Package `ctrdata` has been used for unpublished works and these publications:
 - Jong et al. (2025) Experiences with Low-Intervention Clinical Trials -- the New Category under the European Union Clinical Trials Regulation. Clinical Trials <https://doi.org/10.1177/17407745241309293>
 - Lopez-Rey et al. (2025) Use of Bayesian Approaches in Oncology Clinical Trials: A Cross-Sectional Analysis’. Frontiers in Pharmacology <https://doi.org/10.3389/fphar.2025.1548997>
 - Russek et al. (2025) Supplementing Single-Arm Trials with External Control Arms—Evaluation of German Real-World Data. Clinical Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684> 
-- Clinical Studies Sweden (2025) National Summary of Clinical Trials in Human Medicines Based on CTIS Data [link](https://www.kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
+- Clinical Studies Sweden (2025) National Summary of Clinical Trials in Human Medicines Based on CTIS Data [link](https://kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
 - Alzheimer’s disease Horizon Scanning Report (2024) [link](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success in Hematology Malignancy Cancer Clinical Trials (2008-2023). Blood Meeting Abstracts <https://doi.org/10.1182/blood-2024-207446>
 - Sood et al. (2022) Managing the evidence infodemic: Automation approaches used for developing NICE COVID-19 living guidelines. <https://doi.org/10.1101/2022.06.13.22276242> 
