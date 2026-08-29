@@ -53,7 +53,7 @@ jobs:
 
       - name: Install dev nodbi
         if: ${{ (matrix.config.os == 'ubuntu-latest') }}
-        run: remotes::install_github("https://github.com/ropensci/nodbi/tree/mariadb_add", dependencies = c("Depends", "Imports"))
+        run: remotes::install_github("ropensci/nodbi", dependencies = c("Depends", "Imports"))
         shell: Rscript {0}
 
       - name: Try installing duckdb extension library
