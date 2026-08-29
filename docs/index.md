@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-08-11 for version 1.26.2.9000.
+package. This README was reviewed on 2026-08-28 for version 1.26.3.
 
 ## Main features
 
@@ -70,7 +70,7 @@ in any publication or work as follows:
 > Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (2026-08-09). *ctrdata: Retrieve and Analyze Clinical Trials
+> Herold R (2026-08-28). *ctrdata: Retrieve and Analyze Clinical Trials
 > Data from Public Registers*. R package version 1.26.2.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
@@ -102,7 +102,7 @@ publications:
   Pharmacology & Therapeutics <https://doi.org/10.1002/cpt.3684>
 - Clinical Studies Sweden (2025) National Summary of Clinical Trials in
   Human Medicines Based on CTIS Data
-  [link](https://www.kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
+  [link](https://kliniskastudier.se/english/news-archive/news-archive/2025-11-27-national-summary-of-clinical-trials-in-human-medicines-based-on-ctis-data)
 - Alzheimer’s disease Horizon Scanning Report (2024)
   [link](https://www.ema.europa.eu/en/documents/report/alzheimers-disease-eu-horizon-scanning-report_en.pdf)
 - Kundu et al. (2024) Analysis of Factors Influencing Enrollment Success
@@ -133,7 +133,7 @@ GitHub](https://github.com/rfhb/ctrdata). Within
 [R](https://www.r-project.org/), use the following commands to install
 package `ctrdata`:
 
-`# Install CRAN version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``)`` `` ``# Alternatively, install development version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"devtools"``)`` ``remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, build_vignettes ``=`` ``TRUE``)`
+`# Install CRAN version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``)`` `` ``# Alternatively, install development version:`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"remotes"``)`` ``remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, build_vignettes ``=`` ``TRUE``)`
 
 These commands also install the package’s dependencies (`jsonlite`,
 `httr2`, `xml2`, `nodbi`, `stringi`, `lubridate`, `jqr`, `dplyr`, `zip`,

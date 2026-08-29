@@ -25,9 +25,10 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 ## Value
 
 A named character vector of the active substance (input parameter), the
-MeSH code(s) and various names used in registered studies, or NULL if
-active substance was not found and may be invalid. The active substances
-are ordered in decreasing number of occurrence.
+MeSH term(s) and various names (other than the MeSH term) used in
+registered studies, or NULL if the active substance was not found and
+may be invalid. The active substances are ordered in decreasing number
+of occurrence.
 
 ## Examples
 
@@ -36,8 +37,7 @@ if (FALSE) { # \dontrun{
 
 ctrFindActiveSubstanceSynonyms(activesubstance = "imatinib")
 # activesubstance                mesh
-#      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"
-#        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"
-#       "gleevac" "mesylate imatinib"    "ST1571"
+#      "imatinib" "imatinib mesylate"  "imatinib" "gleevec" "glivec"
+#        "STI571"          "CGP57148" "CGP57148B" "NSC716051"
 } # }
 ```

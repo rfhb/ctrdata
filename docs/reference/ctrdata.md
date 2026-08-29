@@ -22,7 +22,7 @@ connection object is specified once and then can be used as parameter
 
 \*For DuckDB, the JSON extension is needed which can be permanently
 downloaded as follows. User sets a directory of choice for each new R
-session: `options(duckdb.home = "~/.duckdb")` Load and store in this
+session: `options(duckdb.home = "~/.duckdb")` Install extension in this
 directory; needs to be executed only once after a DuckDB install:
 `DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')`
 

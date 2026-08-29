@@ -15,7 +15,7 @@ Note this is mostly manually filled, thus may not be free of errors."></head><bo
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,9 +75,10 @@ Note this is mostly manually filled, thus may not be free of errors.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named character vector of the active substance (input parameter),
- the MeSH code(s) and various names used in registered studies, or NULL if
- active substance was not found and may be invalid. The active substances
- are ordered in decreasing number of occurrence.</p>
+ the MeSH term(s) and various names (other than the MeSH term) used in
+ registered studies, or NULL if the active substance was not found and may
+ be invalid. The active substances are ordered in decreasing number of
+ occurrence.</p>
     </div>
 
     <div class="section level2">
@@ -86,9 +87,8 @@ Note this is mostly manually filled, thus may not be free of errors.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ctrFindActiveSubstanceSynonyms</span><span class="op">(</span>activesubstance <span class="op">=</span> <span class="st">"imatinib"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># activesubstance                mesh</span></span></span>
-<span class="r-in"><span><span class="co">#      "imatinib" "imatinib mesylate"  "imatinib"  "gleevec"  "imatinib mesylate"</span></span></span>
-<span class="r-in"><span><span class="co">#        "glivec"            "STI571"    "111201" "CGP57148"          "CGP57148B"</span></span></span>
-<span class="r-in"><span><span class="co">#       "gleevac" "mesylate imatinib"    "ST1571"</span></span></span>
+<span class="r-in"><span><span class="co">#      "imatinib" "imatinib mesylate"  "imatinib" "gleevec" "glivec"</span></span></span>
+<span class="r-in"><span><span class="co">#        "STI571"          "CGP57148" "CGP57148B" "NSC716051"</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

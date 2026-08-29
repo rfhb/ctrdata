@@ -1,3 +1,7 @@
+# ctrdata 1.26.3.900
+
+- New development version
+
 # ctrdata 1.26.3
 
 - Added support for MariaDB (nodbi v0.15.0)

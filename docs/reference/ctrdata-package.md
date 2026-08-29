@@ -8,16 +8,17 @@ registers, the 'European Union Clinical Trials Register' ('EUCTR',
 classic interface), the 'ISRCTN' (<https://www.isrctn.com/>) and the
 'European Union Clinical Trials Information System' ('CTIS',
 <https://euclinicaltrials.eu/>). Trial information is downloaded,
-converted and stored in a database ('PostgreSQL', 'SQLite', 'DuckDB' or
-'MongoDB'; via package 'nodbi'). Protocols, statistical analysis plans,
-informed consent sheets and other documents in registers associated with
-trials can also be downloaded. Other functions implement trial concepts
-canonically across registers, identify deduplicated records, easily find
+converted and stored as JSON in a database ('PostgreSQL', 'SQLite',
+'DuckDB', 'MongoDB' or 'MariaDB'; via package 'nodbi'). Protocols,
+statistical analysis plans, informed consent sheets and other documents
+in registers associated with trials can also be downloaded. Other
+functions implement trial analysis concepts canonically across
+registers, identify deduplicated records across registers, easily find
 and extract variables (fields) of interest even from complex nested data
-as used by the registers, merge variables and update queries. The
-package can be used for monitoring, meta- and trend-analysis of the
-design and conduct as well as of the results of clinical trials across
-registers. See overview in Herold, R. (2025)
+as used by registers, merge variables and update queries. The package
+can be used for monitoring, meta- and trend-analysis of the design and
+conduct as well as of the results of clinical trials across registers.
+See overview in Herold, R. (2025)
 [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061) .
 
 ## See also

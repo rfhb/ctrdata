@@ -25,9 +25,9 @@ library.
 
 ## Databases to use
 
-At this time, a PostgreSQL, DuckDB, an SQLite or a MongoDB (local or
-remote) database can be used with the package `ctrdata`. A full SQLite
-database is provided in the R package
+At this time, a SQLite, DuckDB, PostgreSQL, MariaDB (local or remote) or
+MongoDB (local or remote) database can be used with the package
+`ctrdata`. A full SQLite database adapter is provided in the R package
 [`RSQLite`](https://rsqlite.r-dbi.org/). Suggested installation
 instructions for PostgreSQL are
 [here](https://www.postgresql.org/download/) and for a local MongoDB
@@ -36,7 +36,7 @@ server are
 a remote MongoDB database server is accessible
 [here](https://www.mongodb.com/products/platform). See
 [here](https://github.com/ropensci/nodbi#benchmark) for a speed
-comparison of the databases; recommended: DuckDB, PostgreSQL or MongoDB
+comparison of the databases; recommended: DuckDB, SQLite or MongoDB
 local server.
 
 | Purpose | Function call |
@@ -45,12 +45,13 @@ local server.
 | Create **DuckDB** database connection\* | `dbc <- nodbi::src_duckdb(dbname = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **MongoDB** database connection | `dbc <- nodbi::src_mongo(db = "name_of_my_database", collection = "name_of_my_collection")` |
 | Create **PostgreSQL** database connection | `dbc <- nodbi::src_postgres(dbname = "name_of_my_database"); dbc[["collection"]] <- "name_of_my_collection"` |
+| Create **MariaDB** database connection | `dbc <- nodbi::src_mariadb(db = "name_of_my_database", collection = "name_of_my_collection")` |
 | Use connection with `ctrdata` functions | `ctrdata::{ctrLoadQueryIntoDb, dbQueryHistory, dbFindIdsUniqueTrials, dbFindFields, dbGetFieldsIntoDf}(con = dbc, ...)` |
 
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`` `` ``# load and store in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
+`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`` `` ``# load and install in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
 
 ## Attach package `ctrdata`
 
@@ -77,5 +78,5 @@ Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or\
 Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
-from Public Registers*. R package version 1.26.2.9000,
+from Public Registers*. R package version 1.26.3.9000,
 <https://cran.r-project.org/package=ctrdata>.

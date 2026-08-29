@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ctrdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.26.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,25 +39,30 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.26.2.9000" id="ctrdata-12629000">ctrdata 1.26.2.9000<a class="anchor" aria-label="anchor" href="#ctrdata-12629000"></a></h2>
-<ul><li>Added tests to increase coverage</li>
-<li>Remove ISRCTN text that represents a missing value</li>
-<li>Corrected for EUCTR <code><a href="../reference/f.sampleSize.html">f.sampleSize()</a></code>, notes for 1.26.2 (<a href="https://github.com/rfhb/ctrdata/issues/62" class="external-link">#62</a>) and testing</li>
+<h2 class="pkg-version" data-toc-text="1.26.3.900" id="ctrdata-1263900">ctrdata 1.26.3.900<a class="anchor" aria-label="anchor" href="#ctrdata-1263900"></a></h2>
+<ul><li>New development version</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.26.3" id="ctrdata-1263">ctrdata 1.26.3<a class="anchor" aria-label="anchor" href="#ctrdata-1263"></a></h2>
+<ul><li>Added support for MariaDB (nodbi v0.15.0)</li>
+<li>Added tests to increase coverage of code testing</li>
+<li>Type as <code>NA</code> new ISRCTN texts that indicate a value is missing</li>
+<li>Added using all secondary ISRCTN identifiers for <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code>
+</li>
 <li>Refactored <code><a href="../reference/ctrFindActiveSubstanceSynonyms.html">ctrFindActiveSubstanceSynonyms()</a></code> to use MeSH terms in CTGOV2</li>
-<li>Added using all secondary identifiers for <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> for ISRCTN</li>
-<li>Minor update to browser script (see <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser" class="uri">https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser</a>)</li>
 <li>Corrected <code><a href="../reference/f.primaryEndpointResults.html">f.primaryEndpointResults()</a></code> for CTGOV (did not affect CTGOV2)</li>
+<li>Corrected <code><a href="../reference/f.sampleSize.html">f.sampleSize()</a></code>: for EUCTR, in news for 1.26.2 (<a href="https://github.com/rfhb/ctrdata/issues/62" class="external-link">#62</a>), testing</li>
 <li>Corrected import of history of results for EUCTR (<code>euctrresultshistory = TRUE</code>)</li>
-<li>Added support for MariaDB (available in <a href="https://github.com/ropensci/nodbi/tree/mariadb_add" class="external-link uri">https://github.com/ropensci/nodbi/tree/mariadb_add</a>)</li>
+<li>Minor update to browser script (see <a href="https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser" class="uri">https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.26.2" id="ctrdata-1262">ctrdata 1.26.2<a class="anchor" aria-label="anchor" href="#ctrdata-1262"></a></h2><p class="text-muted">CRAN release: 2026-07-12</p>
-<ul><li>Made <code><a href="../reference/f.sampleSize.html">f.sampleSize()</a></code> return the number of enrolled participants also for CTIS, where available</li>
+<ul><li>Minor typing function speed up</li>
 <li>Enabled international characters in <code>queryterm</code>
 </li>
+<li>Used for <code><a href="../reference/f.sampleSize.html">f.sampleSize()</a></code> for CTIS additional field ‘enrolled’ participants (news corrected)</li>
 <li>Revised how failed batch imports are handled through iterating over individual trial records</li>
 <li>Updated user and editorial information, including how <code><a href="../reference/dbFindIdsUniqueTrials.html">dbFindIdsUniqueTrials()</a></code> handles so-called transitioned trials</li>
-<li>Minor typing function speed up</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.26.1" id="ctrdata-1261">ctrdata 1.26.1<a class="anchor" aria-label="anchor" href="#ctrdata-1261"></a></h2><p class="text-muted">CRAN release: 2026-03-08</p>
