@@ -30,9 +30,8 @@ It can be used with the
 - EU Clinical Trials Register (“EUCTR”,
   <https://www.clinicaltrialsregister.eu/>)
 - EU Clinical Trials Information System (“CTIS”,
-  <https://euclinicaltrials.eu/>, [example](#workflow-ctis-example))
-- ClinicalTrials.gov (“CTGOV2”, <https://clinicaltrials.gov/>,
-  [example](#workflow-ctgov-example))
+  <https://euclinicaltrials.eu/>)
+- ClinicalTrials.gov (“CTGOV2”, <https://clinicaltrials.gov/>)
 - ISRCTN Registry (“ISRCTN”, <https://www.isrctn.com/>)
 
 Additional registers are being explored. The package facilitates

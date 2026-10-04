@@ -2,9 +2,11 @@
 
 ## ctrdata 1.26.3.900
 
-- New development version
+- Revised register information help page
 
 ## ctrdata 1.26.3
+
+CRAN release: 2026-08-28
 
 - Added support for MariaDB (nodbi v0.15.0)
 - Added tests to increase coverage of code testing

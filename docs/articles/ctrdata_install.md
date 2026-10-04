@@ -13,12 +13,16 @@ General information on the `ctrdata` package is available here:
 
 In R, execute:
 
+\
 [`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``)`
 
 For using the development version of package `ctrdata`, install from
 GitHub:
 
-`# install package under development`` `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(`[`c`](https://rdrr.io/r/base/c.html)`(``"remotes"``)``)`` ``remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, dependencies ``=`` ``TRUE``, build_vignettes ``=`` ``TRUE``)`
+\
+`# install package under development`\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(`[`c`](https://rdrr.io/r/base/c.html)`(``"remotes"``)``)`\
+`remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, dependencies ``=`` ``TRUE``, build_vignettes ``=`` ``TRUE``)`
 
 Either of the above should install package `ctrdata` into the user’s
 library.
@@ -51,13 +55,21 @@ local server.
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-`# user to specify their directory of choice;`` ``# remember to set option for each new R session`` `[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`` `` ``# load and install in above-mentioned `` ``# directory; only once to be executed`` ``DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
+\
+`# user to specify their directory of choice;`\
+`# remember to set option for each new R session`\
+[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`\
+\
+`# load and install in above-mentioned `\
+`# directory; only once to be executed`\
+`DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
 
 ## Attach package `ctrdata`
 
 After completing the installation, attach the package from the user’s
 library:
 
+\
 [`library`](https://rdrr.io/r/base/library.html)`(`[`ctrdata`](https://cran.r-project.org/package=ctrdata)`)`
 
 ## Credit to clinical trial registers
