@@ -31,10 +31,11 @@ knitr::opts_chunk$set(
 [Overview](#overview-of-functions-in-ctrdata) •
 [Data model](#data-model-of-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) •
+[Documentation](#documentation-and-vignettes) •
 [Example workflow](#example-workflow) •
 [Analysis across registers](#workflow-across-registers-example) •
 [Tests, coverage](#tests-and-coverage) •
-[Acknowledgements](#acknowledgements) •
+[Acknowledgements, citation](#acknowledgements-and-citation) •
 [Future](#future-features)
 
 
@@ -47,7 +48,7 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/, [example](#workflow-ctgov-example))
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-08-28 for version 1.26.3.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-10-04 for version 1.26.3.9000.
 
 
 ## Main features
@@ -58,30 +59,12 @@ Additional registers are being explored. The package facilitates investigating a
 
 * For analyses, `ctrdata` functions suggest canonical [trial concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.html) to simplify analyses across registers, find synonyms of an active substance, identify unique (de-duplicated) trial records across all registers, merge and recode fields as well as easily access deeply-nested fields. Analyses can be done with `R` (see [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)) and other systems, using the stored `JSON`-structured data. 
 
-Respect the registers' terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package in any publication or work as follows: 
-
-<blockquote>
-```{r, eval=TRUE, results='asis', echo=FALSE, warning=FALSE}
-citation("ctrdata") |> 
-  format(style = "text") |> 
-  sub("????", packageDate("ctrdata"), x = _, fixed = TRUE) |> 
-  rev() |> 
-  cat(sep = " or <br/>")
-```
-</blockquote>
-
-
 ## References
-
-An introduction to the package, together with worked examples and technical explanations is in: 
-
-* Herold R. Aggregating and analysing clinical trials data from multiple public registers using R package ctrdata. Research Synthesis Methods. 2026;17(3):624-656.  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 Package `ctrdata` has been used for unpublished works and these publications: 
 
-<!--
-- van Zwet et al. (2026) A Statistical Case for Qualified Scientific Optimism. <https://sites.stat.columbia.edu/gelman/research/unpublished/A_statistical_case_for_qualified_scientific_optimism.pdf>
--->
+- 🆕 van Zwet, Gelman, Więcek (2026) A Statistical Case for Qualified Scientific Optimism. [link](https://sites.stat.columbia.edu/gelman/research/unpublished/A_statistical_case_for_qualified_scientific_optimism.pdf)
+- 🆕 Machado et al. (2026) Clinical trials on medicinal products in the EU/EEA, 2013–2025: a cross-sectional analysis of CTIS and EudraCT data. The Lancet Regional Health - Europe <https://doi.org/10.1016/j.lanepe.2026.101884>
 - Machado et al. (2026) The road for developing new pharmacological therapies for Parkinson's disease: Current trends and targets in clinical trials. Journal of Parkinson's disease
 <https://doi.org/10.1177/1877718X251412671>
 - Jong et al. (2025) Experiences with Low-Intervention Clinical Trials -- the New Category under the European Union Clinical Trials Regulation. Clinical Trials <https://doi.org/10.1177/17407745241309293>
@@ -207,11 +190,15 @@ DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
 ```
 
 
-## Vignettes
+## Documentation and vignettes
 
 - [Install R package ctrdata](https://rfhb.github.io/ctrdata/articles/ctrdata_install.html)
 - [Retrieve clinical trial information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.html)
 - [Summarise and analyse clinical trial information](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)
+
+An introduction to the package, together with worked examples and technical explanations is in: 
+
+* Herold R. Aggregating and analysing clinical trials data from multiple public registers using R package ctrdata. Research Synthesis Methods. 2026;17(3):624-656.  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 ## Example workflow
 
@@ -864,21 +851,12 @@ covr::report(cp); cp
 * Explore further registers (exploration is continually ongoing; added value, terms and conditions for programmatic access vary; no clear roadmap is established yet).
 
 
-## Acknowledgements
+## Acknowledgements and citation
 
-* Data providers and curators of the clinical trial registers. Please review and respect their copyrights and terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
+Data providers and curators of the clinical trial registers are acknowledged. 
+Please review and respect their copyrights and terms and conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
 
-* Please cite the package in any publication or work as follows as: 
-```{r, eval=TRUE, results='asis', echo=FALSE, warning=FALSE}
-citation("ctrdata") |> 
-  format(style = "text") |> 
-  sub("????", packageDate("ctrdata"), x = _, fixed = TRUE) |> 
-  rev() |> 
-  _[1] |> 
-  cat()
-```
-
-* Package `ctrdata` has been made possible building on the work done for
+Package `ctrdata` has been made possible by building on the work done for
 [R](https://www.r-project.org/),
 [dplyr](https://cran.r-project.org/package=dplyr),
 [duckdb](https://cran.r-project.org/package=duckdb),
@@ -891,13 +869,25 @@ citation("ctrdata") |>
 [nodbi](https://cran.r-project.org/package=nodbi),
 [readr](https://cran.r-project.org/package=readr).
 [rlang](https://cran.r-project.org/package=rlang),
+[RMariaDB](https://cran.r-project.org/package=RMariaDB),
 [RPostgres](https://cran.r-project.org/package=RPostgres),
 [RSQLite](https://CRAN.R-project.org/package=RSQLite),
-[stringdist](https://cran.r-project.org/package=stringdist) and
-[stringi](https://cran.r-project.org/package=stringi) and
+[stringdist](https://cran.r-project.org/package=stringdist),
+[stringi](https://cran.r-project.org/package=stringi), 
 [tidyr](https://cran.r-project.org/package=tidyr),
 [V8](https://cran.r-project.org/package=V8),
 [xml2](https://cran.r-project.org/package=xml2). 
+
+<blockquote>
+Please cite the package in any publication or work as follows as: 
+```{r, eval=TRUE, results='asis', echo=FALSE, warning=FALSE}
+citation("ctrdata") |> 
+  format(style = "text") |> 
+  sub("????", packageDate("ctrdata"), x = _, fixed = TRUE) |> 
+  rev() |> 
+  cat(sep = " or <br/>")
+```
+</blockquote>
 
 
 ## Issues and notes

@@ -13,11 +13,12 @@ status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran
 [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) • [Data
 model](#data-model-of-ctrdata) •
-[Databases](#databases-for-use-with-ctrdata) • [Example
+[Databases](#databases-for-use-with-ctrdata) •
+[Documentation](#documentation-and-vignettes) • [Example
 workflow](#example-workflow) • [Analysis across
 registers](#workflow-across-registers-example) • [Tests,
-coverage](#tests-and-coverage) • [Acknowledgements](#acknowledgements) •
-[Future](#future-features)
+coverage](#tests-and-coverage) • [Acknowledgements,
+citation](#acknowledgements-and-citation) • [Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -40,7 +41,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-08-28 for version 1.26.3.
+package. This README was reviewed on 2026-10-04 for version 1.26.3.9000.
 
 ## Main features
 
@@ -72,38 +73,18 @@ package. This README was reviewed on 2026-08-28 for version 1.26.3.
   [vignette](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html))
   and other systems, using the stored `JSON`-structured data.
 
-Respect the registers’ terms and conditions, see
-`ctrOpenSearchPagesInBrowser(copyright = TRUE)`. Please cite the package
-in any publication or work as follows:
-
-<blockquote>
-
-Herold R (2026). “Aggregating and analysing clinical trials data from
-multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
-<doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
-or <br/>Herold R (2026-08-28). *ctrdata: Retrieve and Analyze Clinical
-Trials Data from Public Registers*. R package version 1.26.2.9000,
-<https://cran.r-project.org/package=ctrdata>.
-</blockquote>
-
 ## References
-
-An introduction to the package, together with worked examples and
-technical explanations is in:
-
-- Herold R. Aggregating and analysing clinical trials data from multiple
-  public registers using R package ctrdata. Research Synthesis Methods.
-  2026;17(3):624-656.
-  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 Package `ctrdata` has been used for unpublished works and these
 publications:
 
-<!--
-- van Zwet et al. (2026) A Statistical Case for Qualified Scientific Optimism. <https://sites.stat.columbia.edu/gelman/research/unpublished/A_statistical_case_for_qualified_scientific_optimism.pdf>
--->
-
+- 🆕 van Zwet, Gelman, Więcek (2026) A Statistical Case for Qualified
+  Scientific Optimism.
+  [link](https://sites.stat.columbia.edu/gelman/research/unpublished/A_statistical_case_for_qualified_scientific_optimism.pdf)
+- 🆕 Machado et al. (2026) Clinical trials on medicinal products in the
+  EU/EEA, 2013–2025: a cross-sectional analysis of CTIS and EudraCT
+  data. The Lancet Regional Health - Europe
+  <https://doi.org/10.1016/j.lanepe.2026.101884>
 - Machado et al. (2026) The road for developing new pharmacological
   therapies for Parkinson’s disease: Current trends and targets in
   clinical trials. Journal of Parkinson’s disease
@@ -310,7 +291,7 @@ options(duckdb.home = "~/.duckdb")
 DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
 ```
 
-## Vignettes
+## Documentation and vignettes
 
 - [Install R package
   ctrdata](https://rfhb.github.io/ctrdata/articles/ctrdata_install.html)
@@ -318,6 +299,14 @@ DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
   information](https://rfhb.github.io/ctrdata/articles/ctrdata_retrieve.html)
 - [Summarise and analyse clinical trial
   information](https://rfhb.github.io/ctrdata/articles/ctrdata_summarise.html)
+
+An introduction to the package, together with worked examples and
+technical explanations is in:
+
+- Herold R. Aggregating and analysing clinical trials data from multiple
+  public registers using R package ctrdata. Research Synthesis Methods.
+  2026;17(3):624-656.
+  [doi:10.1017/rsm.2025.10061](https://doi.org/10.1017/rsm.2025.10061)
 
 ## Example workflow
 
@@ -1043,38 +1032,45 @@ covr::report(cp); cp
   value, terms and conditions for programmatic access vary; no clear
   roadmap is established yet).
 
-## Acknowledgements
+## Acknowledgements and citation
 
-- Data providers and curators of the clinical trial registers. Please
-  review and respect their copyrights and terms and conditions, see
-  `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
+Data providers and curators of the clinical trial registers are
+acknowledged. Please review and respect their copyrights and terms and
+conditions, see `ctrOpenSearchPagesInBrowser(copyright = TRUE)`.
 
-- Please cite the package in any publication or work as follows as:
-  Herold R (2026). “Aggregating and analysing clinical trials data from
-  multiple public registers using R package ctrdata.” *Research
-  Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
-  <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
+Package `ctrdata` has been made possible by building on the work done
+for [R](https://www.r-project.org/),
+[dplyr](https://cran.r-project.org/package=dplyr),
+[duckdb](https://cran.r-project.org/package=duckdb),
+[htmlwidgets](https://cran.r-project.org/package=htmlwidgets),
+[httr2](https://cran.r-project.org/package=httr2),
+[jqr](https://cran.r-project.org/package=jqr),
+[jsonlite](https://cran.r-project.org/package=jsonlite),
+[lubridate](https://cran.r-project.org/package=lubridate),
+[mongolite](https://cran.r-project.org/package=mongolite),
+[nodbi](https://cran.r-project.org/package=nodbi),
+[readr](https://cran.r-project.org/package=readr).
+[rlang](https://cran.r-project.org/package=rlang),
+[RMariaDB](https://cran.r-project.org/package=RMariaDB),
+[RPostgres](https://cran.r-project.org/package=RPostgres),
+[RSQLite](https://CRAN.R-project.org/package=RSQLite),
+[stringdist](https://cran.r-project.org/package=stringdist),
+[stringi](https://cran.r-project.org/package=stringi),
+[tidyr](https://cran.r-project.org/package=tidyr),
+[V8](https://cran.r-project.org/package=V8),
+[xml2](https://cran.r-project.org/package=xml2).
 
-- Package `ctrdata` has been made possible building on the work done for
-  [R](https://www.r-project.org/),
-  [dplyr](https://cran.r-project.org/package=dplyr),
-  [duckdb](https://cran.r-project.org/package=duckdb),
-  [htmlwidgets](https://cran.r-project.org/package=htmlwidgets),
-  [httr2](https://cran.r-project.org/package=httr2),
-  [jqr](https://cran.r-project.org/package=jqr),
-  [jsonlite](https://cran.r-project.org/package=jsonlite),
-  [lubridate](https://cran.r-project.org/package=lubridate),
-  [mongolite](https://cran.r-project.org/package=mongolite),
-  [nodbi](https://cran.r-project.org/package=nodbi),
-  [readr](https://cran.r-project.org/package=readr).
-  [rlang](https://cran.r-project.org/package=rlang),
-  [RPostgres](https://cran.r-project.org/package=RPostgres),
-  [RSQLite](https://CRAN.R-project.org/package=RSQLite),
-  [stringdist](https://cran.r-project.org/package=stringdist) and
-  [stringi](https://cran.r-project.org/package=stringi) and
-  [tidyr](https://cran.r-project.org/package=tidyr),
-  [V8](https://cran.r-project.org/package=V8),
-  [xml2](https://cran.r-project.org/package=xml2).
+<blockquote>
+
+Please cite the package in any publication or work as follows as: Herold
+R (2026). “Aggregating and analysing clinical trials data from multiple
+public registers using R package ctrdata.” *Research Synthesis Methods*,
+*17*(3), 624–656. ISSN 1759-2879, 1759-2887.
+<doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
+or <br/>Herold R (2026-10-04). *ctrdata: Retrieve and Analyze Clinical
+Trials Data from Public Registers*. R package version 1.26.3.9000,
+<https://cran.r-project.org/package=ctrdata>.
+</blockquote>
 
 ## Issues and notes
 
