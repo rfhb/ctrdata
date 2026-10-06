@@ -827,11 +827,18 @@ ctrMultiDownload <- function(
     destfiles,
     data = NULL,
     progress = TRUE,
+    cookieFile = NULL,
     verbose = TRUE) {
 
   # check params
   stopifnot(length(urls) == length(destfiles))
   if (!length(urls)) return(data.frame())
+
+  # temporary file
+  if (is.null(cookieFile)) {
+    cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+    on.exit(unlink(cookieFile), add = TRUE)
+  }
 
   # helper
   body2json <- function(x) {
@@ -900,6 +907,9 @@ ctrMultiDownload <- function(
           is_transient = function(resp) httr2::resp_status(
             resp) %in% c(403L, 429L, 503L),
           failure_timeout = 60L
+        ) |>
+        httr2::req_cookie_preserve(
+          path = cookieFile
         )
 
       # conditionally add body
@@ -1118,12 +1128,19 @@ ctrDocsDownload <- function(
     documents.path,
     documents.regexp,
     multiplex = TRUE,
+    cookieFile = NULL,
     verbose) {
 
   # check and create directory
   createdDir <- try(
     dir.create(documents.path, recursive = TRUE, showWarnings = FALSE),
     silent = TRUE)
+
+  # temporary file
+  if (is.null(cookieFile)) {
+    cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+    on.exit(unlink(cookieFile), add = TRUE)
+  }
 
   # early return
   if (inherits(createdDir, "try-errror")) {
@@ -1230,6 +1247,7 @@ ctrDocsDownload <- function(
     filesCount <- ctrMultiDownload(
       urls = dlFiles$url[!dlFiles$fileexists],
       destfiles = dlFiles$filepathname[!dlFiles$fileexists],
+      cookieFile = cookieFile,
       verbose = verbose
     )
     message("\n\r", appendLF = FALSE)

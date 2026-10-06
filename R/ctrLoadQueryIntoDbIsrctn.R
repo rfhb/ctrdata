@@ -34,6 +34,10 @@ ctrLoadQueryIntoDbIsrctn <- function(
     verbose,
     queryupdateterm) {
 
+  ## use persisting cookies for downloading
+  cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+  on.exit(unlink(cookieFile), add = TRUE)
+
   ## check params
 
   if (!is.null(documents.path) &&
@@ -197,7 +201,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
   ctrMultiDownload(
     urls = isrctndownloadurl,
     destfiles = f,
-    verbose = verbose)
+    cookieFile = cookieFile,
+    verbose = verbose
+  )
   # )) # print system time
 
   # inform user
@@ -340,7 +346,9 @@ ctrLoadQueryIntoDbIsrctn <- function(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
-        verbose = verbose)
+        cookieFile = cookieFile,
+        verbose = verbose
+      )
 
     } else {
 

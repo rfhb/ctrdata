@@ -487,9 +487,13 @@ ctrRerunQuery <- function(
             "download iteratively. ", call. = FALSE, immediate. = TRUE)
 
           res <- ctisApi1(
-            queryterm, only.count,
-            "https://euclinicaltrials.eu/ctis-public-api/search",
-            ctrTempDir(verbose), verbose)
+            queryterm = queryterm,
+            only.count = only.count,
+            ctisEndpoints = "https://euclinicaltrials.eu/ctis-public-api/search",
+            tempDir = ctrTempDir(verbose),
+            cookieFile = NULL,
+            verbose = verbose
+          )
 
           # prepare for early exit if only.count
           if (only.count) {

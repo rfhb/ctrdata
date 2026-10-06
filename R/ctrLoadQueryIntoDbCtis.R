@@ -33,6 +33,10 @@ ctrLoadQueryIntoDbCtis <- function(
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
 
+  ## use persisting cookies for downloading
+  cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+  on.exit(unlink(cookieFile), add = TRUE)
+
   ## ctis api -----------------------------------------------------------
 
   # https://euclinicaltrials.eu/ctis-public/assets/i18n/en.json
@@ -63,6 +67,7 @@ ctrLoadQueryIntoDbCtis <- function(
     only.count,
     ctisEndpoints,
     tempDir,
+    cookieFile,
     verbose)
 
   # early exit
@@ -92,7 +97,9 @@ ctrLoadQueryIntoDbCtis <- function(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fPartIPartsIIJson(idsTrials),
-    verbose = verbose)
+    cookieFile = cookieFile,
+    verbose = verbose
+  )
   # )) # print system time
 
   # convert partI and partsII details into ndjson file(s),
@@ -229,7 +236,9 @@ ctrLoadQueryIntoDbCtis <- function(
         documents.path,
         documents.regexp,
         multiplex = FALSE,
-        verbose = verbose)
+        cookieFile = cookieFile,
+        verbose = verbose
+      )
 
     } else {
 
@@ -257,6 +266,7 @@ ctisApi1 <- function(
     only.count,
     ctisEndpoints,
     tempDir,
+    cookieFile,
     verbose) {
 
   # for importing overview (recruitment, status etc.) into database
@@ -394,7 +404,9 @@ ctisApi1 <- function(
     urls = rep.int(ctisEndpoints[1], length(pageNo)),
     destfiles = fTrialsJsonApi1PageFiles,
     data = jsonApi1Pages,
-    verbose = verbose)
+    cookieFile = cookieFile,
+    verbose = verbose
+  )
   # )) # print system time
 
   # prepare files

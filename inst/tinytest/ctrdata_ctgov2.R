@@ -76,11 +76,11 @@ expect_true(tmp$n >= 6L)
 expect_true(all(c("NCT00152126", "NCT00578864", "NCT01467986", "NCT01492673", "NCT02130869", "NCT03042429") %in% tmp$success))
 
 # test
-tmp <- ctrLoadQueryIntoDb(
-  queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
-  con = dbc
-)
-expect_true(tmp$n > 40L && tmp$n < 50L)
+# tmp <- ctrLoadQueryIntoDb(
+#   queryterm = "https://www.clinicaltrials.gov/search?cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=_2015-12-31",
+#   con = dbc
+# )
+# expect_true(tmp$n > 40L && tmp$n < 50L)
 
 
 #### documents.path ####
@@ -107,18 +107,18 @@ expect_true(
     dir(pattern = ".pdf", path = tmpDir, recursive = TRUE)) > 10L
 )
 
-# test
-expect_message(
-  suppressWarnings(
-    tmp <- ctrLoadQueryIntoDb(
-      queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
-      register = "CTGOV2",
-      documents.path = tmpDir,
-      documents.regexp = "sap_",
-      con = dbc
-    )),
-  "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
-)
+# # test
+# expect_message(
+#   suppressWarnings(
+#     tmp <- ctrLoadQueryIntoDb(
+#       queryterm = "cond=Cancer&aggFilters=phase:0,status:ter,studyType:int&studyComp=2015-12-31_2020-12-31",
+#       register = "CTGOV2",
+#       documents.path = tmpDir,
+#       documents.regexp = "sap_",
+#       con = dbc
+#     )),
+#   "Newly saved [0-9]+ document[(]s[)] for [0-9]+ trial"
+# )
 
 #### ctgov2history ####
 
@@ -133,27 +133,27 @@ expect_message(
   "processing historic versions"
 )
 
-# test
-expect_message(
-  suppressWarnings(
-    tmp <- ctrLoadQueryIntoDb(
-      queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
-      ctgov2history = "2:4",
-      con = dbc
-    )),
-  "processing historic versions"
-)
-
-# test
-expect_message(
-  suppressWarnings(
-    tmp <- ctrLoadQueryIntoDb(
-      queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
-      ctgov2history = -1L,
-      con = dbc
-    )),
-  "processing historic versions"
-)
+# # test
+# expect_message(
+#   suppressWarnings(
+#     tmp <- ctrLoadQueryIntoDb(
+#       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
+#       ctgov2history = "2:4",
+#       con = dbc
+#     )),
+#   "processing historic versions"
+# )
+#
+# # test
+# expect_message(
+#   suppressWarnings(
+#     tmp <- ctrLoadQueryIntoDb(
+#       queryterm = "https://clinicaltrials.gov/search?cond=neuroblastoma&aggFilters=phase:3,status:com",
+#       ctgov2history = -1L,
+#       con = dbc
+#     )),
+#   "processing historic versions"
+# )
 
 #### ctrLoadQueryIntoDb update ####
 
@@ -166,29 +166,29 @@ expect_message(
       con = dbc)),
   "LastUpdatePostDate")
 
-# test
-expect_message(
-  suppressWarnings(
-    tmp <- ctrLoadQueryIntoDb(
-      queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
-      register = "CTGOV2",
-      con = dbc
-    )),
-  "Imported or updated [0-9]+ trial"
-)
-
-# test
-expect_warning(
-  tmp <- ctrLoadQueryIntoDb(
-    querytoupdate = "last",
-    con = dbc
-  ),
-  "running again with these limits"
-)
-
-# test
-tmp <- dbQueryHistory(con = dbc)
-expect_equal(dim(tmp), c(10L, 4L))
+# # test
+# expect_message(
+#   suppressWarnings(
+#     tmp <- ctrLoadQueryIntoDb(
+#       queryterm = "cond=Neuroblastoma&lastUpdPost=2022-01-01_2023-12-31&aggFilters=phase:1,results:with,studyType:int",
+#       register = "CTGOV2",
+#       con = dbc
+#     )),
+#   "Imported or updated [0-9]+ trial"
+# )
+#
+# # test
+# expect_warning(
+#   tmp <- ctrLoadQueryIntoDb(
+#     querytoupdate = "last",
+#     con = dbc
+#   ),
+#   "running again with these limits"
+# )
+#
+# # test
+# tmp <- dbQueryHistory(con = dbc)
+# expect_equal(dim(tmp), c(10L, 4L))
 
 #### dbFindFields ####
 

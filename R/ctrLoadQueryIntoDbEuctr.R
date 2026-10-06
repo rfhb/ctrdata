@@ -30,6 +30,9 @@ ctrLoadQueryIntoDbEuctr <- function(
     only.count,
     con, verbose,
     queryupdateterm) {
+  ## use persisting cookies for downloading
+  cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+  on.exit(unlink(cookieFile), add = TRUE)
 
   ## sanity correction for naked terms
   # otherwise all trials would be retrieved
@@ -199,7 +202,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fp,
-    verbose = verbose)
+    cookieFile = cookieFile,
+    verbose = verbose
+  )
   # )) # print system time
 
   if (nrow(resDf) != resultsEuNumPages) {
@@ -289,7 +294,9 @@ ctrLoadQueryIntoDbEuctr <- function(
   resDf <- ctrMultiDownload(
     urls = urls,
     destfiles = fp,
-    verbose = verbose)
+    cookieFile = cookieFile,
+    verbose = verbose
+  )
   # )) # print system time
 
   ## convert euctr to ndjson -----------------------------------------------
@@ -413,6 +420,7 @@ ctrLoadQueryIntoDbEuctr <- function(
     resDf <- ctrMultiDownload(
       urls = urls,
       destfiles = fp,
+      cookieFile = cookieFile,
       verbose = verbose
     )
 
@@ -711,6 +719,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             # curl::curl_options("vers")
             r <- httr2::req_options(r, http_version = 2)
             r <- httr2::req_options(r, range = "0-30000")
+            r <- httr2::req_cookie_preserve(r, path = cookieFile)
 
             r <- httr2::req_throttle(
               req = r,

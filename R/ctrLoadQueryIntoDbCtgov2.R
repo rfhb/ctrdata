@@ -32,6 +32,10 @@ ctrLoadQueryIntoDbCtgov2 <- function(
   ## create empty temporary directory
   tempDir <- ctrTempDir(verbose)
 
+  ## use persisting cookies for downloading
+  cookieFile <- tempfile(tmpdir = ctrTempDir(verbose), fileext = ".txt")
+  on.exit(unlink(cookieFile), add = TRUE)
+
   ## ctgov api ---------------------------------------------------------
 
   # https://clinicaltrials.gov/data-api/about-api/api-migration#query-endpoints
@@ -321,6 +325,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
       ctrMultiDownload(
         urls = urlToDownload,
         destfiles = fTrialJson,
+        cookieFile = cookieFile,
         verbose = verbose
       )}, silent = TRUE)
     #
@@ -406,7 +411,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     ctrMultiDownload(
       urls = urls,
       destfiles = files,
-      verbose = verbose)
+      cookieFile = cookieFile,
+      verbose = verbose
+    )
     # )) # print system time
 
     # process
@@ -513,6 +520,7 @@ ctrLoadQueryIntoDbCtgov2 <- function(
     resDf <- ctrMultiDownload(
       urls = urls,
       destfiles = files,
+      cookieFile = cookieFile,
       verbose = verbose
     )
     # )); message() # print system time
@@ -639,7 +647,9 @@ ctrLoadQueryIntoDbCtgov2 <- function(
         dlFiles[, c("_id", "filename", "url"), drop = FALSE],
         documents.path,
         documents.regexp,
-        verbose = verbose)
+        cookieFile = cookieFile,
+        verbose = verbose
+      )
       # )) # print system time
 
     } else {
