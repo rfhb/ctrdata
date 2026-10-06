@@ -1,5 +1,6 @@
 # ctrdata 1.26.3.900
 
+- Added preserving cookies when downloading
 - Revised register information help page
 
 # ctrdata 1.26.3
