@@ -10,7 +10,7 @@ dfMergeVariablesRelevel(df = NULL, colnames = "", levelslist = NULL)
 \item{df}{A \link{data.frame} with the variables (columns) to be merged into
 one vector.}
 
-\item{colnames}{A vector of names of columns in `df` that hold the variables
+\item{colnames}{A vector of names of columns in \code{df} that hold the variables
 to be merged, or a selection of columns as per \code{\link[dplyr]{select}}.}
 
 \item{levelslist}{A names list with one slice each for a new value to be

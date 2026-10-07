@@ -1,7 +1,10 @@
 # ctrdata 1.26.3.900
 
-- Added preserving cookies when downloading
 - Revised register information help page
+- Added preserving cookies when downloading
+- Added life cycle information
+- Soft-deprecated `ctrFindActiveSubstanceSynonyms()` and parameter `ctgov2history` in `ctrLoadQueryIntoDb()`
+- Marked as `experimental` clinical trial concepts `f.likelyPlatformTrial()`, `f.numTestArmsSubstances()` and `f.trialObjectives()`
 
 # ctrdata 1.26.3
 

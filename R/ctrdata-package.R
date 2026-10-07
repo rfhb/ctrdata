@@ -52,5 +52,4 @@
 #' @author Ralf Herold \email{ralf.herold@@mailbox.org}
 #' @keywords package
 #' @md
-#'
 "_PACKAGE"

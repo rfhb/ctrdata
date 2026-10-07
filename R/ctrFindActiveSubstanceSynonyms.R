@@ -2,6 +2,7 @@
 
 #' Find synonyms of an active substance
 #'
+#' `r lifecycle::badge('deprecated')`
 #' An active substance can be identified by a recommended international
 #' nonproprietary name (INN), a trade or product name, or a company code(s).
 #' To find likely synonyms, the function retrieves from CTGOV2 the field
@@ -24,6 +25,8 @@
 #' @importFrom httr2 req_perform req_user_agent request
 #' @importFrom jsonlite fromJSON
 #'
+#' @md
+#'
 #' @export
 #'
 #' @examples
@@ -36,6 +39,17 @@
 #' }
 #'
 ctrFindActiveSubstanceSynonyms <- function(activesubstance = "", verbose = FALSE) {
+
+  # inform user
+  lifecycle::deprecate_soft(
+    when = "1.26.3.9000",
+    what = "ctrFindActiveSubstanceSynonyms()",
+    details = paste0(
+      "Following upstream changes, the function is not highly reliable; ",
+      "suitable and accessible sources of reference data are being explored."
+    )
+  )
+
   # check parameters
   if ((length(activesubstance) != 1L) ||
       !is.character(activesubstance) ||

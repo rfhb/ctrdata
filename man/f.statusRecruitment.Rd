@@ -7,17 +7,17 @@
 f.statusRecruitment(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.statusRecruitment`, which is
-a factor with levels `ongoing` (includes active, not yet recruiting;
+data frame with columns \verb{_id} and \code{.statusRecruitment}, which is
+a factor with levels \code{ongoing} (includes active, not yet recruiting;
 temporarily halted; suspended; authorised, not started and similar),
-`completed` (includes ended; ongoing, recruitment ended),
-`ended early` (includes prematurely ended, terminated early) and
-`other` (includes revoked, withdrawn, planned, stopped).
+\code{completed} (includes ended; ongoing, recruitment ended),
+\verb{ended early} (includes prematurely ended, terminated early) and
+\code{other} (includes revoked, withdrawn, planned, stopped).
 }
 \description{
 Trial concept calculated: status of recruitment at the time of loading
@@ -25,7 +25,7 @@ the trial records. Maps the categories that are in fields which specify
 the state of recruitment. Simplifies the status into three categories.
 }
 \details{
-Note that for EUCTR, `NA` is returned for "Trial now transitioned"
+Note that for EUCTR, \code{NA} is returned for "Trial now transitioned"
 (into CTIS, from which the status can be obtained) and for
 "GB - no longer in EU/EEA" (no data source known).
 }

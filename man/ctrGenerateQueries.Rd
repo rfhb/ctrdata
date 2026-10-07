@@ -65,13 +65,14 @@ input to functions \link{ctrLoadQueryIntoDb},
 \link{ctrOpenSearchPagesInBrowser} and \link[utils]{browseURL}
 }
 \description{
-From high-level search terms provided by the user, generate specific queries
-for each registers with which ctrdata works, see \link{ctrdata-registers}.
+From high-level search terms provided by the user, generate queries that are
+specific for each register with which \code{ctrdata} works,
+see \link{ctrdata-registers}.
 }
 \details{
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the 'intervention' and
-'condition'. Logical operators only work in parameter 'searchPhrase'.
+'condition' parameters. Logical operators only work in parameter 'searchPhrase'.
 }
 \examples{
 

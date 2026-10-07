@@ -84,24 +84,25 @@
 #' between Member States' protocol versions of a trial such as dates or outcomes
 #' of an authorisation decision or an ethics opinion, global status and end.
 #'
-#' @param ctgov2history For trials from CTGOV2, retrieve historic
-#' versions of the record. Default is \code{FALSE}, because this
-#' is a time-consuming operation. Use
-#' \code{n} for n from all versions (recommended),
+#' @param ctgov2history `r lifecycle::badge('deprecated')`
+#' If \code{TRUE}, retrieve historic versions of the record from CTGOV2.
+#' Default is \code{FALSE}, because this is a time-consuming operation. Use
+#' \code{n} for retrieving n from all versions (recommended),
 #' \code{1} for the first (original) version,
 #' \code{-1} for the last-but-one version,
 #' \code{"n:m"} for the nth to the mth versions, or
 #' \code{TRUE} for all versions
-#' of the trial record to be retrieved. Note that for register
-#' CTIS, historic versions were available in the `applications`
-#' field only before the register's relaunch on 2024-06-17.
+#' of the trial record to be retrieved.
 #'
-#' @param ctishistory If \code{TRUE}, and only when using \code{querytoupdate},
+#' @param ctishistory `r lifecycle::badge('experimental')`
+#' If \code{TRUE}, and only when using \code{querytoupdate},
 #' move the current CTIS record into an array \code{history} with the record
 #' which holds one or more historic versions, before updating the rest of the
 #' record from CTIS. Default is \code{FALSE}, because this is a time-consuming
 #' operation. See "Historic versions..." in vignette
 #' \href{../doc/ctrdata_summarise.html}{ctrdata_summarise}.
+#' Note that CTIS historic versions were available in the `applications`
+#' field only before the register's relaunch on 2024-06-17.
 #'
 #' @param annotation.text Text to be including into the field
 #' "annotation" in the records retrieved with the query
@@ -138,6 +139,8 @@
 #' @export
 #'
 #' @importFrom utils packageVersion URLencode
+#'
+#' @md
 #'
 #' @examples
 #' \dontrun{
@@ -203,6 +206,17 @@ ctrLoadQueryIntoDb <- function(
     verbose = FALSE) {
 
   ## check params
+  if (!is.null(ctgov2history)) {
+    lifecycle::deprecate_warn(
+      when = "1.26.3.9000",
+      what = "ctrLoadQueryIntoDb(ctgov2history)",
+      details = paste0(
+        "Retrieving previons version of CTGOV2 records risk to trigger ",
+        "a rate limit at the endpoint accessed and cause a block; however, ",
+        "usage limits seem not published. No alternative is known so far."
+      )
+    )
+  }
 
   # - parameters consistent
   if (!is.null(querytoupdate) && !is.null(queryterm)) {

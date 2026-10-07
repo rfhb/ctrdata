@@ -3,12 +3,13 @@
 
 #' Generates queries that work across registers
 #'
-#' From high-level search terms provided by the user, generate specific queries
-#' for each registers with which ctrdata works, see \link{ctrdata-registers}.
+#' From high-level search terms provided by the user, generate queries that are
+#' specific for each register with which `ctrdata` works,
+#' see \link{ctrdata-registers}.
 #'
 #' Search terms that are expanded to concepts such as from MeSH and MedDRA
 #' by the search implementations in registers include the 'intervention' and
-#' 'condition'. Logical operators only work in parameter 'searchPhrase'.
+#' 'condition' parameters. Logical operators only work in parameter 'searchPhrase'.
 #'
 #' @param searchPhrase String with optional logical operators ("AND", "OR")
 #' that will be searched in selected fields of registers (general or title

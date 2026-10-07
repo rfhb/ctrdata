@@ -7,12 +7,12 @@
 f.isMedIntervTrial(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with colums `_id` and `.isMedIntervTrial`, a logical.
+data frame with colums \verb{_id} and \code{.isMedIntervTrial}, a logical.
 }
 \description{
 Trial concept calculated: Calculates if record is a medicine-interventional

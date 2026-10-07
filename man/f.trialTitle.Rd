@@ -7,12 +7,12 @@
 f.trialTitle(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.trialTitle`, a string.
+data frame with columns \verb{_id} and \code{.trialTitle}, a string.
 }
 \description{
 Trial concept calculated: scientific or full title of the study.

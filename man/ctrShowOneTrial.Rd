@@ -7,10 +7,10 @@
 ctrShowOneTrial(identifier = NULL, con = NULL)
 }
 \arguments{
-\item{identifier}{A trial identifier (`_id`) string, see examples}
+\item{identifier}{A trial identifier (\verb{_id}) string, see examples}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section `1 - Database connection` in
+\code{nodbi}. See section \verb{1 - Database connection} in
 \link{ctrdata}.}
 }
 \value{

@@ -7,15 +7,15 @@
 f.primaryEndpointResults(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and new columns:
-`.primaryEndpointFirstPvalue` (discarding any inequality indicator, e.g. <=),
-`.primaryEndpointFirstPmethod` (normalised string, e.g. chisquared),
-`.primaryEndpointFirstPsize` (number included in test, across assignment groups).
+data frame with columns \verb{_id} and new columns:
+\code{.primaryEndpointFirstPvalue} (discarding any inequality indicator, e.g. <=),
+\code{.primaryEndpointFirstPmethod} (normalised string, e.g. chisquared),
+\code{.primaryEndpointFirstPsize} (number included in test, across assignment groups).
 }
 \description{
 Trial concept calculated: Calculates several results-related elements of

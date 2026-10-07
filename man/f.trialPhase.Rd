@@ -7,15 +7,15 @@
 f.trialPhase(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.trialPhase`, which is
-an ordered factor with levels `phase 1`, `phase 1+2`, `phase 2`,
-`phase 2+3`, `phase 2+4`, `phase 3`, `phase 3+4`, `phase 1+2+3`,
-`phase 4`, `phase 1+2+3+4`.
+data frame with columns \verb{_id} and \code{.trialPhase}, which is
+an ordered factor with levels \verb{phase 1}, \verb{phase 1+2}, \verb{phase 2},
+\verb{phase 2+3}, \verb{phase 2+4}, \verb{phase 3}, \verb{phase 3+4}, \verb{phase 1+2+3},
+\verb{phase 4}, \verb{phase 1+2+3+4}.
 }
 \description{
 Trial concept calculated: phase of a clinical trial as per ICH E8(R1).

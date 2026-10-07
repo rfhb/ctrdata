@@ -30,7 +30,7 @@ that are conducted exclusively in third countries, that is, outside
 the European Union. Ignored if \code{prefermemberstate} is set to "3RD".}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section `1 - Database connection` in
+\code{nodbi}. See section \verb{1 - Database connection} in
 \link{ctrdata}.}
 
 \item{verbose}{If \code{TRUE}, prints out the fields of registers used to
@@ -55,9 +55,9 @@ Note that the content of records may differ between registers
 Such differences are not considered by this function.
 
 Note that for "CTIS", the trial with the latest (highest) resubmission
-number (last two digits of `id`, clinical trial number) is identified.
+number (last two digits of \code{id}, clinical trial number) is identified.
 Trials transitioned from "EUCTR" into "CTIS" will be identified from
-"CTIS" unless "EUCTR" occurs before "CTIS" in parameter `preferregister`.
+"CTIS" unless "EUCTR" occurs before "CTIS" in parameter \code{preferregister}.
 
 Note that the trial concept \link{f.isUniqueTrial} (which uses this
 function) can be calculated at the time of creating a data frame with

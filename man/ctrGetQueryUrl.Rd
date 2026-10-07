@@ -14,22 +14,22 @@ For automatically copying the user's query of a register
 in a web browser to the clipboard, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}.
 Can also contain a query term such as from
-\link{dbQueryHistory}()["query-term"].
+\link{dbQueryHistory}()\code{query-term}.
 Can also be an identifier of a trial, which based on its
 format will indicate to which register it relates.}
 
 \item{register}{Optional name of register (one of "EUCTR", "CTGOV2"
-"ISRCTN" or "CTIS") in case `url` is a query term but not a full URL}
+"ISRCTN" or "CTIS") in case \code{url} is a query term but not a full URL}
 }
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)
-with column names `query-term` and `query-register`.
+with column names \code{query-term} and \code{query-register}.
 The data frame (or tibble) can be passed as such as parameter
-`queryterm` to \link{ctrLoadQueryIntoDb} and as parameter
-`url` to \link{ctrOpenSearchPagesInBrowser}.
+\code{queryterm} to \link{ctrLoadQueryIntoDb} and as parameter
+\code{url} to \link{ctrOpenSearchPagesInBrowser}.
 }
 \description{
-Extracts query parameters and register name from parameter `url` or
+Extracts query parameters and register name from parameter \code{url} or
 from the clipboard, into which the URL of a register search was copied.
 }
 \details{
@@ -37,7 +37,7 @@ To obtain the search query from CTIS, consider installing the
 \href{https://www.tampermonkey.net/}{Tampermonkey browser extension},
 click on the extension icon, "Create a new script", "Utility" and then
 "Import from this URL":
-`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
+\verb{https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js}
 This will copy query URLs from all registers into the clipboard; see
 \link{ctrOpenSearchPagesInBrowser} for additional uses.
 }

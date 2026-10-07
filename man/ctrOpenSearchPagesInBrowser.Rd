@@ -31,7 +31,7 @@ For CTIS to accept a search URL and show results, consider installing the
 \href{https://www.tampermonkey.net/}{Tampermonkey browser extension},
 click on the extension icon, "Create a new script", "Utility" and then
 "Import from this URL":
-`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
+\verb{https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js}
 }
 \examples{
 

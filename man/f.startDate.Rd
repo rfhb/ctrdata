@@ -7,12 +7,12 @@
 f.startDate(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.startDate`, a date.
+data frame with columns \verb{_id} and \code{.startDate}, a date.
 }
 \description{
 Trial concept calculated: start of the trial, based on the

@@ -12,8 +12,8 @@ See function \link{dbFindFields} for how to find names of fields and
 \link{ctrShowOneTrial} for interactively selecting field names.
 Dot path notation ("field.subfield") without indices is supported.
 If compatibility with \link[nodbi:src_postgres]{nodbi::src_postgres} is
-needed, specify fewer than 50 fields, or use parent fields such as `"a.b"`
-instead of `c("a.b.c.d", "a.b.c.e")` and then access sought fields with
+needed, specify fewer than 50 fields, or use parent fields such as \code{"a.b"}
+instead of \code{c("a.b.c.d", "a.b.c.e")} and then access sought fields with
 \link{dfTrials2Long} followed by \link{dfName2Value} or with other R functions.}
 
 \item{calculate}{Vector of one or more strings, which are names of functions
@@ -21,7 +21,7 @@ to calculate certain trial concepts from fields in the collection, across
 different registers. See \link{ctrdata-trial-concepts} for available functions.}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section `1 - Database connection` in
+\code{nodbi}. See section \verb{1 - Database connection} in
 \link{ctrdata}.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
@@ -30,7 +30,7 @@ different registers. See \link{ctrdata-trial-concepts} for available functions.}
 \value{
 A data frame (or tibble, if \code{tibble} is loaded)
 with columns corresponding to the sought fields.
-A column with the record `_id` will always be included.
+A column with the record \verb{_id} will always be included.
 The maximum number of rows of the returned data frame is equal to the number
 of trial records in the database collection, or less if none of the fields
 has a value in a record.
@@ -39,8 +39,8 @@ has a value in a record.
 Fields in the collection are retrieved from all records into a data
 frame (or tibble). The function uses the field names to appropriately type
 the values that it returns, harmonising original values (e.g.,
-"Yes" to `TRUE`, "false" to `FALSE`, "Information not present in EudraCT" to
-`NA`, date strings to dates or time differences, number strings to numbers).
+"Yes" to \code{TRUE}, "false" to \code{FALSE}, "Information not present in EudraCT" to
+\code{NA}, date strings to dates or time differences, number strings to numbers).
 Trial concepts are calculated for all records and included in the return value.
 }
 \details{

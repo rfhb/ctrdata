@@ -7,12 +7,12 @@
 f.trialObjectives(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.trialObjectives`, which is
+data frame with columns \verb{_id} and \code{.trialObjectives}, which is
 a string with letters separated by a space, such as
 E (efficacy, including cure, survival, effectiveness);
 A (activity, including reponse, remission, seroconversion);
@@ -21,6 +21,7 @@ D (dose-finding, determining recommended dose);
 LT (long-term); and FU (follow-up).
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 Trial concept calculated: objectives of the trial, by searching for text
 fragments found in fields describing its purpose, objective, background
 or hypothesis, after applying .isMedIntervTrial, because the text

@@ -28,7 +28,7 @@ ctrLoadQueryIntoDb(
 query in a register, e.g. one of the strings returned by
 \link{ctrGenerateQueries}, or a single-row data frame returned by
 \link{ctrGetQueryUrl} or \link{dbQueryHistory},
-or an `_id` in the format of one of the trial registers (e.g., "NCT..."),
+or an \verb{_id} in the format of one of the trial registers (e.g., "NCT..."),
 or, together with \code{register}, a string with query
 elements of a search URL. The query details are recorded in the
 \code{collection} for later use, e.g. to update records.
@@ -75,24 +75,25 @@ Default is \code{TRUE}, for backwards consistency; for new collections,
 between Member States' protocol versions of a trial such as dates or outcomes
 of an authorisation decision or an ethics opinion, global status and end.}
 
-\item{ctgov2history}{For trials from CTGOV2, retrieve historic
-versions of the record. Default is \code{FALSE}, because this
-is a time-consuming operation. Use
-\code{n} for n from all versions (recommended),
+\item{ctgov2history}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+If \code{TRUE}, retrieve historic versions of the record from CTGOV2.
+Default is \code{FALSE}, because this is a time-consuming operation. Use
+\code{n} for retrieving n from all versions (recommended),
 \code{1} for the first (original) version,
 \code{-1} for the last-but-one version,
 \code{"n:m"} for the nth to the mth versions, or
 \code{TRUE} for all versions
-of the trial record to be retrieved. Note that for register
-CTIS, historic versions were available in the `applications`
-field only before the register's relaunch on 2024-06-17.}
+of the trial record to be retrieved.}
 
-\item{ctishistory}{If \code{TRUE}, and only when using \code{querytoupdate},
+\item{ctishistory}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+If \code{TRUE}, and only when using \code{querytoupdate},
 move the current CTIS record into an array \code{history} with the record
 which holds one or more historic versions, before updating the rest of the
 record from CTIS. Default is \code{FALSE}, because this is a time-consuming
 operation. See "Historic versions..." in vignette
-\href{../doc/ctrdata_summarise.html}{ctrdata_summarise}.}
+\href{../doc/ctrdata_summarise.html}{ctrdata_summarise}.
+Note that CTIS historic versions were available in the \code{applications}
+field only before the register's relaunch on 2024-06-17.}
 
 \item{documents.path}{If this is a relative or absolute
 path to a directory that exists or can be created,
@@ -134,7 +135,7 @@ Does not load trial information into the database.
 Default is \code{FALSE}.}
 
 \item{con}{A database connection object, created with
-\code{nodbi}. See section `1 - Database connection` in
+\code{nodbi}. See section \verb{1 - Database connection} in
 \link{ctrdata}.}
 
 \item{verbose}{If \code{TRUE}, prints additional information
@@ -142,10 +143,10 @@ Default is \code{FALSE}.}
 }
 \value{
 A list with elements
-`n` (number of trial records newly imported or updated),
-`success` (a vector of _id's of successfully loaded records),
-`failed` (a vector of identifiers of records that failed to load)
-and `queryterm` (the query term used).
+\code{n} (number of trial records newly imported or updated),
+\code{success} (a vector of _id's of successfully loaded records),
+\code{failed} (a vector of identifiers of records that failed to load)
+and \code{queryterm} (the query term used).
 The returned list has several attributes (including database and
 collection name, as well as the query history of this database
 collection) to facilitate documentation.

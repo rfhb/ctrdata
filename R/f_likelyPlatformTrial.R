@@ -4,6 +4,7 @@
 
 #' Calculate if study is likely a platform trial or not
 #'
+#' `r lifecycle::badge('experimental')`
 #' Trial concept calculated: platform trial, research platform.
 #' As operational definition, at least one of these criteria is true:
 #' a. trial has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage"
@@ -47,6 +48,8 @@
 #' @importFrom stringdist stringsimmatrix
 #' @importFrom tidyr pivot_longer unnest
 #' @importFrom rlang .data
+#'
+#' @md
 #'
 #' @examples
 #' # fields needed

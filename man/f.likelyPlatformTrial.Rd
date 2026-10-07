@@ -7,21 +7,22 @@
 f.likelyPlatformTrial(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.likelyPlatformTrial`, a logical,
+data frame with columns \verb{_id} and \code{.likelyPlatformTrial}, a logical,
 and two complementary columns, each with lists of identifiers:
-`.likelyRelatedTrials` (based on other identifiers provided in the trial
-record, including `associatedClinicalTrials` from CTIS; listing identifiers
+\code{.likelyRelatedTrials} (based on other identifiers provided in the trial
+record, including \code{associatedClinicalTrials} from CTIS; listing identifiers
 whether or not the trial with the other identifier is in the database
-collection) and `.maybeRelatedTrials` (based on similar short terms in the
+collection) and \code{.maybeRelatedTrials} (based on similar short terms in the
 first set of brackets or before a colon in the trial title; only listing
 identifiers from the database collection).
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 Trial concept calculated: platform trial, research platform.
 As operational definition, at least one of these criteria is true:
 a. trial has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage"
@@ -37,7 +38,7 @@ criterion requires results-related data).
 }
 \details{
 For EUCTR, requires that results have been included in the collection, using
-`ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...)`.
+\code{ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...)}.
 Requires packages dplyr and stringdist to be installed; stringdist is used
 for evaluating terms in brackets in the trial title, where trials may be
 related if the term similarity is 0.77 or higher.

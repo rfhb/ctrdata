@@ -9,16 +9,17 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 \arguments{
 \item{activesubstance}{An active substance, in an atomic character vector}
 
-\item{verbose}{Print number of studies found in CTGOV2 for `activesubstance`}
+\item{verbose}{Print number of studies found in CTGOV2 for \code{activesubstance}}
 }
 \value{
 A named character vector of the active substance (input parameter),
- the MeSH term(s) and various names (other than the MeSH term) used in
- registered studies, or NULL if the active substance was not found and may
- be invalid. The active substances are ordered in decreasing number of
- occurrence.
+the MeSH term(s) and various names (other than the MeSH term) used in
+registered studies, or NULL if the active substance was not found and may
+be invalid. The active substances are ordered in decreasing number of
+occurrence.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 An active substance can be identified by a recommended international
 nonproprietary name (INN), a trade or product name, or a company code(s).
 To find likely synonyms, the function retrieves from CTGOV2 the field

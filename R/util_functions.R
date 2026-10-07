@@ -895,12 +895,12 @@ ctrMultiDownload <- function(
         httr2::req_throttle(
           # ensures that function never makes more
           # than capacity requests in fill_time_s
-          capacity = 100L,
+          capacity = 60L,
           fill_time_s = 20L
         ) |>
         # include retries in request
         httr2::req_retry(
-          max_tries = 10L,
+          max_tries = 5L,
           max_seconds = NULL,
           retry_on_failure = FALSE,
           # adapt to return codes found with some registers
@@ -967,7 +967,7 @@ ctrMultiDownload <- function(
     paths = sapply(reqs, "[[", "fp"),
     on_error = "continue",
     progress = TRUE,
-    max_active = 10L,
+    max_active = 5L,
     mock = cdnResolve
   )
 

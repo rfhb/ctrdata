@@ -29,10 +29,10 @@ calling \link{dbGetFieldsIntoDf} (parameter \code{calculate}).
 Concepts will continue to be refined and added;
 last updated 2026-07-09.
 \itemize{
-\item \link{f.assignmentType} (factor) was the assignment to treatment based on
-randomisation or not? ("R" or "NR")
+\item \link{f.assignmentType} (returns a factor) was the assignment to treatment
+based on randomisation or not? (factor has levels "R" and "NR")
 \item \link{f.controlType} (factor) which type of internal or concurrent control
-is used in the trial? ("none", "no-treatment", "placebo", "active",
+is used in the trial? (levels "none", "no-treatment", "placebo", "active",
 "placebo+active" or "other")
 \item \link{f.externalLinks} (character) provides links to publications or
 other external references
@@ -40,26 +40,26 @@ other external references
 structured data, reports or publications
 \item \link{f.isMedIntervTrial} (logical) is the trial interventional and does
 it have one or more medicines (drugs or biological) as investigational
-(experimental) intervention? (irrespective of status of authorisation and
-of study design)
+(experimental) intervention, irrespective of status of authorisation and
+of study design?
 \item \link{f.isUniqueTrial} (logical) is the trial record unique in the data
 frame of trial records, based on default parameters of
 \link{dbFindIdsUniqueTrials}?
-\item \link{f.likelyPlatformTrial} (logical, list of likely related trials, and
-list of maybe related trials) is the trial possibly a (research)
-platform trial, and what are related trials? (based on trial title,
-\code{f.numTestArmsSubstances}, number of periods; identifiers of related trials;
-similarity of terms in parts of trial titles)
+\item \link{f.likelyPlatformTrial} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(columns of logical, list of likely related trials, and list of maybe
+related trials) is the trial possibly a (research) platform trial, and what
+are related trials? (based on trial title, \code{f.numTestArmsSubstances},
+number of periods; identifiers of related trials; similarity of terms in
+parts of trial titles)
 \item \link{f.numSites} (integer) how many sites does the trial have?
-\item \link{f.numTestArmsSubstances} (integer) how many arms or groups in the
-trial have medicines that are investigational? (cannot be calculated for
-ISRCTN or for phase 1 trials)
+\item \link{f.numTestArmsSubstances} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(integer) how many arms or groups in the trial have medicines that are
+investigational? (cannot be calculated for ISRCTN or for phase 1 trials)
 \item \link{f.primaryEndpointDescription} (list of character) string containing
 protocol definition, details and time frames, concatenated with " == "
 \item \link{f.primaryEndpointResults} (columns of number, character, integer)
-returning the statistical testing p value and method as well as the
-number of subjects included in the test, each in one new column, for the
-first primary endpoint only
+the statistical testing p value and method as well as the number of subjects
+included in the test, for the first primary endpoint only
 \item \link{f.resultsDate} (date) the planned or achieved date of results availability
 \item \link{f.startDate} (date) the planned, authorised or documented date
 of start of recruitment
@@ -67,19 +67,20 @@ of start of recruitment
 or participants recruited (depending on status of recruitment and
 availability of results)
 \item \link{f.sponsorType} (factor) a type or class of sponsor(s) that
-is simplified to "not for profit", "for profit", "mixed" or "other"
-\item \link{f.statusRecruitment} (factor) a status that is simplified to
+is simplified to levels "not for profit", "for profit", "mixed" or "other"
+\item \link{f.statusRecruitment} (factor) a status that is simplified to levels
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
 terminated or ended prematurely) and "other" (includes planned, not yet
 recruiting, stopped, withdrawn)
-\item \link{f.trialObjectives} (string) identifies with letters those objectives
-that could be identified in text fragments, e.g. "E S PD D", with "E"
-(efficacy), "S" (safety), "D" (dose-finding)
+\item \link{f.trialObjectives} (string) \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+identifies with letters those objectives that could be identified in text
+fragments, e.g. "E S PD D", with "E" (efficacy), "S" (safety), "D"
+(dose-finding)
 \item \link{f.trialPhase} (ordered factor) the phase(s) of medicine development
-with which a trial is associated ("phase 1", "phase 1+2" etc.)
+with which a trial is associated (levels "phase 1", "phase 1+2" etc.)
 \item \link{f.trialPopulation} (columns of factor, string and string) age groups
-(e.g., "P" for paediatric participants, "A" for adults, "E" for older than
-65 years, or "P+A"), inclusion and exclusion criteria texts
+(e.g., level "P" for paediatric participants, "A" for adults, "E" for older
+than 65 years or "P+A"), inclusion and exclusion criteria texts
 \item \link{f.trialTitle} (string) full or scientific title of the study
 }
 }

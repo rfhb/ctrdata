@@ -3,6 +3,7 @@
 
 #' Calculate number of sites of a study
 #'
+#' `r lifecycle::badge('experimental')`
 #' Trial concept calculated: number of the sites where the trial is conducted.
 #' EUCTR lacks information on number of sites outside of the EEA;
 #' for each non-EEA country mentioned, at least one site is assumed.
@@ -18,6 +19,8 @@
 #' @importFrom dplyr if_else mutate case_when `%>%`
 #' @importFrom stringi stri_extract_all_regex stri_split_regex
 #' @importFrom rlang .data
+#'
+#' @md
 #'
 #' @examples
 #' # fields needed

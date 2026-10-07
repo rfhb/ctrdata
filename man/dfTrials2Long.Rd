@@ -14,7 +14,7 @@ one or more variables as obtained from
 }
 \value{
 A data frame  (or tibble, if \code{tibble} is loaded)
-with the four columns: `_id`, `identifier`, `name`, `value`
+with the four columns: \verb{_id}, \code{identifier}, \code{name}, \code{value}
 }
 \description{
 The function works with procotol- and results- related information.

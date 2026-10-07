@@ -7,14 +7,15 @@
 f.numSites(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.numSites`, an integer.
+data frame with columns \verb{_id} and \code{.numSites}, an integer.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 Trial concept calculated: number of the sites where the trial is conducted.
 EUCTR lacks information on number of sites outside of the EEA;
 for each non-EEA country mentioned, at least one site is assumed.

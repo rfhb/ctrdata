@@ -3,6 +3,7 @@
 
 #' Calculate objectives of a study
 #'
+#' `r lifecycle::badge('experimental')`
 #' Trial concept calculated: objectives of the trial, by searching for text
 #' fragments found in fields describing its purpose, objective, background
 #' or hypothesis, after applying .isMedIntervTrial, because the text
@@ -26,6 +27,8 @@
 #'
 #' @importFrom dplyr if_else mutate case_when rename left_join `%>%`
 #' @importFrom rlang .data
+#'
+#' @md
 #'
 #' @examples
 #' # fields needed

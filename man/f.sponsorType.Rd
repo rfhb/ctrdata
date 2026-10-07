@@ -7,19 +7,19 @@
 f.sponsorType(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and `.sponsorType`, which is
-a factor with levels `for profit`, `not for profit`, `mixed` (not and for
-profit sponsors) or `other`.
+data frame with columns \verb{_id} and \code{.sponsorType}, which is
+a factor with levels \verb{for profit}, \verb{not for profit}, \code{mixed} (not and for
+profit sponsors) or \code{other}.
 }
 \description{
 Trial concept calculated: type or class of the sponsor(s) of the study.
 No specific field is available in ISRCTN; thus, sponsor type is set to
-`other`. Note: If several sponsors, sponsor type is deemed `mixed`
+\code{other}. Note: If several sponsors, sponsor type is deemed \code{mixed}
 \emph{if there is both, a commercial and a non-commercial sponsor(s)}.
 }
 \examples{

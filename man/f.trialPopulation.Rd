@@ -7,15 +7,15 @@
 f.trialPopulation(df = NULL)
 }
 \arguments{
-\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If `NULL`,
-prints fields needed in `df` for calculating this trial concept, which can
+\item{df}{data frame such as from \link{dbGetFieldsIntoDf}. If \code{NULL},
+prints fields needed in \code{df} for calculating this trial concept, which can
 be used with \link{dbGetFieldsIntoDf}.}
 }
 \value{
-data frame with columns `_id` and new columns:
-`.trialPopulationAgeGroup` (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
-`.trialPopulationInclusion` (string),
-`.trialPopulationExclusion` (string).
+data frame with columns \verb{_id} and new columns:
+\code{.trialPopulationAgeGroup} (factor, "P", "A", "P+A", "E", "A+E", "P+A+E"),
+\code{.trialPopulationInclusion} (string),
+\code{.trialPopulationExclusion} (string).
 }
 \description{
 Trial concept calculated: inclusion and exclusion criteria as well as
