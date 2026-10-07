@@ -24,7 +24,7 @@ dfMergeVariablesRelevel(df = NULL, colnames = "", levelslist = NULL)
 
 - colnames:
 
-  A vector of names of columns in \`df\` that hold the variables to be
+  A vector of names of columns in `df` that hold the variables to be
   merged, or a selection of columns as per
   [`select`](https://dplyr.tidyverse.org/reference/select.html).
 

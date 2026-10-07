@@ -1,7 +1,7 @@
 # Generates queries that work across registers
 
-From high-level search terms provided by the user, generate specific
-queries for each registers with which ctrdata works, see
+From high-level search terms provided by the user, generate queries that
+are specific for each register with which `ctrdata` works, see
 [ctrdata-registers](https://rfhb.github.io/ctrdata/reference/ctrdata-registers.md).
 
 ## Usage
@@ -101,7 +101,7 @@ and [browseURL](https://rdrr.io/r/utils/browseURL.html)
 
 Search terms that are expanded to concepts such as from MeSH and MedDRA
 by the search implementations in registers include the 'intervention'
-and 'condition'. Logical operators only work in parameter
+and 'condition' parameters. Logical operators only work in parameter
 'searchPhrase'.
 
 ## Examples

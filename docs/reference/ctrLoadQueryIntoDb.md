@@ -46,7 +46,7 @@ ctrLoadQueryIntoDb(
   [ctrGetQueryUrl](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)
   or
   [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md),
-  or an \`\_id\` in the format of one of the trial registers (e.g.,
+  or an `_id` in the format of one of the trial registers (e.g.,
   "NCT..."), or, together with `register`, a string with query elements
   of a search URL. The query details are recorded in the `collection`
   for later use, e.g. to update records. For "CTIS", `queryterm` can be
@@ -108,23 +108,23 @@ ctrLoadQueryIntoDb(
 
 - ctgov2history:
 
-  For trials from CTGOV2, retrieve historic versions of the record.
-  Default is `FALSE`, because this is a time-consuming operation. Use
-  `n` for n from all versions (recommended), `1` for the first
-  (original) version, `-1` for the last-but-one version, `"n:m"` for the
-  nth to the mth versions, or `TRUE` for all versions of the trial
-  record to be retrieved. Note that for register CTIS, historic versions
-  were available in the \`applications\` field only before the
-  register's relaunch on 2024-06-17.
+  **\[deprecated\]** If `TRUE`, retrieve historic versions of the record
+  from CTGOV2. Default is `FALSE`, because this is a time-consuming
+  operation. Use `n` for retrieving n from all versions (recommended),
+  `1` for the first (original) version, `-1` for the last-but-one
+  version, `"n:m"` for the nth to the mth versions, or `TRUE` for all
+  versions of the trial record to be retrieved.
 
 - ctishistory:
 
-  If `TRUE`, and only when using `querytoupdate`, move the current CTIS
-  record into an array `history` with the record which holds one or more
-  historic versions, before updating the rest of the record from CTIS.
-  Default is `FALSE`, because this is a time-consuming operation. See
-  "Historic versions..." in vignette
+  **\[experimental\]** If `TRUE`, and only when using `querytoupdate`,
+  move the current CTIS record into an array `history` with the record
+  which holds one or more historic versions, before updating the rest of
+  the record from CTIS. Default is `FALSE`, because this is a
+  time-consuming operation. See "Historic versions..." in vignette
   [ctrdata_summarise](https://rfhb.github.io/ctrdata/doc/ctrdata_summarise.md).
+  Note that CTIS historic versions were available in the `applications`
+  field only before the register's relaunch on 2024-06-17.
 
 - documents.path:
 
@@ -170,8 +170,8 @@ ctrLoadQueryIntoDb(
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 - verbose:
@@ -180,13 +180,12 @@ ctrLoadQueryIntoDb(
 
 ## Value
 
-A list with elements \`n\` (number of trial records newly imported or
-updated), \`success\` (a vector of \_id's of successfully loaded
-records), \`failed\` (a vector of identifiers of records that failed to
-load) and \`queryterm\` (the query term used). The returned list has
-several attributes (including database and collection name, as well as
-the query history of this database collection) to facilitate
-documentation.
+A list with elements `n` (number of trial records newly imported or
+updated), `success` (a vector of \_id's of successfully loaded records),
+`failed` (a vector of identifiers of records that failed to load) and
+`queryterm` (the query term used). The returned list has several
+attributes (including database and collection name, as well as the query
+history of this database collection) to facilitate documentation.
 
 ## Examples
 

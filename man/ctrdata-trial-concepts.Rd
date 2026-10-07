@@ -72,7 +72,7 @@ is simplified to levels "not for profit", "for profit", "mixed" or "other"
 "ongoing" (includes temporarily halted), "completed", "ended early" (includes
 terminated or ended prematurely) and "other" (includes planned, not yet
 recruiting, stopped, withdrawn)
-\item \link{f.trialObjectives} (string) \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\item \link{f.trialObjectives} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} (string)
 identifies with letters those objectives that could be identified in text
 fragments, e.g. "E S PD D", with "E" (efficacy), "S" (safety), "D"
 (dose-finding)

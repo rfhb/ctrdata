@@ -10,7 +10,7 @@
 ## Load information from clinical trial registers
 
 - [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
-  : Find synonyms of an active substance
+  **\[deprecated\]** : Find synonyms of an active substance
 - [`ctrGenerateQueries()`](https://rfhb.github.io/ctrdata/reference/ctrGenerateQueries.md)
   : Generates queries that work across registers
 - [`ctrGetQueryUrl()`](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)
@@ -59,9 +59,10 @@
 - [`f.isUniqueTrial()`](https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.md)
   : Calculate if record is unique for a study
 - [`f.likelyPlatformTrial()`](https://rfhb.github.io/ctrdata/reference/f.likelyPlatformTrial.md)
-  : Calculate if study is likely a platform trial or not
+  **\[experimental\]** : Calculate if study is likely a platform trial
+  or not
 - [`f.numSites()`](https://rfhb.github.io/ctrdata/reference/f.numSites.md)
-  : Calculate number of sites of a study
+  **\[experimental\]** : Calculate number of sites of a study
 - [`f.numTestArmsSubstances()`](https://rfhb.github.io/ctrdata/reference/f.numTestArmsSubstances.md)
   : Calculate number of arms or groups with investigational medicines in
   a study
@@ -80,7 +81,7 @@
 - [`f.statusRecruitment()`](https://rfhb.github.io/ctrdata/reference/f.statusRecruitment.md)
   : Calculate status of recruitment of a study
 - [`f.trialObjectives()`](https://rfhb.github.io/ctrdata/reference/f.trialObjectives.md)
-  : Calculate objectives of a study
+  **\[experimental\]** : Calculate objectives of a study
 - [`f.trialPhase()`](https://rfhb.github.io/ctrdata/reference/f.trialPhase.md)
   : Calculate phase of a clinical trial
 - [`f.trialPopulation()`](https://rfhb.github.io/ctrdata/reference/f.trialPopulation.md)

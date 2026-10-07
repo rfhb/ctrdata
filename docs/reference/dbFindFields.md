@@ -22,12 +22,12 @@ dbFindFields(namepart = ".*", con, sample = TRUE, verbose = FALSE)
 
   A character string (can be a regular expression, including Perl-style)
   to be searched among all field names (keys) in the collection,
-  case-insensitive. The default \`".\*"\` lists all fields.
+  case-insensitive. The default `".*"` lists all fields.
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 - sample:

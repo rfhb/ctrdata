@@ -2,8 +2,18 @@
 
 ## ctrdata 1.26.3.900
 
-- Added preserving cookies when downloading
 - Revised register information help page
+- Added preserving cookies when downloading
+- Added life cycle information
+- Soft-deprecated
+  [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
+  and parameter `ctgov2history` in
+  [`ctrLoadQueryIntoDb()`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
+- Marked as `experimental` clinical trial concepts
+  [`f.likelyPlatformTrial()`](https://rfhb.github.io/ctrdata/reference/f.likelyPlatformTrial.md),
+  [`f.numTestArmsSubstances()`](https://rfhb.github.io/ctrdata/reference/f.numTestArmsSubstances.md)
+  and
+  [`f.trialObjectives()`](https://rfhb.github.io/ctrdata/reference/f.trialObjectives.md)
 
 ## ctrdata 1.26.3
 

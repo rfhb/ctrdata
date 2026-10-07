@@ -5,7 +5,7 @@ For CTIS to accept a search URL and show results, consider installing
 the [Tampermonkey browser extension](https://www.tampermonkey.net/),
 click on the extension icon, "Create a new script", "Utility" and then
 "Import from this URL":
-\`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js\`
+`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
 
 ## Usage
 

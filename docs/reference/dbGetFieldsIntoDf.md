@@ -3,8 +3,8 @@
 Fields in the collection are retrieved from all records into a data
 frame (or tibble). The function uses the field names to appropriately
 type the values that it returns, harmonising original values (e.g.,
-"Yes" to \`TRUE\`, "false" to \`FALSE\`, "Information not present in
-EudraCT" to \`NA\`, date strings to dates or time differences, number
+"Yes" to `TRUE`, "false" to `FALSE`, "Information not present in
+EudraCT" to `NA`, date strings to dates or time differences, number
 strings to numbers). Trial concepts are calculated for all records and
 included in the return value.
 
@@ -27,8 +27,8 @@ dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE)
   ("field.subfield") without indices is supported. If compatibility with
   [nodbi::src_postgres](https://docs.ropensci.org/nodbi/reference/src_postgres.html)
   is needed, specify fewer than 50 fields, or use parent fields such as
-  \`"a.b"\` instead of \`c("a.b.c.d", "a.b.c.e")\` and then access
-  sought fields with
+  `"a.b"` instead of `c("a.b.c.d", "a.b.c.e")` and then access sought
+  fields with
   [dfTrials2Long](https://rfhb.github.io/ctrdata/reference/dfTrials2Long.md)
   followed by
   [dfName2Value](https://rfhb.github.io/ctrdata/reference/dfName2Value.md)
@@ -44,8 +44,8 @@ dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE)
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 - verbose:
@@ -55,8 +55,8 @@ dbGetFieldsIntoDf(fields = "", calculate = "", con, verbose = FALSE)
 ## Value
 
 A data frame (or tibble, if `tibble` is loaded) with columns
-corresponding to the sought fields. A column with the record \`\_id\`
-will always be included. The maximum number of rows of the returned data
+corresponding to the sought fields. A column with the record `_id` will
+always be included. The maximum number of rows of the returned data
 frame is equal to the number of trial records in the database
 collection, or less if none of the fields has a value in a record.
 

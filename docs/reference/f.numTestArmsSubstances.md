@@ -22,14 +22,13 @@ f.numTestArmsSubstances(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.numTestArmsSubstances\`, an
-integer
+data frame with columns `_id` and `.numTestArmsSubstances`, an integer
 
 ## Examples
 

@@ -12,8 +12,8 @@ ctrDb(con)
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 ## Value

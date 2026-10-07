@@ -82,7 +82,7 @@
 #' terminated or ended prematurely) and "other" (includes planned, not yet
 #' recruiting, stopped, withdrawn)
 #'
-#' - \link{f.trialObjectives} (string) `r lifecycle::badge('experimental')`
+#' - \link{f.trialObjectives} `r lifecycle::badge('experimental')` (string)
 #' identifies with letters those objectives that could be identified in text
 #' fragments, e.g. "E S PD D", with "E" (efficacy), "S" (safety), "D"
 #' (dose-finding)

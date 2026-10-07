@@ -1,8 +1,9 @@
 # Calculate number of sites of a study
 
-Trial concept calculated: number of the sites where the trial is
-conducted. EUCTR lacks information on number of sites outside of the
-EEA; for each non-EEA country mentioned, at least one site is assumed.
+**\[experimental\]** Trial concept calculated: number of the sites where
+the trial is conducted. EUCTR lacks information on number of sites
+outside of the EEA; for each non-EEA country mentioned, at least one
+site is assumed.
 
 ## Usage
 
@@ -16,13 +17,13 @@ f.numSites(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.numSites\`, an integer.
+data frame with columns `_id` and `.numSites`, an integer.
 
 ## Examples
 

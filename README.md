@@ -40,7 +40,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-10-04 for version 1.26.3.9000.
+package. This README was reviewed on 2026-10-07 for version 1.26.3.9000.
 
 ## Main features
 
@@ -1066,7 +1066,7 @@ R (2026). “Aggregating and analysing clinical trials data from multiple
 public registers using R package ctrdata.” *Research Synthesis Methods*,
 *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
-or <br/>Herold R (2026-10-04). *ctrdata: Retrieve and Analyze Clinical
+or <br/>Herold R (2026-10-07). *ctrdata: Retrieve and Analyze Clinical
 Trials Data from Public Registers*. R package version 1.26.3.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>

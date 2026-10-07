@@ -1,7 +1,7 @@
 # Get register name and query parameters from search URL
 
-Extracts query parameters and register name from parameter \`url\` or
-from the clipboard, into which the URL of a register search was copied.
+Extracts query parameters and register name from parameter `url` or from
+the clipboard, into which the URL of a register search was copied.
 
 ## Usage
 
@@ -18,22 +18,22 @@ ctrGetQueryUrl(url = "", register = "")
   the user's query of a register in a web browser to the clipboard, see
   [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser).
   Can also contain a query term such as from
-  [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)()\["query-term"\].
+  [dbQueryHistory](https://rfhb.github.io/ctrdata/reference/dbQueryHistory.md)()`query-term`.
   Can also be an identifier of a trial, which based on its format will
   indicate to which register it relates.
 
 - register:
 
   Optional name of register (one of "EUCTR", "CTGOV2" "ISRCTN" or
-  "CTIS") in case \`url\` is a query term but not a full URL
+  "CTIS") in case `url` is a query term but not a full URL
 
 ## Value
 
 A data frame (or tibble, if `tibble` is loaded) with column names
-\`query-term\` and \`query-register\`. The data frame (or tibble) can be
-passed as such as parameter \`queryterm\` to
+`query-term` and `query-register`. The data frame (or tibble) can be
+passed as such as parameter `queryterm` to
 [ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
-and as parameter \`url\` to
+and as parameter `url` to
 [ctrOpenSearchPagesInBrowser](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md).
 
 ## Details
@@ -42,7 +42,7 @@ To obtain the search query from CTIS, consider installing the
 [Tampermonkey browser extension](https://www.tampermonkey.net/), click
 on the extension icon, "Create a new script", "Utility" and then "Import
 from this URL":
-\`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js\`
+`https://raw.githubusercontent.com/rfhb/ctrdata/master/tools/ctrdataURLcopier.js`
 This will copy query URLs from all registers into the clipboard; see
 [ctrOpenSearchPagesInBrowser](https://rfhb.github.io/ctrdata/reference/ctrOpenSearchPagesInBrowser.md)
 for additional uses.

@@ -1,10 +1,11 @@
 # Find synonyms of an active substance
 
-An active substance can be identified by a recommended international
-nonproprietary name (INN), a trade or product name, or a company
-code(s). To find likely synonyms, the function retrieves from CTGOV2 the
-field protocolSection.armsInterventionsModule.interventions. Note this
-is mostly manually filled, thus may not be free of errors.
+**\[deprecated\]** An active substance can be identified by a
+recommended international nonproprietary name (INN), a trade or product
+name, or a company code(s). To find likely synonyms, the function
+retrieves from CTGOV2 the field
+`protocolSection.armsInterventionsModule.interventions`. Note this is
+mostly manually filled, thus may not be free of errors.
 
 ## Usage
 
@@ -20,7 +21,7 @@ ctrFindActiveSubstanceSynonyms(activesubstance = "", verbose = FALSE)
 
 - verbose:
 
-  Print number of studies found in CTGOV2 for \`activesubstance\`
+  Print number of studies found in CTGOV2 for `activesubstance`
 
 ## Value
 

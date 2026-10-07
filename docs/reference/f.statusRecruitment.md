@@ -16,24 +16,24 @@ f.statusRecruitment(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.statusRecruitment\`, which is a
-factor with levels \`ongoing\` (includes active, not yet recruiting;
+data frame with columns `_id` and `.statusRecruitment`, which is a
+factor with levels `ongoing` (includes active, not yet recruiting;
 temporarily halted; suspended; authorised, not started and similar),
-\`completed\` (includes ended; ongoing, recruitment ended), \`ended
-early\` (includes prematurely ended, terminated early) and \`other\`
-(includes revoked, withdrawn, planned, stopped).
+`completed` (includes ended; ongoing, recruitment ended), `ended early`
+(includes prematurely ended, terminated early) and `other` (includes
+revoked, withdrawn, planned, stopped).
 
 ## Details
 
-Note that for EUCTR, \`NA\` is returned for "Trial now transitioned"
-(into CTIS, from which the status can be obtained) and for "GB - no
-longer in EU/EEA" (no data source known).
+Note that for EUCTR, `NA` is returned for "Trial now transitioned" (into
+CTIS, from which the status can be obtained) and for "GB - no longer in
+EU/EEA" (no data source known).
 
 ## Examples
 

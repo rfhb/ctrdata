@@ -45,8 +45,8 @@ dbFindIdsUniqueTrials(
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 - verbose:
@@ -67,10 +67,10 @@ Note that the content of records may differ between registers (and, for
 are not considered by this function.
 
 Note that for "CTIS", the trial with the latest (highest) resubmission
-number (last two digits of \`id\`, clinical trial number) is identified.
+number (last two digits of `id`, clinical trial number) is identified.
 Trials transitioned from "EUCTR" into "CTIS" will be identified from
 "CTIS" unless "EUCTR" occurs before "CTIS" in parameter
-\`preferregister\`.
+`preferregister`.
 
 Note that the trial concept
 [f.isUniqueTrial](https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.md)

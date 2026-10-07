@@ -1,11 +1,12 @@
 # Calculate objectives of a study
 
-Trial concept calculated: objectives of the trial, by searching for text
-fragments found in fields describing its purpose, objective, background
-or hypothesis, after applying .isMedIntervTrial, because the text
-fragments are tailored to medicinal product interventional trials. This
-is a simplification, and it is expected that the criteria will be
-further refined. The text fragments only apply to English.
+**\[experimental\]** Trial concept calculated: objectives of the trial,
+by searching for text fragments found in fields describing its purpose,
+objective, background or hypothesis, after applying .isMedIntervTrial,
+because the text fragments are tailored to medicinal product
+interventional trials. This is a simplification, and it is expected that
+the criteria will be further refined. The text fragments only apply to
+English.
 
 ## Usage
 
@@ -19,16 +20,16 @@ f.trialObjectives(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.trialObjectives\`, which is a
-string with letters separated by a space, such as E (efficacy, including
-cure, survival, effectiveness); A (activity, including reponse,
-remission, seroconversion); S (safety); PK; PD (including biomarker); D
+data frame with columns `_id` and `.trialObjectives`, which is a string
+with letters separated by a space, such as E (efficacy, including cure,
+survival, effectiveness); A (activity, including reponse, remission,
+seroconversion); S (safety); PK; PD (including biomarker); D
 (dose-finding, determining recommended dose); LT (long-term); and FU
 (follow-up).
 

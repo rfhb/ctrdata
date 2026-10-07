@@ -97,7 +97,7 @@ the European Union. Ignored if <code>prefermemberstate</code> is set to "3RD".</
 
 <dt id="arg-con">con<a class="anchor" aria-label="anchor" href="#arg-con"></a></dt>
 <dd><p>A database connection object, created with
-<code>nodbi</code>. See section `1 - Database connection` in
+<code>nodbi</code>. See section <code>1 - Database connection</code> in
 <a href="ctrdata.html">ctrdata</a>.</p></dd>
 
 
@@ -118,9 +118,9 @@ names correspond to the register of the record.</p>
 (and, for "EUCTR", between records for different Member States).
 Such differences are not considered by this function.</p>
 <p>Note that for "CTIS", the trial with the latest (highest) resubmission
-number (last two digits of `id`, clinical trial number) is identified.
+number (last two digits of <code>id</code>, clinical trial number) is identified.
 Trials transitioned from "EUCTR" into "CTIS" will be identified from
-"CTIS" unless "EUCTR" occurs before "CTIS" in parameter `preferregister`.</p>
+"CTIS" unless "EUCTR" occurs before "CTIS" in parameter <code>preferregister</code>.</p>
 <p>Note that the trial concept <a href="f.isUniqueTrial.html">f.isUniqueTrial</a> (which uses this
 function) can be calculated at the time of creating a data frame with
 <a href="dbGetFieldsIntoDf.html">dbGetFieldsIntoDf</a>, which often may be the preferred approach.</p>

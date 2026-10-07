@@ -29,7 +29,7 @@ interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [R](https://www.r-project.org/) system,
 but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-10-04 for version 1.26.3.9000.
+package. This README was reviewed on 2026-10-07 for version 1.26.3.9000.
 
 ## Main features
 
@@ -994,7 +994,7 @@ for [R](https://www.r-project.org/),
 > Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (2026-10-04). *ctrdata: Retrieve and Analyze Clinical Trials
+> Herold R (2026-10-07). *ctrdata: Retrieve and Analyze Clinical Trials
 > Data from Public Registers*. R package version 1.26.3.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 
@@ -1029,7 +1029,7 @@ for [R](https://www.r-project.org/),
 ## Load information from clinical trial registers
 
 - [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
-  : Find synonyms of an active substance
+  **\[deprecated\]** : Find synonyms of an active substance
 - [`ctrGenerateQueries()`](https://rfhb.github.io/ctrdata/reference/ctrGenerateQueries.md)
   : Generates queries that work across registers
 - [`ctrGetQueryUrl()`](https://rfhb.github.io/ctrdata/reference/ctrGetQueryUrl.md)
@@ -1078,9 +1078,10 @@ for [R](https://www.r-project.org/),
 - [`f.isUniqueTrial()`](https://rfhb.github.io/ctrdata/reference/f.isUniqueTrial.md)
   : Calculate if record is unique for a study
 - [`f.likelyPlatformTrial()`](https://rfhb.github.io/ctrdata/reference/f.likelyPlatformTrial.md)
-  : Calculate if study is likely a platform trial or not
+  **\[experimental\]** : Calculate if study is likely a platform trial
+  or not
 - [`f.numSites()`](https://rfhb.github.io/ctrdata/reference/f.numSites.md)
-  : Calculate number of sites of a study
+  **\[experimental\]** : Calculate number of sites of a study
 - [`f.numTestArmsSubstances()`](https://rfhb.github.io/ctrdata/reference/f.numTestArmsSubstances.md)
   : Calculate number of arms or groups with investigational medicines in
   a study
@@ -1099,7 +1100,7 @@ for [R](https://www.r-project.org/),
 - [`f.statusRecruitment()`](https://rfhb.github.io/ctrdata/reference/f.statusRecruitment.md)
   : Calculate status of recruitment of a study
 - [`f.trialObjectives()`](https://rfhb.github.io/ctrdata/reference/f.trialObjectives.md)
-  : Calculate objectives of a study
+  **\[experimental\]** : Calculate objectives of a study
 - [`f.trialPhase()`](https://rfhb.github.io/ctrdata/reference/f.trialPhase.md)
   : Calculate phase of a clinical trial
 - [`f.trialPopulation()`](https://rfhb.github.io/ctrdata/reference/f.trialPopulation.md)

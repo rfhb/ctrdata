@@ -1,12 +1,13 @@
 # Calculate if study is likely a platform trial or not
 
-Trial concept calculated: platform trial, research platform. As
-operational definition, at least one of these criteria is true: a. trial
-has "platform", "basket", "umbrella", "multi.?arm", "multi.?stage" or
-"master protocol" in its title or description (for ISRCTN, this is the
-only criterion; some trials in EUCTR lack data in English), b. trial has
-more than 2 active arms with different investigational medicines, after
-excluding comparator, auxiliary and placebo medicines (calculated with
+**\[experimental\]** Trial concept calculated: platform trial, research
+platform. As operational definition, at least one of these criteria is
+true: a. trial has "platform", "basket", "umbrella", "multi.?arm",
+"multi.?stage" or "master protocol" in its title or description (for
+ISRCTN, this is the only criterion; some trials in EUCTR lack data in
+English), b. trial has more than 2 active arms with different
+investigational medicines, after excluding comparator, auxiliary and
+placebo medicines (calculated with
 [f.numTestArmsSubstances](https://rfhb.github.io/ctrdata/reference/f.numTestArmsSubstances.md);
 not used for ISRCTN because it cannot be calculated precisely), c. trial
 has more than 2 periods, after excluding safety run-in, screening,
@@ -25,28 +26,29 @@ f.likelyPlatformTrial(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.likelyPlatformTrial\`, a
-logical, and two complementary columns, each with lists of identifiers:
-\`.likelyRelatedTrials\` (based on other identifiers provided in the
-trial record, including \`associatedClinicalTrials\` from CTIS; listing
+data frame with columns `_id` and `.likelyPlatformTrial`, a logical, and
+two complementary columns, each with lists of identifiers:
+`.likelyRelatedTrials` (based on other identifiers provided in the trial
+record, including `associatedClinicalTrials` from CTIS; listing
 identifiers whether or not the trial with the other identifier is in the
-database collection) and \`.maybeRelatedTrials\` (based on similar short
+database collection) and `.maybeRelatedTrials` (based on similar short
 terms in the first set of brackets or before a colon in the trial title;
 only listing identifiers from the database collection).
 
 ## Details
 
 For EUCTR, requires that results have been included in the collection,
-using \`ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con =
-...)\`. Requires packages dplyr and stringdist to be installed;
-stringdist is used for evaluating terms in brackets in the trial title,
-where trials may be related if the term similarity is 0.77 or higher.
+using
+`ctrLoadQueryIntoDb(queryterm = ..., euctrresults = TRUE, con = ...)`.
+Requires packages dplyr and stringdist to be installed; stringdist is
+used for evaluating terms in brackets in the trial title, where trials
+may be related if the term similarity is 0.77 or higher.
 
 Publication references considered: [EU-PEARL WP2
 2020](https://web.archive.org/web/20230314024441/https://eu-pearl.eu/wp-content/uploads/2020/06/EU-PEARL_D2.1_Report-on-Terminology-and-Scenarios-for-Platform-Trials-and-Masterprotocols.pdf)

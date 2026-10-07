@@ -6,7 +6,7 @@
 #' An active substance can be identified by a recommended international
 #' nonproprietary name (INN), a trade or product name, or a company code(s).
 #' To find likely synonyms, the function retrieves from CTGOV2 the field
-#' protocolSection.armsInterventionsModule.interventions.
+#' `protocolSection.armsInterventionsModule.interventions`.
 #' Note this is mostly manually filled, thus may not be free of errors.
 #'
 #' @param activesubstance An active substance, in an atomic character vector

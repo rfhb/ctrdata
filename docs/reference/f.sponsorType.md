@@ -2,8 +2,8 @@
 
 Trial concept calculated: type or class of the sponsor(s) of the study.
 No specific field is available in ISRCTN; thus, sponsor type is set to
-\`other\`. Note: If several sponsors, sponsor type is deemed \`mixed\`
-*if there is both, a commercial and a non-commercial sponsor(s)*.
+`other`. Note: If several sponsors, sponsor type is deemed `mixed` *if
+there is both, a commercial and a non-commercial sponsor(s)*.
 
 ## Usage
 
@@ -17,15 +17,15 @@ f.sponsorType(df = NULL)
 
   data frame such as from
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
-  If \`NULL\`, prints fields needed in \`df\` for calculating this trial
+  If `NULL`, prints fields needed in `df` for calculating this trial
   concept, which can be used with
   [dbGetFieldsIntoDf](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md).
 
 ## Value
 
-data frame with columns \`\_id\` and \`.sponsorType\`, which is a factor
-with levels \`for profit\`, \`not for profit\`, \`mixed\` (not and for
-profit sponsors) or \`other\`.
+data frame with columns `_id` and `.sponsorType`, which is a factor with
+levels `for profit`, `not for profit`, `mixed` (not and for profit
+sponsors) or `other`.
 
 ## Examples
 

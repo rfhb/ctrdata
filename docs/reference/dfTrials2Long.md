@@ -29,7 +29,7 @@ dfTrials2Long(df)
 ## Value
 
 A data frame (or tibble, if `tibble` is loaded) with the four columns:
-\`\_id\`, \`identifier\`, \`name\`, \`value\`
+`_id`, `identifier`, `name`, `value`
 
 ## Examples
 

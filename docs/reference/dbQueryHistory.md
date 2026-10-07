@@ -14,8 +14,8 @@ dbQueryHistory(con, verbose = FALSE)
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 - verbose:
@@ -25,10 +25,10 @@ dbQueryHistory(con, verbose = FALSE)
 ## Value
 
 A data frame (or tibble, if `tibble` is loaded) with columns:
-\`query-timestamp\`, \`query-register\`, \`query-records\` (note: this
-is the number of records loaded when last executing
+`query-timestamp`, `query-register`, `query-records` (note: this is the
+number of records loaded when last executing
 [ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md),
-not the total record number) and \`query-term\`, with one row for each
+not the total record number) and `query-term`, with one row for each
 time that
 [ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)
 loaded trial records into this collection.

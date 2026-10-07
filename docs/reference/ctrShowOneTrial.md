@@ -22,12 +22,12 @@ ctrShowOneTrial(identifier = NULL, con = NULL)
 
 - identifier:
 
-  A trial identifier (\`\_id\`) string, see examples
+  A trial identifier (`_id`) string, see examples
 
 - con:
 
-  A database connection object, created with `nodbi`. See section \`1 -
-  Database connection\` in
+  A database connection object, created with `nodbi`. See section
+  `1 - Database connection` in
   [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md).
 
 ## Value
