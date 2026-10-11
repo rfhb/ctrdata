@@ -231,7 +231,7 @@ ctrLoadQueryIntoDbIsrctn <- function(
       .ctrdataenv$ct$call(
         "parsexml",
         # read source xml file
-        readr::read_file(f),
+        readr::read_file(file(f)),
         # important parameters
         V8::JS("{trim: true, ignoreAttrs: true, explicitArray: false}"))
     ),

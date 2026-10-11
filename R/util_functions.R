@@ -895,8 +895,8 @@ ctrMultiDownload <- function(
         httr2::req_throttle(
           # ensures that function never makes more
           # than capacity requests in fill_time_s
-          capacity = 60L,
-          fill_time_s = 20L
+          capacity = 50L,
+          fill_time_s = 15L
         ) |>
         # include retries in request
         httr2::req_retry(
@@ -967,7 +967,7 @@ ctrMultiDownload <- function(
     paths = sapply(reqs, "[[", "fp"),
     on_error = "continue",
     progress = TRUE,
-    max_active = 5L,
+    max_active = 10L,
     mock = cdnResolve
   )
 
@@ -1305,7 +1305,7 @@ initTranformers <- function() {
            { out = result; }); return JSON.stringify(out); }"))
 
   # native javascript function for euctr txt to ndjson conversion
-  ct$eval(readr::read_file(system.file("js/euctr2ndjson.js", package = "ctrdata")))
+  ct$eval(readr::read_file(file(system.file("js/euctr2ndjson.js", package = "ctrdata"))))
 
   # assign into package private environment, see zzz.R
   assign("ct", ct, envir = .ctrdataenv)

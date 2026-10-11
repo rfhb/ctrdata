@@ -335,7 +335,7 @@ ctrLoadQueryIntoDbEuctr <- function(
         readr::write_file(
           .ctrdataenv$ct$call(
             # parameters to js function call
-            "euctr2ndjson", readr::read_file(fi), ti),
+            "euctr2ndjson", readr::read_file(file(fi)), ti),
           file = fo, append = TRUE)
       )
 
@@ -568,7 +568,7 @@ ctrLoadQueryIntoDbEuctr <- function(
             .ctrdataenv$ct$call(
               "parsexml",
               # read source file
-              readr::read_file(xmlFileList[f]),
+              readr::read_file(file(xmlFileList[f])),
               # important parameters for conversion
               V8::JS("{trim: true, ignoreAttrs: false, mergeAttrs: true,
                       explicitRoot: false, explicitArray: false, xmlns: false}")),

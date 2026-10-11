@@ -28,13 +28,13 @@ tf <- function() {
 
   i <- fileTo
   ct <- V8::v8()
-  ct$eval(readr::read_file(system.file("js/euctr2ndjson.js", package = "ctrdata")))
+  ct$eval(readr::read_file(file(system.file("js/euctr2ndjson.js", package = "ctrdata"))))
 
   # start copy from ctrLoadQueryIntoEuctr.R but
   # change .ctrdataenv$ct$call to ct$call
 
   readr::write_file(
-    ct$call("euctr2ndjson", readr::read_file(i),
+    ct$call("euctr2ndjson", readr::read_file(file(i)),
             format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
     file = sub("[.]txt$", ".ndjson", i))
 
