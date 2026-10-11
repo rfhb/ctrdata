@@ -1,15 +1,16 @@
 # ctrdata for aggregating and analysing clinical trials
 
-[Main features](#main-features) • [References](#references) •
+[Features](#main-features) • [References](#references) •
 [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) • [Data
 model](#data-model-of-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) •
-[Documentation](#documentation-and-vignettes) • [Example
-workflow](#example-workflow) • [Analysis across
-registers](#workflow-across-registers-example) • [Tests,
-coverage](#tests-and-coverage) • [Acknowledgements,
-citation](#acknowledgements-and-citation) • [Future](#future-features)
+[Documentation](#documentation-and-vignettes) •
+[Workflow](#example-workflow) • [Analysis across
+registers](#workflow-across-registers-example) • [WebR in
+browser](#use-ctrdata-in-the-browser) • [Tests](#tests-and-coverage) •
+[Acknowledgements](#acknowledgements-and-citation) •
+[Future](#future-features)
 
 Package `ctrdata` provides functions for retrieving (downloading),
 aggregating and analysing clinical trials using information (structured
@@ -27,9 +28,10 @@ Additional registers are being explored. The package facilitates
 investigating across registers the design and conduct of trials of
 interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
-`ctrdata` is a package for the [R](https://www.r-project.org/) system,
-but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-10-07 for version 1.26.3.9000.
+`ctrdata` is a package for the [`R`](https://www.r-project.org/) system
+including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other
+systems and tools can use the databases created with this package. This
+README was reviewed on 2026-10-11 for version 1.26.3.9001.
 
 ## Main features
 
@@ -877,6 +879,31 @@ Neuroblastoma trials
 `# SbjctIaICF-E SbjctInfaICF SmmryofPrdcC SmmryofRslts SynpssofthPr `\
 `#            2         5595          495          176         1516 `
 
+## Use ctrdata in the browser
+
+🆕 The package can be used in `wasm` applications such as through
+[`webr`](https://docs.r-wasm.org/webr/latest/). For example, open
+<https://webr.r-wasm.org/latest/>, paste and run the following code in
+the browser.
+
+See
+[here](https://docs.r-wasm.org/webr/latest/mounting.html#indexeddb-filesystem-storage)
+for how to persist files or a database in the browser.
+
+\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(`[`c`](https://rdrr.io/r/base/c.html)`(``"lazyeval"``, ``"RSQLite"``, ``"readr"``, ``"ctrdata"``, ``"ggplot2"``)``)`\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"jqr"``, repos ``=`` ``"https://ropensci.r-universe.dev"``)`\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``, repos ``=`` ``"https://rfhb.r-universe.dev"``)`\
+\
+`db`` ``<-`` ``nodbi``::`[`src_sqlite`](https://docs.ropensci.org/nodbi/reference/src_sqlite.html)`(``collection ``=`` ``"collection_name"``)`\
+\
+`ctrdata``::`[`ctrLoadQueryIntoDb`](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md)`(`\
+`  queryterm ``=`` ``"cond=Neuroblastoma&aggFilters=phase:1,results:with,studyType:int"``,`\
+`  register ``=`` ``"CTGOV2"``, con ``=`` ``db``)`\
+\
+`ctrdata``::`[`dbGetFieldsIntoDf`](https://rfhb.github.io/ctrdata/reference/dbGetFieldsIntoDf.md)`(``calculate ``=`` ``"f.startDate"``, con ``=`` ``db``)`` ``|>`` `\
+`ggplot2``::`[`ggplot`](https://ggplot2.tidyverse.org/reference/ggplot.html)`(``)`` ``+`` ``ggplot2``::`[`stat_ecdf`](https://ggplot2.tidyverse.org/reference/stat_ecdf.html)`(``ggplot2``::`[`aes`](https://ggplot2.tidyverse.org/reference/aes.html)`(``x ``=`` ``.startDate``)``)`
+
 ## Tests and coverage
 
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
@@ -994,7 +1021,7 @@ for [R](https://www.r-project.org/),
 > Synthesis Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 > <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 > or\
-> Herold R (2026-10-07). *ctrdata: Retrieve and Analyze Clinical Trials
+> Herold R (2026-10-11). *ctrdata: Retrieve and Analyze Clinical Trials
 > Data from Public Registers*. R package version 1.26.3.9000,
 > <https://cran.r-project.org/package=ctrdata>.
 

@@ -9,16 +9,17 @@ status](https://www.r-pkg.org/badges/version-last-release/ctrdata)](https://cran
 [![R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml)
 <!-- badges: end -->
 
-[Main features](#main-features) • [References](#references) •
+[Features](#main-features) • [References](#references) •
 [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) • [Data
 model](#data-model-of-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) •
-[Documentation](#documentation-and-vignettes) • [Example
-workflow](#example-workflow) • [Analysis across
-registers](#workflow-across-registers-example) • [Tests,
-coverage](#tests-and-coverage) • [Acknowledgements,
-citation](#acknowledgements-and-citation) • [Future](#future-features)
+[Documentation](#documentation-and-vignettes) •
+[Workflow](#example-workflow) • [Analysis across
+registers](#workflow-across-registers-example) • [WebR in
+browser](#use-ctrdata-in-the-browser) • [Tests](#tests-and-coverage) •
+[Acknowledgements](#acknowledgements-and-citation) •
+[Future](#future-features)
 
 # ctrdata for aggregating and analysing clinical trials
 
@@ -38,9 +39,10 @@ Additional registers are being explored. The package facilitates
 investigating across registers the design and conduct of trials of
 interest, to describe their trends and availability for patients and to
 facilitate using their detailed results for research and meta-analyses.
-`ctrdata` is a package for the [R](https://www.r-project.org/) system,
-but other systems and tools can use the databases created with this
-package. This README was reviewed on 2026-10-07 for version 1.26.3.9000.
+`ctrdata` is a package for the [`R`](https://www.r-project.org/) system
+including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other
+systems and tools can use the databases created with this package. This
+README was reviewed on 2026-10-11 for version 1.26.3.9001.
 
 ## Main features
 
@@ -946,6 +948,32 @@ table(docNames)
 #            2         5595          495          176         1516 
 ```
 
+## Use ctrdata in the browser
+
+🆕 The package can be used in `wasm` applications such as through
+[`webr`](https://docs.r-wasm.org/webr/latest/). For example, open
+<https://webr.r-wasm.org/latest/>, paste and run the following code in
+the browser.
+
+See
+[here](https://docs.r-wasm.org/webr/latest/mounting.html#indexeddb-filesystem-storage)
+for how to persist files or a database in the browser.
+
+``` r
+install.packages(c("lazyeval", "RSQLite", "readr", "ctrdata", "ggplot2"))
+install.packages("jqr", repos = "https://ropensci.r-universe.dev")
+install.packages("ctrdata", repos = "https://rfhb.r-universe.dev")
+
+db <- nodbi::src_sqlite(collection = "collection_name")
+
+ctrdata::ctrLoadQueryIntoDb(
+  queryterm = "cond=Neuroblastoma&aggFilters=phase:1,results:with,studyType:int",
+  register = "CTGOV2", con = db)
+
+ctrdata::dbGetFieldsIntoDf(calculate = "f.startDate", con = db) |> 
+ggplot2::ggplot() + ggplot2::stat_ecdf(ggplot2::aes(x = .startDate))
+```
+
 ## Tests and coverage
 
 See also <https://app.codecov.io/gh/rfhb/ctrdata/tree/master/R>
@@ -1066,7 +1094,7 @@ R (2026). “Aggregating and analysing clinical trials data from multiple
 public registers using R package ctrdata.” *Research Synthesis Methods*,
 *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
-or <br/>Herold R (2026-10-07). *ctrdata: Retrieve and Analyze Clinical
+or <br/>Herold R (2026-10-11). *ctrdata: Retrieve and Analyze Clinical
 Trials Data from Public Registers*. R package version 1.26.3.9000,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>

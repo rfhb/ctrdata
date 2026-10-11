@@ -25,17 +25,18 @@ knitr::opts_chunk$set(
 [![R-CMD-CHECK-win-macos-linux-duckdb-mongodb-sqlite-postgres](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml/badge.svg)](https://github.com/rfhb/ctrdata/actions/workflows/check-standard-win-macos-linux.yaml)
 <!-- badges: end -->
 
-[Main features](#main-features) •
+[Features](#main-features) •
 [References](#references) •
 [Installation](#installation) •
 [Overview](#overview-of-functions-in-ctrdata) •
 [Data model](#data-model-of-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) •
 [Documentation](#documentation-and-vignettes) •
-[Example workflow](#example-workflow) •
+[Workflow](#example-workflow) •
 [Analysis across registers](#workflow-across-registers-example) •
-[Tests, coverage](#tests-and-coverage) •
-[Acknowledgements, citation](#acknowledgements-and-citation) •
+[WebR in browser](#use-ctrdata-in-the-browser) •
+[Tests](#tests-and-coverage) •
+[Acknowledgements](#acknowledgements-and-citation) •
 [Future](#future-features)
 
 
@@ -48,7 +49,7 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/)
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [R](https://www.r-project.org/) system, but other systems and tools can use the databases created with this package. This README was reviewed on 2026-10-07 for version 1.26.3.9000.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [`R`](https://www.r-project.org/) system including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other systems and tools can use the databases created with this package. This README was reviewed on 2026-10-11 for version 1.26.3.9001.
 
 
 ## Main features
@@ -764,6 +765,29 @@ unlink("./files-euctr/", recursive = TRUE)
 unlink("./files-ctgov/", recursive = TRUE)
 unlink("./files-ctgov2/", recursive = TRUE)
 unlink("./files-isrctn/", recursive = TRUE)
+```
+
+
+## Use ctrdata in the browser
+
+🆕 The package can be used in `wasm` applications such as through [`webr`](https://docs.r-wasm.org/webr/latest/). 
+For example, open <https://webr.r-wasm.org/latest/>, paste and run the following code in the browser. 
+
+See [here](https://docs.r-wasm.org/webr/latest/mounting.html#indexeddb-filesystem-storage) for how to persist files or a database in the browser. 
+
+```{r}
+install.packages(c("lazyeval", "RSQLite", "readr", "ctrdata", "ggplot2"))
+install.packages("jqr", repos = "https://ropensci.r-universe.dev")
+install.packages("ctrdata", repos = "https://rfhb.r-universe.dev")
+
+db <- nodbi::src_sqlite(collection = "collection_name")
+
+ctrdata::ctrLoadQueryIntoDb(
+  queryterm = "cond=Neuroblastoma&aggFilters=phase:1,results:with,studyType:int",
+  register = "CTGOV2", con = db)
+
+ctrdata::dbGetFieldsIntoDf(calculate = "f.startDate", con = db) |> 
+ggplot2::ggplot() + ggplot2::stat_ecdf(ggplot2::aes(x = .startDate))
 ```
 
 

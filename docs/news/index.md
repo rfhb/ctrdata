@@ -5,6 +5,8 @@
 - Revised register information help page
 - Added preserving cookies when downloading
 - Added life cycle information
+- Added `README.md` section on how to use `ctrdata` with `webr` under
+  `wasm` in a browser
 - Soft-deprecated
   [`ctrFindActiveSubstanceSynonyms()`](https://rfhb.github.io/ctrdata/reference/ctrFindActiveSubstanceSynonyms.md)
   and parameter `ctgov2history` in

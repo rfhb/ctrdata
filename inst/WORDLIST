@@ -64,10 +64,10 @@ Tampermonkey
 Trials’
 Var
 WP
+WebR
 Więcek
 Zwet
 analyzing
-armsInterventionsModule
 backends
 chisquared
 cleanup
@@ -142,7 +142,6 @@ pkgdown
 postgres
 preferrably
 procotol
-protocolSection
 publicEvaluation
 publicevents
 queryterm
