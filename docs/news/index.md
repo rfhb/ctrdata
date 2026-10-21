@@ -5,6 +5,7 @@
 - Revised register information help page
 - Added preserving cookies when downloading
 - Added life cycle information
+- Added handling bare search terms for CTIS
 - Added `README.md` section on how to use `ctrdata` with `webr` under
   `wasm` in a browser
 - Soft-deprecated
