@@ -49,7 +49,7 @@ Package `ctrdata` provides functions for retrieving (downloading), aggregating a
 - ClinicalTrials.gov ("CTGOV2", https://clinicaltrials.gov/)
 - ISRCTN Registry ("ISRCTN", https://www.isrctn.com/) 
 
-Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [`R`](https://www.r-project.org/) system including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other systems and tools can use the databases created with this package. This README was reviewed on 2026-10-11 for version 1.26.3.9001.
+Additional registers are being explored. The package facilitates investigating across registers the design and conduct of trials of interest, to describe their trends and availability for patients and to facilitate using their detailed results for research and meta-analyses. `ctrdata` is a package for the [`R`](https://www.r-project.org/) system including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other systems and tools can use the databases created with this package. This README was reviewed on 2026-10-21 for version 1.26.3.9001.
 
 
 ## Main features
@@ -771,7 +771,7 @@ unlink("./files-isrctn/", recursive = TRUE)
 ## Use ctrdata in the browser
 
 🆕 The package can be used in `wasm` applications such as through [`webr`](https://docs.r-wasm.org/webr/latest/). 
-For example, open <https://webr.r-wasm.org/latest/>, paste and run the following code in the browser. 
+For example, open <https://webr.r-wasm.org/latest/>, paste and run the following code in the browser (or open the example directly from this [link](https://webr.r-wasm.org/latest/#code=eJx9ks9u1DAQxiWOeQorlVBW3SSiR4vlQtUKqQK1VFyjsT2bGBw7a092CeLGE%2FAOfQyuPARvg72NdlstwqdvRv5%2Bnj%2F%2B%2BePBQo%2B%2FFPauAQtmCjo0krwCgmaHwld3DwNQ9%2Be87lyPdUw1Y0Bf%2F9eR9O8XWttAYEw1gPwCLYZCFrmBbxNuweRLlt99vL3RhEl6BOWTmElJtu1gHF3ki0V2Qso%2Fb9J1j4MLbMXyjmgIvK69G9AGqStfjlZv0QesFG7zfyGOT51i1p04RWRKsNcls04JzXnwsgkbExsopDMGJWlnE%2BQYNWm4yTg%2FxXkUNw7U7Yh%2BemfJXYoiY2yTQkLfP9qtWr3H0TthIJDr4SW07ZU28UJYDR0E5K%2BWHsNoKPCdpm4ZaFTT%2FTQg15byZSR6bHWIhgR8e3%2F94dNFbFPu61PiaUFKXCNdaTQq7OtZFxKMHA0QJu%2B6ilPzdAn7NR0A7Psbls374fxRFAt2zg65aKMGpVoXhxTEoX%2BN%2FiMybjY7i4cFRPZs9m1saxSVdvVcaX0Wv105B6W2JXVYCu928TNmfwE13%2Fge)). 
 
 See [here](https://docs.r-wasm.org/webr/latest/mounting.html#indexeddb-filesystem-storage) for how to persist files or a database in the browser. 
 
