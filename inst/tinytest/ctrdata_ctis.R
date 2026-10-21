@@ -9,6 +9,15 @@ nodbi::docdb_delete(dbc, dbc$collection)
 expect_true(
   suppressWarnings(
     ctrLoadQueryIntoDb(
+      queryterm = "2023-505267-36-00",
+      register = "CTIS",
+      only.count = TRUE,
+      con = dbc)[["n"]] == 1L))
+
+# test
+expect_true(
+  suppressWarnings(
+    ctrLoadQueryIntoDb(
       queryterm = 'https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAny":"neuroblastoma"}',
       only.count = TRUE,
       verbose = TRUE,

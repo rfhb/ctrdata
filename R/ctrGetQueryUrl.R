@@ -428,6 +428,14 @@ ctrGetQueryUrl <- function(
       queryterm
     )
 
+    # correct for naked teams
+    if (!grepl('[\\":\\{\\}]', queryterm)) {
+      queryterm <- sprintf(
+        'searchCriteria={"containAll":"%s"}',
+        queryterm
+      )
+    }
+
     # inform user
     if (grepl("^http", queryterm) && queryterm == url) stop(
       "Not a search query: ", url
