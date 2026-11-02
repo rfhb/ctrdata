@@ -3,29 +3,29 @@
 Registers of the four clinical trial registers from which package
 [ctrdata](https://rfhb.github.io/ctrdata/reference/ctrdata.md) can
 retrieve, aggregate and analyse protocol- and result-related information
-as well as documents, last updated 2026-10-04.
+as well as documents, last updated 2026-11-02.
 
 ## 1 - Overview
 
 - **EUCTR**: The EU Clinical Trials Register is complete with more than
   44,400 clinical trials (at least one investigational medicinal
   product, IMP; in the European Union and beyond), including more than
-  26,200 trials with results, which continue to be added.
+  26,250 trials with results, which continue to be provided.
 
 - **CTIS**: The EU Clinical Trials Information System, launched in 2023,
-  holds more than 12,500 publicly accessible clinical trials, including
-  more than 1,550 with results or a report. (To automatically get CTIS
+  holds more than 12,750 publicly accessible clinical trials, including
+  almost 1,700 with results or a report. (To automatically get CTIS
   search query URLs, see
   [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser))
 
-- **CTGOV2**: ClinicalTrials.gov holds more than 605,000 interventional
-  and observational studies, including more than 37,400 applicable
+- **CTGOV2**: ClinicalTrials.gov holds more than 609,000 interventional
+  and observational studies, including more than 37,700 applicable
   clinical trials (ACT, e.g. interventional studies with an
   Investigational Drug or Device, see
   [here](https://clinicaltrials.gov/expert-search?term=AREA%5BStudyType%5D%20Interventional%20AND%20AREA%5BStartDate%5D%20RANGE%5B01%2F18%2F2017,%20MAX%5D%20AND%20(AREA%5BIsFDARegulatedDrug%5D%20Yes%20OR%20AREA%5BIsFDARegulatedDevice%5D%20Yes)%20AND%20NOT%20AREA%5BPhase%5D%20(%22Early%20Phase%201%22%20OR%20%22Phase%201%22)%20AND%20NOT%20AREA%5BDesignPrimaryPurpose%5D%20%22Device%20Feasibility%22%20AND%20(AREA%5BLocationCountry%5D%20(%22United%20States%22%20OR%20%22Puerto%20Rico%22%20OR%20%22Guam%22%20OR%20%22American%20Samoa%22%20OR%20%22Northern%20Mariana%20Islands%22%20OR%20%22U.S.%20Virgin%20Islands%22)%20OR%20AREA%5BIsUSExport%5D%20Yes))
   ), of which more than 14,400 with results.
 
-- **ISRCTN**: The ISRCTN Registry holds more than 28,400 interventional
+- **ISRCTN**: The ISRCTN Registry holds more than 28,900 interventional
   and observational health studies.
 
 [TABLE]
@@ -68,23 +68,23 @@ Some registers are expanding entered search terms using dictionaries
 
 ## 4 - Example and ctrdata motivation
 
-The example is an expert search for interventional clinical trials
-primarily with neonates, investigating medicines for infectious
+A motivating example is an expert search for interventional clinical
+trials primarily with neonates, investigating medicines for infectious
 conditions. It shows that searches in the web interface of most
 registers are not sufficient to identify and analyse the trials of
 interest:
 
-- EUCTR has a search box to retrieve trials with neonates, but not only
-  those conducted exclusively in neonates
+- EUCTR has a search box to retrieve trials with neonates, but retrieves
+  not only those conducted exclusively in neonates
   ([link](https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants)).
 
-- CTIS retrieves trials based on their information mentioning the words
-  neonates and infection
+- CTIS retrieves trials based on some of their information mentioning
+  the words neonates and infection
   ([link](https://euclinicaltrials.eu/ctis-public/search#searchCriteria=%7B%22containAll%22:%22infection%22,%22containAny%22:%22neonates%22%7D);
   to show CTIS search results, see
   [here](https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser)).
 
-- CTGOV2 can retrieve trials with neonates only if a specific age
+- CTGOV2 can retrieve trials with neonates only, provided a specific age
   definition is used
   ([link](https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent)).
 
@@ -94,7 +94,10 @@ interest:
 To address these issues, trials can first be retrieved using the links
 above with
 [ctrLoadQueryIntoDb](https://rfhb.github.io/ctrdata/reference/ctrLoadQueryIntoDb.md).
-In a second step, all trial or a subset can be analysed.
+In a second step, interesting characteristics, such as endpoints (see
+[f.primaryEndpointDescription](https://rfhb.github.io/ctrdata/reference/f.primaryEndpointDescription.md)),
+can be analysed and a subset of relevant studies with relevant
+information is created.
 
 `ctrdata` supports users with pre-defined
 [ctrdata-trial-concepts](https://rfhb.github.io/ctrdata/reference/ctrdata-trial-concepts.md)

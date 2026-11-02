@@ -117,18 +117,17 @@ trialsDf <- dbGetFieldsIntoDf(
 #> , 25 found in collection
 trialsDf
 #> # A tibble: 25 × 4
-#>    `_id`             .likelyPlatformTrial .likelyRelatedTrials
-#>    <chr>             <lgl>                <list>              
-#>  1 12949496          FALSE                <chr [2]>           
-#>  2 13281214          FALSE                <chr [2]>           
-#>  3 17473621          FALSE                <lgl [1]>           
-#>  4 2013-000615-24-BE FALSE                <chr [1]>           
-#>  5 2016-004489-24-DE FALSE                <chr [2]>           
-#>  6 2019-002663-10-ES FALSE                <chr [2]>           
-#>  7 2022-000099-20-DE FALSE                <chr [2]>           
-#>  8 2022-500244-37-00 FALSE                <chr [1]>           
-#>  9 2023-505613-24-00 FALSE                <chr [2]>           
-#> 10 2023-508143-51-01 FALSE                <chr [1]>           
+#>    `_id`           .likelyPlatformTrial .likelyRelatedTrials .maybeRelatedTrials
+#>    <chr>           <lgl>                <list>               <list>             
+#>  1 12949496        FALSE                <chr [2]>            <chr [1]>          
+#>  2 13281214        FALSE                <chr [2]>            <chr [1]>          
+#>  3 17473621        FALSE                <lgl [1]>            <chr [1]>          
+#>  4 2013-000615-24… FALSE                <chr [1]>            <chr [1]>          
+#>  5 2016-004489-24… FALSE                <chr [2]>            <chr [1]>          
+#>  6 2019-002663-10… FALSE                <chr [2]>            <chr [1]>          
+#>  7 2022-000099-20… FALSE                <chr [2]>            <chr [1]>          
+#>  8 2022-500244-37… FALSE                <chr [1]>            <chr [1]>          
+#>  9 2023-505613-24… FALSE                <chr [2]>            <chr [1]>          
+#> 10 2023-508143-51… FALSE                <chr [1]>            <chr [1]>          
 #> # ℹ 15 more rows
-#> # ℹ 1 more variable: .maybeRelatedTrials <list>
 ```

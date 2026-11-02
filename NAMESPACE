@@ -38,7 +38,7 @@ importFrom(V8,
   v8
 )
 importFrom(dplyr,
-  `%>%`,
+  "%>%",
   case_match,
   case_when,
   coalesce,

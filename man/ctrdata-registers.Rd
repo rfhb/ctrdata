@@ -7,26 +7,26 @@
 \description{
 Registers of the four clinical trial registers from which package
 \link{ctrdata} can retrieve, aggregate and analyse protocol- and
-result-related information as well as documents, last updated 2026-10-04.
+result-related information as well as documents, last updated 2026-11-02.
 }
 \section{1 - Overview}{
 
 \itemize{
 \item \strong{EUCTR}: The EU Clinical Trials Register is complete with more than 44,400
 clinical trials (at least one investigational medicinal product, IMP; in
-the European Union and beyond), including more than 26,200 trials with
-results, which continue to be added.
+the European Union and beyond), including more than 26,250 trials with
+results, which continue to be provided.
 \item \strong{CTIS}: The EU Clinical Trials Information System, launched in 2023,
-holds more than 12,500 publicly accessible clinical trials, including
-more than 1,550 with results or a report.
+holds more than 12,750 publicly accessible clinical trials, including
+almost 1,700 with results or a report.
 (To automatically get CTIS search query URLs, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}})
-\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 605,000 interventional and
-observational studies, including more than 37,400 applicable clinical trials
+\item \strong{CTGOV2}: ClinicalTrials.gov holds more than 609,000 interventional and
+observational studies, including more than 37,700 applicable clinical trials
 (ACT, e.g. interventional studies with an Investigational Drug or Device, see
 \href{https://clinicaltrials.gov/expert-search?term=AREA\%5BStudyType\%5D\%20Interventional\%20AND\%20AREA\%5BStartDate\%5D\%20RANGE\%5B01\%2F18\%2F2017,\%20MAX\%5D\%20AND\%20(AREA\%5BIsFDARegulatedDrug\%5D\%20Yes\%20OR\%20AREA\%5BIsFDARegulatedDevice\%5D\%20Yes)\%20AND\%20NOT\%20AREA\%5BPhase\%5D\%20(\%22Early\%20Phase\%201\%22\%20OR\%20\%22Phase\%201\%22)\%20AND\%20NOT\%20AREA\%5BDesignPrimaryPurpose\%5D\%20\%22Device\%20Feasibility\%22\%20AND\%20(AREA\%5BLocationCountry\%5D\%20(\%22United\%20States\%22\%20OR\%20\%22Puerto\%20Rico\%22\%20OR\%20\%22Guam\%22\%20OR\%20\%22American\%20Samoa\%22\%20OR\%20\%22Northern\%20Mariana\%20Islands\%22\%20OR\%20\%22U.S.\%20Virgin\%20Islands\%22)\%20OR\%20AREA\%5BIsUSExport\%5D\%20Yes)}{here}
 ), of which more than 14,400 with results.
-\item \strong{ISRCTN}: The ISRCTN Registry holds more than 28,400 interventional and
+\item \strong{ISRCTN}: The ISRCTN Registry holds more than 28,900 interventional and
 observational health studies.
 }\tabular{lcccc}{
     \tab \strong{EUCTR} \tab \strong{CTIS} \tab \strong{CTGOV2} \tab \strong{ISRCTN} \cr
@@ -75,27 +75,30 @@ Some registers are expanding entered search terms using dictionaries
 \section{4 - Example and ctrdata motivation}{
 
 
-The example is an expert search for interventional clinical trials
+A motivating example is an expert search for interventional clinical trials
 primarily with neonates, investigating medicines for infectious conditions.
 It shows that searches in the web interface of most registers are not
 sufficient to identify and analyse the trials of interest:
 \itemize{
-\item EUCTR has a search box to retrieve trials with neonates, but not only
-those conducted exclusively in neonates
+\item EUCTR has a search box to retrieve trials with neonates, but retrieves not
+only those conducted exclusively in neonates
 (\ifelse{latex}{\out{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections\&age=newborn\&age=preterm-new-born-infants}{link}}}{\href{https://www.clinicaltrialsregister.eu/ctr-search/search?query=Infections&age=newborn&age=preterm-new-born-infants}{link}}).
-\item CTIS retrieves trials based on their information mentioning the words neonates and infection
+\item CTIS retrieves trials based on some of their information mentioning the
+words neonates and infection
 (\ifelse{latex}{\out{\href{https://euclinicaltrials.eu/ctis-public/search\#searchCriteria={"containAll":"infection","containAny":"neonates","containNot":""}}{link}}}{\href{https://euclinicaltrials.eu/ctis-public/search#searchCriteria={"containAll":"infection","containAny":"neonates"}}{link}};
 to show CTIS search results, see
 \ifelse{latex}{\out{\href{https://rfhb.github.io/ctrdata/\#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}}{\href{https://rfhb.github.io/ctrdata/#id_2-script-to-automatically-copy-users-query-from-web-browser}{here}}).
-\item CTGOV2 can retrieve trials with neonates only if a specific age definition is used
+\item CTGOV2 can retrieve trials with neonates only, provided a specific age
+definition is used
 (\ifelse{latex}{\out{\href{https://clinicaltrials.gov/search?ageRange=0M_1M\&cond=Infections\&aggFilters=studyType:int\&distance=50\&intr=Investigational+Agent}{link}}}{\href{https://clinicaltrials.gov/search?ageRange=0M_1M&cond=Infections&aggFilters=studyType:int&distance=50&intr=Investigational+Agent}{link}}).
 \item ISRCTN retrieves studies only with neonates, but not only of medicines
 (\ifelse{latex}{\out{\href{https://www.isrctn.com/search?q=\&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations\&searchType=advanced-search}{link}}}{\href{https://www.isrctn.com/search?q=&filters=ageRange:Neonate,conditionCategory:Infections+and+Infestations&searchType=advanced-search}{link}}).
 }
 
 To address these issues, trials can first be retrieved using the links above
-with \link{ctrLoadQueryIntoDb}. In a second step, all trial or a subset
-can be analysed.
+with \link{ctrLoadQueryIntoDb}. In a second step, interesting characteristics,
+such as endpoints (see \link{f.primaryEndpointDescription}), can be analysed
+and a subset of relevant studies with relevant information is created.
 
 \code{ctrdata} supports users with pre-defined \link{ctrdata-trial-concepts} that
 can be calculated across registers when creating a dataframe for analysis,

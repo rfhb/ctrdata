@@ -55,6 +55,7 @@ for additional uses.
 # the address bar of the browser that shows results
 # from a query in one of the trial registers
 if (interactive()) try(ctrGetQueryUrl(), silent = TRUE)
+#> Warning: System clipboard contained no readable text. Returning NULL.
 
 # extract query parameters from search result URL
 # (URL was cut for the purpose of formatting only)

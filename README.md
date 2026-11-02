@@ -16,7 +16,7 @@ model](#data-model-of-ctrdata) •
 [Databases](#databases-for-use-with-ctrdata) •
 [Documentation](#documentation-and-vignettes) •
 [Workflow](#example-workflow) • [Analysis across
-registers](#workflow-across-registers-example) • [WebR in
+registers](#workflow-across-registers-example) • ⭐️ [WebR in
 browser](#use-ctrdata-in-the-browser) • [Tests](#tests-and-coverage) •
 [Acknowledgements](#acknowledgements-and-citation) •
 [Future](#future-features)
@@ -42,7 +42,7 @@ facilitate using their detailed results for research and meta-analyses.
 `ctrdata` is a package for the [`R`](https://www.r-project.org/) system
 including [`WASM`](https://docs.r-wasm.org/webr/latest/), but other
 systems and tools can use the databases created with this package. This
-README was reviewed on 2026-10-21 for version 1.26.3.9001.
+README was reviewed on 2026-11-02 for version 1.26.3.9001.
 
 ## Main features
 
@@ -954,16 +954,14 @@ table(docNames)
 [`webr`](https://docs.r-wasm.org/webr/latest/). For example, open
 <https://webr.r-wasm.org/latest/>, paste and run the following code in
 the browser (or open the example directly from this
-[link](https://webr.r-wasm.org/latest/#code=eJx9ks9u1DAQxiWOeQorlVBW3SSiR4vlQtUKqQK1VFyjsT2bGBw7a092CeLGE%2FAOfQyuPARvg72NdlstwqdvRv5%2Bnj%2F%2B%2BePBQo%2B%2FFPauAQtmCjo0krwCgmaHwld3DwNQ9%2Be87lyPdUw1Y0Bf%2F9eR9O8XWttAYEw1gPwCLYZCFrmBbxNuweRLlt99vL3RhEl6BOWTmElJtu1gHF3ki0V2Qso%2Fb9J1j4MLbMXyjmgIvK69G9AGqStfjlZv0QesFG7zfyGOT51i1p04RWRKsNcls04JzXnwsgkbExsopDMGJWlnE%2BQYNWm4yTg%2FxXkUNw7U7Yh%2BemfJXYoiY2yTQkLfP9qtWr3H0TthIJDr4SW07ZU28UJYDR0E5K%2BWHsNoKPCdpm4ZaFTT%2FTQg15byZSR6bHWIhgR8e3%2F94dNFbFPu61PiaUFKXCNdaTQq7OtZFxKMHA0QJu%2B6ilPzdAn7NR0A7Psbls374fxRFAt2zg65aKMGpVoXhxTEoX%2BN%2FiMybjY7i4cFRPZs9m1saxSVdvVcaX0Wv105B6W2JXVYCu928TNmfwE13%2Fge)).
+[link](https://webr.r-wasm.org/latest/#code=eJx9kcFq3DAQhul1n0I4ULxkbdMcRbeXhoRCaEkaejUjadYWlSVHM2a70FufoO%2BQx%2Bi1917zNh1vzKan6jQz6Pv1z6%2BfPx4jDPjL4ZBaiBAO5Km1nB0wtHs0ub57HIH7p%2FOmTwM2Mmonwtz8l5jr36%2F%2B%2BEgMIdQj2K%2FQIZW2LO4%2B3954xmKjigWay64bQ%2BKLYr1erZxRbysVkzNea8q2pYcgRGlTCGjZp6i2Ap%2B6dt6gEHDR01qKmwTudsJ8%2BBA5XZpypdTD3DLm4RmPbvsRp5xMAOI0wGvouisf5AJtxx4I9ZtNRpoCk9577jfEkzvcH0bUPnKxEcWMnScBZsH399efvlzILvboz5l%2FDTlzjXzlMTg6%2BtmVFoKdAjDO7K6WnDJfwjGXk4D6%2Fk7JK0s2Wj8X5Vqdv8wE5Bat25WnEUjQ30ThRXRO9UyOIkTVM4%2BkmybvelN3sthkap%2BaxWtzJr9bLU3lY8U9Vianvfz56i8nY8Ob)).
 
 See
 [here](https://docs.r-wasm.org/webr/latest/mounting.html#indexeddb-filesystem-storage)
 for how to persist files or a database in the browser.
 
 ``` r
-install.packages(c("lazyeval", "RSQLite", "readr", "ctrdata", "ggplot2"))
-install.packages("jqr", repos = "https://ropensci.r-universe.dev")
-install.packages("ctrdata", repos = "https://rfhb.r-universe.dev")
+install.packages(c("RSQLite", "ctrdata", "ggplot2"))
 
 db <- nodbi::src_sqlite(collection = "collection_name")
 
@@ -972,7 +970,7 @@ ctrdata::ctrLoadQueryIntoDb(
   register = "CTGOV2", con = db)
 
 ctrdata::dbGetFieldsIntoDf(calculate = "f.startDate", con = db) |> 
-ggplot2::ggplot() + ggplot2::stat_ecdf(ggplot2::aes(x = .startDate))
+  ggplot2::ggplot() + ggplot2::stat_ecdf(ggplot2::aes(x = .startDate))
 ```
 
 ## Tests and coverage
@@ -1093,9 +1091,9 @@ for [R](https://www.r-project.org/),
 Please cite the package in any publication or work as follows as: Herold
 R (2026). “Aggregating and analysing clinical trials data from multiple
 public registers using R package ctrdata.” *Research Synthesis Methods*,
-*17*(3), 624–656. ISSN 1759-2879, 1759-2887.
+*17*(3), 624-656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
-or <br/>Herold R (2026-10-11). *ctrdata: Retrieve and Analyze Clinical
+or <br/>Herold R (2026-11-02). *ctrdata: Retrieve and Analyze Clinical
 Trials Data from Public Registers*. R package version 1.26.3.9001,
 <https://cran.r-project.org/package=ctrdata>.
 </blockquote>

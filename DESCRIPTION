@@ -70,5 +70,5 @@ Authors@R: c(person(given = "Ralf", family = "Herold", role = c("aut", "cre"),
         )
 Language: en-GB
 Depends: R (>= 4.2)
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Roxygen: list(markdown = TRUE)

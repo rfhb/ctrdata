@@ -13,16 +13,20 @@ General information on the `ctrdata` package is available here:
 
 In R, execute:
 
-\
-[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"ctrdata"``)`
+``` r
+
+install.packages("ctrdata")
+```
 
 For using the development version of package `ctrdata`, install from
 GitHub:
 
-\
-`# install package under development`\
-[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(`[`c`](https://rdrr.io/r/base/c.html)`(``"remotes"``)``)`\
-`remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"rfhb/ctrdata"``, dependencies ``=`` ``TRUE``, build_vignettes ``=`` ``TRUE``)`
+``` r
+
+# install package under development
+install.packages(c("remotes"))
+remotes::install_github("rfhb/ctrdata", dependencies = TRUE, build_vignettes = TRUE)
+```
 
 Either of the above should install package `ctrdata` into the user’s
 library.
@@ -55,22 +59,26 @@ local server.
 - For DuckDB, the JSON extension is needed which can be permanently
   downloaded as follows:
 
-\
-`# user to specify their directory of choice;`\
-`# remember to set option for each new R session`\
-[`options`](https://rdrr.io/r/base/options.html)`(``duckdb.home ``=`` ``"~/.duckdb"``)`\
-\
-`# load and install in above-mentioned `\
-`# directory; only once to be executed`\
-`DBI``::`[`dbExecute`](https://dbi.r-dbi.org/reference/dbExecute.html)`(``duckdb``::``dbConnect``(``duckdb``::`[`duckdb`](https://r.duckdb.org/reference/duckdb.html)`(``)``)``, ``'INSTALL json;'``)`
+``` r
+
+# user to specify their directory of choice;
+# remember to set option for each new R session
+options(duckdb.home = "~/.duckdb")
+
+# load and install in above-mentioned 
+# directory; only once to be executed
+DBI::dbExecute(duckdb::dbConnect(duckdb::duckdb()), 'INSTALL json;')
+```
 
 ## Attach package `ctrdata`
 
 After completing the installation, attach the package from the user’s
 library:
 
-\
-[`library`](https://rdrr.io/r/base/library.html)`(`[`ctrdata`](https://cran.r-project.org/package=ctrdata)`)`
+``` r
+
+library(ctrdata)
+```
 
 ## Credit to clinical trial registers
 
@@ -86,7 +94,7 @@ In any publication, please cite this package as follows:
 
 Herold R (2026). “Aggregating and analysing clinical trials data from
 multiple public registers using R package ctrdata.” *Research Synthesis
-Methods*, *17*(3), 624–656. ISSN 1759-2879, 1759-2887.
+Methods*, *17*(3), 624-656. ISSN 1759-2879, 1759-2887.
 <doi:10.1017/rsm.2025.10061> <https://doi.org/10.1017/rsm.2025.10061>.
 or\
 Herold R (????). *ctrdata: Retrieve and Analyze Clinical Trials Data
